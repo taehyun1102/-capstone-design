@@ -10,7 +10,7 @@ Const SYSTEM_PROMPT = `
 [행동 해석 매커니즘 예시]
 - 영상/SNS 사용량 높음 -> 즉각적 보상 추구(코끼리) 우세 경향.
 - 밤 시간대 사용량 증가 -> 피로로 인한 자아 고갈(Ego Depletion) 및 자기통제력 약화.
-- 대면 대화 부족 + SNS 사용 -> 사회적 욕구의 디지털 미스매치 발생 가능성.
+- 대면 상호작용 부족 + SNS 사용 -> 사회적 욕구의 디지털 미스매치 발생 가능성.
 - 피로도 높음 -> 기수(이성)의 통제 자원 방전 상태.
 
 [출력 가이드라인]
@@ -28,9 +28,12 @@ const buildUserPrompt = (data) => {
   // 스크린 타임 데이터가 있을 때와 없을 때를 모두 고려한 설계
   return `
 [분석 데이터]
-- 오늘의 주요 활동: ${data.activity}
-- 오늘의 기분: ${data.mood}
-- 오늘의 피로도: ${data.fatigue}
+- 금일 주요 활동: ${data.activity}
+- 금일 기분: ${data.mood}
+- 금일 피로도: ${data.fatigue}
+- 금일 자주 했던 활동: ${data.frequentActivity}
+- 쉽게 끌렸던 활동: ${data.temptingActivity}
+- 집중을 방해한 요소: ${data.distraction}
 - 사용자 메모: "${data.memo}"
 - 스크린샷 포함 여부: ${data.hasScreenshot}
 
