@@ -70,8 +70,9 @@ export default function InputScreen() {
 
     console.log("AI 분석 요청 데이터:", payload);
 
+    // result 대신 loading 페이지로 이동
     router.push({
-      pathname: "/result",
+      pathname: "/loading",
       params: {
         mood,
         activity,
@@ -244,7 +245,7 @@ export default function InputScreen() {
       </View>
 
       <Pressable onPress={handleSubmit} style={submitButton}>
-        <Text style={submitButtonText}>AI 분석 결과 보기</Text>
+        <Text style={submitButtonText}>AI 분석 시작</Text>
       </Pressable>
     </ScrollView>
   );
