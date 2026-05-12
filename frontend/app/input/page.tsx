@@ -825,6 +825,7 @@ export default function InputPage() {
             </div>
           </div>
 
+
 <div className="flex flex-col gap-4">
 
   <button
@@ -849,8 +850,12 @@ export default function InputPage() {
   </Link>
 
 </div>
+
+      
         </section>
+
       </div>
     </main>
   );
 }
+
