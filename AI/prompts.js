@@ -34,6 +34,7 @@ const buildUserPrompt = (data) => {
 - 금일 자주 했던 활동: ${data.frequentActivity}
 - 쉽게 끌렸던 활동: ${data.temptingActivity}
 - 집중을 방해한 요소: ${data.distraction}
+- 대면 상호작용 빈도: ${data.socialInteraction}
 - 사용자 메모: "${data.memo}"
 - 스크린샷 포함 여부: ${data.hasScreenshot}
 
@@ -41,6 +42,7 @@ const buildUserPrompt = (data) => {
 - 카톡/인스타 등의 SNS 사용량: 사회적 연결 기제 작동 여부 확인
 - 유튜브 등의 오락매체 사용량: 도파민 회로 자극 정도 확인
 - 생산성 앱 사용량: 기수의 통제력 유지 여부 확인
+- 대면 대화 빈도: 현대 사회의 '사회적 미스매치' 해소 여부 확인
   `;
 };
 
