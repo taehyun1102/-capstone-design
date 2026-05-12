@@ -28,9 +28,10 @@ const buildUserPrompt = (data) => {
   // 스크린 타임 데이터가 있을 때와 없을 때를 모두 고려한 설계
   return `
 [금일 상태 분석 데이터]
-- 금일 활동: ${data.activity}
-- 금일 기분: ${data.mood}
-- 금일 대면 상호작용 빈도: ${data.socialInteraction}
+- 주요 활동: ${data.activity}
+- 기분: ${data.mood}
+- 대면 상호작용 빈도: ${data.socialInteraction}
+- 집중이 잘된 시간대: ${data.focusedTime || '없음'}
 - 피로도: ${data.fatigue}
 - 자주 했던 활동: ${data.frequentActivity}
 - 쉽게 끌렸던 활동: ${data.temptingActivity}
