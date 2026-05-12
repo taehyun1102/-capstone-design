@@ -34,6 +34,8 @@ const buildUserPrompt = (data) => {
 - 금일 자주 했던 활동: ${data.frequentActivity}
 - 쉽게 끌렸던 활동: ${data.temptingActivity}
 - 집중을 방해한 요소: ${data.distraction}
+- 금일 목표 존재 여부: ${data.hasGoal ? '있었음' : '없었음'}
+- 목표 달성 여부: ${data.goalResult}
 - 대면 상호작용 빈도: ${data.socialInteraction}
 - 사용자 메모: "${data.memo}"
 - 스크린샷 포함 여부: ${data.hasScreenshot}
