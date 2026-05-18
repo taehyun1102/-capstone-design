@@ -1,6 +1,6 @@
 const express = require("express");
 const cors = require("cors");
-const { generateAiDetectedPatterns } = require("./patternGenerator");
+const { generateMobileAnalysis } = require("./analyzeService");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -22,25 +22,49 @@ app.post("/api/analyze", (req, res) => {
     });
   }
 
-  const userInput = body.userInput ?? {};
-  const existingPatterns = Array.isArray(body.aiDetectedPatterns)
-    ? [...body.aiDetectedPatterns]
-    : [];
+  const {
+    mood,
+    activity,
+    fatigue,
+    focusLevel,
+    sleepQuality,
+    stressLevel,
+    distraction,
+    digitalFeeling,
+    aiHint,
+    memo,
+    hasScreenshot,
+  } = body;
 
-  const response = {
-    analyzedAt: body.analyzedAt || new Date().toISOString(),
-    userInput,
-    screenshotInfo: body.screenshotInfo ?? {
-      uploaded: false,
-      fileName: "",
-      analyzed: false,
-      skipped: true,
-      estimatedConfidence: 0,
-    },
-    aiDetectedPatterns: generateAiDetectedPatterns(userInput, existingPatterns),
-  };
+  if (!mood || !activity || !fatigue || !focusLevel) {
+    return res.status(400).json({
+      error: "Missing required fields",
+      message: "mood, activity, fatigue, focusLevel은 필수입니다.",
+    });
+  }
 
-  res.json(response);
+  if (!memo || typeof memo !== "string" || memo.trim() === "") {
+    return res.status(400).json({
+      error: "Missing required fields",
+      message: "memo는 필수입니다.",
+    });
+  }
+
+  const result = generateMobileAnalysis({
+    mood,
+    activity,
+    fatigue,
+    focusLevel,
+    sleepQuality,
+    stressLevel,
+    distraction,
+    digitalFeeling,
+    aiHint,
+    memo,
+    hasScreenshot,
+  });
+
+  res.json(result);
 });
 
 app.use((_req, res) => {
