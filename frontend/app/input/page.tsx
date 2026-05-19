@@ -1,6 +1,12 @@
 "use client";
 
-import { ChangeEvent, useEffect, useRef, useState } from "react";
+import {
+  ChangeEvent,
+  useEffect,
+  useRef,
+  useState,
+  RefObject,
+} from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
@@ -23,7 +29,9 @@ type UserInputData = {
 
 type AnalysisPayload = {
   analyzedAt: string;
+
   userInput: UserInputData;
+
   screenshotInfo: {
     uploaded: boolean;
     fileName: string;
@@ -31,7 +39,20 @@ type AnalysisPayload = {
     skipped: boolean;
     estimatedConfidence: number;
   };
+
+  // 백엔드 API용 필드
+  mood: string;
+  activity: string;
+  fatigue: string;
+  focusLevel: string;
+  distraction: string;
+
+  memo: string;
+
+  hasScreenshot: boolean;
 };
+
+
 
 type NoticeTone = "red" | "amber" | "violet" | "green";
 
@@ -50,7 +71,7 @@ function NoticeBox({
   tone: NoticeTone;
   title?: string;
   withIcon?: boolean;
-  innerRef?: React.RefObject<HTMLDivElement | null>;
+  innerRef?: RefObject<HTMLDivElement | null>;
 }) {
   const styles = {
     red: "border-red-200 bg-red-50 text-red-700",
@@ -190,33 +211,44 @@ export default function InputPage() {
   };
 
   const buildPayload = (): AnalysisPayload => ({
-    analyzedAt: new Date().toISOString(),
+  analyzedAt: new Date().toISOString(),
 
-    userInput: {
-      mainActivity,
-      dayMood,
-      focusTime,
-      fatigueLevel,
-      frequentCheck,
-      impulseActivity,
-      distractionFactor,
+  userInput: {
+    mainActivity,
+    dayMood,
+    focusTime,
+    fatigueLevel,
+    frequentCheck,
+    impulseActivity,
+    distractionFactor,
 
-      hadGoal,
-      achievedGoal,
+    hadGoal,
+    achievedGoal,
 
-      faceToFaceInteraction,
+    faceToFaceInteraction,
 
-      memo,
-    },
+    memo: memo.trim(),
+  },
 
-    screenshotInfo: {
-      uploaded: Boolean(screenshotPreview),
-      fileName: screenshotFileName,
-      analyzed: isScreenshotAnalyzed,
-      skipped: isNoScreenshotMode,
-      estimatedConfidence: analysisConfidence,
-    },
-  });
+  screenshotInfo: {
+    uploaded: Boolean(screenshotPreview),
+    fileName: screenshotFileName,
+    analyzed: isScreenshotAnalyzed,
+    skipped: isNoScreenshotMode,
+    estimatedConfidence: analysisConfidence,
+  },
+
+  // 백엔드 API용 필드
+  mood: dayMood,
+  activity: mainActivity,
+  fatigue: fatigueLevel,
+  focusLevel: focusTime,
+  distraction: distractionFactor,
+
+  memo: memo.trim(),
+
+  hasScreenshot: Boolean(screenshotPreview),
+});
 
   const handleScreenshotUpload = (
     e: ChangeEvent<HTMLInputElement>
@@ -373,35 +405,76 @@ export default function InputPage() {
     return true;
   };
 
-  const handleSubmit = async () => {
-    clearMessages();
+const handleSubmit = async () => {
+  clearMessages();
 
-    if (!validateBeforeSubmit()) {
-      setTimeout(() => {
-        submitErrorRef.current?.scrollIntoView({
-          behavior: "smooth",
-          block: "center",
-        });
-      }, 50);
+  if (!validateBeforeSubmit()) {
+    setTimeout(() => {
+      submitErrorRef.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
+    }, 50);
 
-      return;
-    }
+    return;
+  }
 
-    setIsSubmitting(true);
+  setIsSubmitting(true);
 
+  try {
     const payload = buildPayload();
 
     console.log("최종 분석 요청 데이터:", payload);
 
+    // 입력 데이터 저장
     sessionStorage.setItem(
       "analysisPayload",
       JSON.stringify(payload)
     );
 
-    setTimeout(() => {
-      router.push("/result");
-    }, 1000);
-  };
+    // 백엔드 API 요청
+    const response = await fetch(
+      "http://localhost:5000/api/analyze",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      }
+    );
+
+    // 서버 응답 실패 처리
+    if (!response.ok) {
+      throw new Error("서버 응답 실패");
+    }
+
+    // 분석 결과 JSON 변환
+    const result = await response.json();
+
+    console.log("분석 결과:", result);
+
+    // 결과 저장
+    sessionStorage.setItem(
+      "analysisResult",
+      JSON.stringify(result)
+    );
+
+    // 결과 페이지 이동
+    router.push("/result");
+
+  } catch (error) {
+    console.error(error);
+
+    setSubmitError(
+      "서버 연결 또는 분석 요청 중 오류가 발생했습니다."
+    );
+  } finally {
+    setIsSubmitting(false);
+  }
+};
+
+
 
   const screenshotSummaryCards = [
     "주요 사용 앱 흐름 분석",
