@@ -1,4 +1,4 @@
-Const SYSTEM_PROMPT = `
+const SYSTEM_PROMPT = `
 당신은 진화심리학 및 인지과학 기반의 행동 분석 AI입니다.
 사용자의 디지털 데이터와 심리 체크리스트를 결합하여 '인지 자원 상태'를 진단합니다.
 
@@ -37,7 +37,7 @@ const buildUserPrompt = (data) => {
 - 쉽게 끌렸던 활동: ${data.temptingActivity}
 - 집중을 방해한 요소: ${data.distraction}
 - 목표 존재 여부: ${data.hasGoal ? '있었음' : '없었음'}
-- 목표 달성 여부: ${data.goalResult}
+- 목표 달성 여부: ${data.goalResult || '해당 없음'}
 - 사용자 메모: "${data.memo}"
 - 스크린샷 포함 여부: ${data.hasScreenshot}
 
