@@ -30,6 +30,7 @@ const SYSTEM_PROMPT = `
 
 - 출력 형식:
   반드시 JSON 형식으로만 응답하십시오.
+  JSON 외의 텍스트를 절대 출력하지 마시오.
 
 {
   "summary": "오늘 하루의 핵심 데이터 요약 (1문장)",
@@ -41,18 +42,18 @@ const buildUserPrompt = (data) => {
   // 스크린 타임 데이터가 있을 때와 없을 때를 모두 고려한 설계
   return `
 [금일 상태 분석 데이터]
-- 주요 활동: ${data.activity}
-- 기분: ${data.mood}
-- 대면 상호작용 빈도: ${data.socialInteraction}
+- 주요 활동: ${data.activity || '없음'}
+- 기분: ${data.mood || '없음'}
+- 대면 상호작용 빈도: ${data.socialInteraction || '없음'}
 - 집중이 잘된 시간대: ${data.focusedTime || '없음'}
-- 피로도: ${data.fatigue}
-- 자주 했던 활동: ${data.frequentActivity}
-- 쉽게 끌렸던 활동: ${data.temptingActivity}
-- 집중을 방해한 요소: ${data.distraction}
+- 피로도: ${data.fatigue || '없음'}
+- 자주 했던 활동: ${data.frequentActivity || '없음'}
+- 쉽게 끌렸던 활동: ${data.temptingActivity || '없음'}
+- 집중을 방해한 요소: ${data.distraction || '없음'}
 - 목표 존재 여부: ${data.hasGoal ? '있었음' : '없었음'}
 - 목표 달성 여부: ${data.goalResult || '해당 없음'}
-- 사용자 메모: "${data.memo}"
-- 스크린샷 포함 여부: ${data.hasScreenshot}
+- 사용자 메모: "${data.memo?.trim() || '없음'}"
+- 스크린샷 포함 여부: ${data.hasScreenshot ? '있음' : '없음'}
 
 [참고: 데이터가 존재하는 경우에 가중치를 부여하라]
 - 카톡/인스타 등의 SNS 사용량: 사회적 연결 기제 작동 여부 확인
