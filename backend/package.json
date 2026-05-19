@@ -9,6 +9,8 @@
   },
   "dependencies": {
     "cors": "^2.8.5",
-    "express": "^4.21.2"
+    "deasync": "^0.1.30",
+    "express": "^4.21.2",
+    "openai": "^4.104.0"
   }
 }
