@@ -15,9 +15,7 @@ type UserInputData = {
   dayMood: string;
   focusTime: string;
   fatigueLevel: string;
-  frequentCheck: string;
   impulseActivity: string;
-  distractionFactor: string;
 
   hadGoal: string;
   achievedGoal: string;
@@ -140,9 +138,7 @@ export default function InputPage() {
   const [dayMood, setDayMood] = useState("");
   const [focusTime, setFocusTime] = useState("");
   const [fatigueLevel, setFatigueLevel] = useState("");
-  const [frequentCheck, setFrequentCheck] = useState("");
   const [impulseActivity, setImpulseActivity] = useState("");
-  const [distractionFactor, setDistractionFactor] = useState("");
 
   const [hadGoal, setHadGoal] = useState("");
   const [achievedGoal, setAchievedGoal] = useState("");
@@ -218,9 +214,7 @@ export default function InputPage() {
     dayMood,
     focusTime,
     fatigueLevel,
-    frequentCheck,
     impulseActivity,
-    distractionFactor,
 
     hadGoal,
     achievedGoal,
@@ -243,7 +237,7 @@ export default function InputPage() {
   activity: mainActivity,
   fatigue: fatigueLevel,
   focusLevel: focusTime,
-  distraction: distractionFactor,
+distraction: impulseActivity,
 
   memo: memo.trim(),
 
@@ -346,9 +340,7 @@ export default function InputPage() {
       dayMood,
       focusTime,
       fatigueLevel,
-      frequentCheck,
       impulseActivity,
-      distractionFactor,
       faceToFaceInteraction,
       hadGoal,
     ];
@@ -488,28 +480,28 @@ const handleSubmit = async () => {
       value: mainActivity,
       onChange: setMainActivity,
       options: [
-        "공부",
-        "유튜브/영상 시청",
-        "게임",
-        "SNS/채팅",
+        "목표 수행 (공부/일)",
+        "콘텐츠 소비 (영상 시청/유튜브)",
+        "오락 활동 (게임)",
+        "사회적 상호작용 (SNS/채팅)",
         "휴식/기타",
       ],
     },
 
     {
-      label: "오늘 하루의 전반적인 느낌은 어땠나요?",
+      label: "오늘 하루의 전반적인 상태는 어땠나요?",
       value: dayMood,
       onChange: setDayMood,
       options: [
-        "생산적이었음",
+        "컨디션이 좋았음",
         "평소와 비슷했음",
-        "조금 흐트러졌음",
-        "피곤했음",
+        "조금 산만했음",
+        "피곤하고 지쳤음",
       ],
     },
 
     {
-      label: "오늘 사람들과의 대면 상호작용은 어느 정도 있었나요?",
+      label: "오늘 실제 사람들과의 상호작용(대면/통화)은 어느 정도 있었나요?",
       value: faceToFaceInteraction,
       onChange: setFaceToFaceInteraction,
       options: [
@@ -548,43 +540,19 @@ const handleSubmit = async () => {
     },
 
     {
-      label: "오늘 가장 자주 확인했던 활동은 무엇인가요?",
-      value: frequentCheck,
-      onChange: setFrequentCheck,
-      options: [
-        "메시지 확인",
-        "SNS 확인",
-        "영상 확인",
-        "뉴스 확인",
-        "특별히 없음",
-      ],
-    },
-
-    {
-      label: "오늘 가장 쉽게 끌렸던 활동은 무엇인가요?",
+      label: "오늘 가장 끌렸던 활동은 무엇인가요?",
       value: impulseActivity,
       onChange: setImpulseActivity,
       options: [
-        "영상 시청",
+        "짧은 콘텐츠 (쇼츠/릴스)",
         "게임",
-        "SNS",
-        "채팅",
+        "SNS/메신저",
+        "음식/간식",
+        "휴식/수면",
         "기타",
       ],
     },
 
-    {
-      label: "집중을 가장 방해한 요소가 있었다면 무엇인가요?",
-      value: distractionFactor,
-      onChange: setDistractionFactor,
-      options: [
-        "알림",
-        "SNS",
-        "피로",
-        "주변 환경",
-        "없음",
-      ],
-    },
   ];
 
   return (
