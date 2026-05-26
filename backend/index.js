@@ -1,6 +1,12 @@
 const express = require("express");
 const cors = require("cors");
 const { generateMobileAnalysis } = require("./analyzeService");
+const {
+  TEMP_USER_ID,
+  saveAnalysis,
+  getAnalysesByUserId,
+} = require("./analysisStore");
+const { createUser, authenticateUser } = require("./authStore");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -12,7 +18,57 @@ app.get("/health", (_req, res) => {
   res.json({ status: "ok" });
 });
 
-app.post("/api/analyze", (req, res) => {
+app.post("/api/auth/signup", (req, res) => {
+  const { email, password } = req.body || {};
+
+  if (!email || !password) {
+    return res.status(400).json({
+      error: "Missing required fields",
+      message: "email, password는 필수입니다.",
+    });
+  }
+
+  const result = createUser(email, password);
+
+  if (!result.ok) {
+    return res.status(409).json({
+      error: "Email already exists",
+      message: "이미 가입된 이메일입니다.",
+    });
+  }
+
+  res.status(201).json({
+    message: "회원가입 성공",
+    userId: result.userId,
+  });
+});
+
+app.post("/api/auth/login", (req, res) => {
+  const { email, password } = req.body || {};
+
+  if (!email || !password) {
+    return res.status(400).json({
+      error: "Missing required fields",
+      message: "email, password는 필수입니다.",
+    });
+  }
+
+  const result = authenticateUser(email, password);
+
+  if (!result.ok) {
+    return res.status(401).json({
+      error: "Invalid credentials",
+      message: "이메일 또는 비밀번호가 올바르지 않습니다.",
+    });
+  }
+
+  res.json({
+    message: "로그인 성공",
+    userId: result.userId,
+  });
+});
+
+app.post("/api/analyze", async (req, res) => {
   const body = req.body;
 
   if (!body || typeof body !== "object" || Array.isArray(body)) {
@@ -50,7 +106,9 @@ app.post("/api/analyze", (req, res) => {
     });
   }
 
-  const result = generateMobileAnalysis({
+  const userId = body.userId || TEMP_USER_ID;
+
+  const result = await generateMobileAnalysis({
     mood,
     activity,
     fatigue,
@@ -64,7 +122,26 @@ app.post("/api/analyze", (req, res) => {
     hasScreenshot,
   });
 
+  saveAnalysis({
+    userId,
+    mood,
+    activity,
+    fatigue,
+    focusLevel,
+    distraction,
+    summary: result.summary,
+    pattern: result.pattern,
+    advice: result.advice,
+    createdAt: new Date(),
+  });
+
   res.json(result);
+});
+
+app.get("/api/analysis/history", (req, res) => {
+  const userId = req.query.userId || TEMP_USER_ID;
+  const history = getAnalysesByUserId(userId);
+  res.json(history);
 });
 
 app.use((_req, res) => {

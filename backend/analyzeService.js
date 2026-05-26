@@ -1,5 +1,4 @@
 const OpenAI = require("openai");
-const deasync = require("deasync");
 const { SYSTEM_PROMPT, buildUserPrompt } = require("./prompt");
 
 const FALLBACK_RESPONSE = {
@@ -16,35 +15,43 @@ function getOpenAIClient() {
 
 function toPromptData(input = {}) {
   return {
-    mood: input.mood,
-    activity: input.activity,
-    fatigue: input.fatigue,
-    focusLevel: input.focusLevel,
-    distraction: input.distraction,
-    memo: input.memo,
+    mood: input.mood ?? "",
+    activity: input.activity ?? "",
+    fatigue: input.fatigue ?? "",
+    focusLevel: input.focusLevel ?? "",
+    distraction: input.distraction ?? "",
+    memo: input.memo ?? "",
     hasScreenshot: Boolean(input.hasScreenshot),
-    sleepQuality: input.sleepQuality,
-    stressLevel: input.stressLevel,
-    digitalFeeling: input.digitalFeeling,
-    aiHint: input.aiHint,
+    sleepQuality: input.sleepQuality ?? "",
+    stressLevel: input.stressLevel ?? "",
+    digitalFeeling: input.digitalFeeling ?? "",
+    aiHint: input.aiHint ?? "",
   };
 }
 
 function parseAnalysisContent(content) {
-  const trimmed = (content || "").trim();
-  const fenced = trimmed.match(/```(?:json)?\s*([\s\S]*?)```/i);
-  const jsonText = fenced ? fenced[1].trim() : trimmed;
-  const parsed = JSON.parse(jsonText);
+  try {
+    const trimmed = (content || "").trim();
+    if (!trimmed) {
+      return { ...FALLBACK_RESPONSE };
+    }
 
-  if (!parsed.summary || !parsed.pattern || !parsed.advice) {
-    throw new Error("Invalid analysis response shape");
+    const fenced = trimmed.match(/```(?:json)?\s*([\s\S]*?)```/i);
+    const jsonText = fenced ? fenced[1].trim() : trimmed;
+    const parsed = JSON.parse(jsonText);
+
+    if (!parsed.summary || !parsed.pattern || !parsed.advice) {
+      return { ...FALLBACK_RESPONSE };
+    }
+
+    return {
+      summary: String(parsed.summary),
+      pattern: String(parsed.pattern),
+      advice: String(parsed.advice),
+    };
+  } catch {
+    return { ...FALLBACK_RESPONSE };
   }
-
-  return {
-    summary: String(parsed.summary),
-    pattern: String(parsed.pattern),
-    advice: String(parsed.advice),
-  };
 }
 
 async function requestAnalysis(data) {
@@ -79,23 +86,6 @@ async function generateMobileAnalysis(input = {}) {
   }
 }
 
-function runGenerateMobileAnalysis(input) {
-  let done = false;
-  let result = { ...FALLBACK_RESPONSE };
-
-  generateMobileAnalysis(input)
-    .then((response) => {
-      result = response;
-      done = true;
-    })
-    .catch(() => {
-      done = true;
-    });
-
-  deasync.loopWhile(() => !done);
-  return result;
-}
-
 module.exports = {
-  generateMobileAnalysis: runGenerateMobileAnalysis,
+  generateMobileAnalysis,
 };
