@@ -1,5 +1,5 @@
 const OpenAI = require("openai");
-const { SYSTEM_PROMPT, buildUserPrompt } = //require("./prompt");
+const { SYSTEM_PROMPT, buildUserPrompt } = require("./prompt");
 
 const FALLBACK_RESPONSE = {
   summary: "입력하신 정보를 바탕으로 오늘 하루를 요약했습니다.",
