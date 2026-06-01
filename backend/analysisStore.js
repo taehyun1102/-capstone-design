@@ -1,14 +1,16 @@
+const Analysis = require("./models/Analysis");
+
+// userId 미지정 시 사용할 기본값
 const TEMP_USER_ID = "test-user";
 
-let analyses = [];
-
-function saveAnalysis(record) {
-  analyses.push(record);
-  return record;
+async function saveAnalysis(record) {
+  return Analysis.create(record);
 }
 
-function getAnalysesByUserId(userId) {
-  return analyses.filter((entry) => entry.userId === userId);
+// 사용자별 분석 이력 조회
+async function getAnalysesByUserId(userId) {
+  const records = await Analysis.find({ userId }).sort({ createdAt: -1 });
+  return records.map((record) => record.toJSON());
 }
 
 module.exports = {

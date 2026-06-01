@@ -8,9 +8,12 @@
     "dev": "node --watch index.js"
   },
   "dependencies": {
+    "bcrypt": "^6.0.0",
     "cors": "^2.8.5",
     "deasync": "^0.1.30",
+    "dotenv": "^17.4.2",
     "express": "^4.21.2",
+    "mongoose": "^9.6.3",
     "openai": "^4.104.0"
   }
 }
