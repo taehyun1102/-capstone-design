@@ -34,9 +34,9 @@ const SYSTEM_PROMPT = `
   반드시 JSON 형식으로 응답하십시오.
 
 {
-  "summary": "오늘 하루의 핵심 데이터 요약 (1문장)",
-  "pattern": "진화심리학 관점의 심층적 행동 해석 (2~3문장)",
-  "advice": "내일의 인지 자원 방어를 위한 전략적 행동 지침 (1문장)"
+  "summary": "오늘 하루의 핵심 데이터 요약",
+  "pattern": "진화심리학 관점의 심층적 행동 해석",
+  "advice": "내일의 인지 자원 방어를 위한 전략적 행동 지침"
 }`;
 
 const buildUserPrompt = (data) => {
