@@ -7,7 +7,8 @@ const {
   saveAnalysis,
   getAnalysesByUserId,
 } = require("./analysisStore");
-const { createUser, authenticateUser } = require("./authStore");
+const authRouter = require("./routes/auth");
+const authVerificationRouter = require("./routes/authVerification");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -19,57 +20,8 @@ app.get("/health", (_req, res) => {
   res.json({ status: "ok" });
 });
 
-// 회원가입 API입니다.
-app.post("/api/auth/signup", async (req, res) => {
-  const { email, password } = req.body || {};
-
-  if (!email || !password) {
-    return res.status(400).json({
-      error: "Missing required fields",
-      message: "email, password는 필수입니다.",
-    });
-  }
-
-  const result = await createUser(email, password);
-
-  if (!result.ok) {
-    return res.status(409).json({
-      error: "Email already exists",
-      message: "이미 가입된 이메일입니다.",
-    });
-  }
-
-  res.status(201).json({
-    message: "회원가입 성공",
-    userId: result.userId,
-  });
-});
-
-// 로그인 API입니다.
-app.post("/api/auth/login", async (req, res) => {
-  const { email, password } = req.body || {};
-
-  if (!email || !password) {
-    return res.status(400).json({
-      error: "Missing required fields",
-      message: "email, password는 필수입니다.",
-    });
-  }
-
-  const result = await authenticateUser(email, password);
-
-  if (!result.ok) {
-    return res.status(401).json({
-      error: "Invalid credentials",
-      message: "이메일 또는 비밀번호가 올바르지 않습니다.",
-    });
-  }
-
-  res.json({
-    message: "로그인 성공",
-    userId: result.userId,
-  });
-});
+app.use("/api/auth", authRouter);
+app.use("/api/auth", authVerificationRouter);
 
 // 분석 생성 API입니다.
 app.post("/api/analyze", async (req, res) => {
