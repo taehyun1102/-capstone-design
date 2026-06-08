@@ -14,6 +14,7 @@ function saveCode(email, code) {
   codes.set(normalizeEmail(email), {
     code,
     expiresAt: Date.now() + CODE_TTL_MS,
+    verified: false,
   });
 }
 
@@ -35,7 +36,24 @@ function verifyCode(email, code) {
   }
 
   codes.delete(key);
+  // [이메일 인증 연동] 인증 성공 시 verified 상태를 true로 저장
+  codes.set(key, {
+    ...entry,
+    verified: true,
+  });
+
   return { ok: true };
+}
+
+// [이메일 인증 연동] 회원가입 전 이메일 인증 완료 여부 확인
+function isEmailVerified(email) {
+  const entry = codes.get(normalizeEmail(email));
+  return entry?.verified === true;
+}
+
+// [이메일 인증 연동] 회원가입 성공 후 인증 상태 제거
+function clearVerification(email) {
+  codes.delete(normalizeEmail(email));
 }
 
 module.exports = {
@@ -43,4 +61,6 @@ module.exports = {
   generateCode,
   saveCode,
   verifyCode,
+  isEmailVerified,
+  clearVerification,
 };

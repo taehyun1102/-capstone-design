@@ -4,6 +4,7 @@ const {
   authenticateUser,
   isUsernameAvailable,
 } = require("../authStore");
+const { isEmailVerified, clearVerification } = require("../verificationStore");
 
 const router = express.Router();
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -43,6 +44,14 @@ router.post("/signup", async (req, res) => {
       });
     }
 
+    // [이메일 인증 연동] 인증 완료된 이메일만 회원가입 허용
+    if (!isEmailVerified(email)) {
+      return res.status(403).json({
+        error: "Email not verified",
+        message: "이메일 인증이 필요합니다.",
+      });
+    }
+
     const result = await createUser({ name, username, email, password });
 
     if (!result.ok) {
@@ -58,6 +67,9 @@ router.post("/signup", async (req, res) => {
         message: "이미 가입된 이메일입니다.",
       });
     }
+
+    // [이메일 인증 연동] 회원가입 성공 후 인증 상태 제거
+    clearVerification(email);
 
     res.status(201).json({
       message: "회원가입 성공",
