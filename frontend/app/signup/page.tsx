@@ -38,6 +38,12 @@ export default function SignupPage() {
       );
 
       const data = await res.json();
+
+      if (!res.ok) {
+        alert(data.message || "중복확인 실패");
+        return;
+      }
+
       setIsUsernameAvailable(data.available);
     } catch (err) {
       console.error(err);
@@ -46,14 +52,29 @@ export default function SignupPage() {
   };
 
   const sendCode = async () => {
+    if (!email.trim()) {
+      alert("이메일을 입력해주세요.");
+      return;
+    }
+
     try {
-      await fetch("http://localhost:3001/send-code", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email }),
-      });
+      const res = await fetch(
+        "http://localhost:5000/api/auth/send-code",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email }),
+        }
+      );
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        alert(data.message || "인증 코드 전송 실패");
+        return;
+      }
 
       alert("인증 코드가 이메일로 전송되었습니다.");
     } catch (err) {
@@ -63,9 +84,14 @@ export default function SignupPage() {
   };
 
   const verifyCode = async () => {
+    if (!code.trim()) {
+      alert("인증 코드를 입력해주세요.");
+      return;
+    }
+
     try {
       const res = await fetch(
-        "http://localhost:3001/verify-code",
+        "http://localhost:5000/api/auth/verify-code",
         {
           method: "POST",
           headers: {
@@ -80,11 +106,11 @@ export default function SignupPage() {
 
       const data = await res.json();
 
-      if (data.success) {
+      if (data.verified) {
         setIsVerified(true);
         alert("이메일 인증 완료!");
       } else {
-        alert("인증 실패");
+        alert(data.message || "인증 실패");
       }
     } catch (err) {
       console.error(err);
