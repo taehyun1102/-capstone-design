@@ -3,6 +3,7 @@ const {
   createUser,
   authenticateUser,
   isUsernameAvailable,
+  deleteUser,
 } = require("../authStore");
 const { isEmailVerified, clearVerification } = require("../verificationStore");
 
@@ -137,6 +138,37 @@ router.post("/check-username", async (req, res) => {
     res.status(500).json({
       error: "Check failed",
       message: "아이디 확인 중 오류가 발생했습니다.",
+    });
+  }
+});
+
+// 회원탈퇴
+router.delete("/delete-account", async (req, res) => {
+  try {
+    const { userId } = req.body || {};
+
+    if (!userId) {
+      return res.status(400).json({
+        message: "userId가 필요합니다.",
+      });
+    }
+
+    const result = await deleteUser(userId);
+
+    if (!result.ok) {
+      return res.status(404).json({
+        message: "사용자를 찾을 수 없습니다.",
+      });
+    }
+
+    res.json({
+      message: "회원탈퇴 완료",
+    });
+  } catch (err) {
+    console.error("delete-account error:", err);
+
+    res.status(500).json({
+      message: "회원탈퇴 실패",
     });
   }
 });

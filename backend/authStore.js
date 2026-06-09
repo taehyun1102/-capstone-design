@@ -67,8 +67,18 @@ async function authenticateUser(email, password) {
   return { ok: true, userId: user.userId };
 }
 
+// 회원 탈퇴
+async function deleteUser(userId) {
+  const result = await User.deleteOne({ userId });
+
+  return {
+    ok: result.deletedCount > 0,
+  };
+}
+
 module.exports = {
   createUser,
   authenticateUser,
   isUsernameAvailable,
+  deleteUser,
 };

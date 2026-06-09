@@ -398,6 +398,7 @@ distraction: impulseActivity,
   };
 
 const handleSubmit = async () => {
+  
   clearMessages();
 
   if (!validateBeforeSubmit()) {
@@ -463,6 +464,53 @@ const handleSubmit = async () => {
     );
   } finally {
     setIsSubmitting(false);
+  }
+};
+
+const handleDeleteAccount = async () => {
+  const userId = localStorage.getItem("userId");
+
+  if (!userId) {
+    alert("로그인 정보가 없습니다.");
+    return;
+  }
+
+  const confirmed = confirm(
+    "정말 회원탈퇴하시겠습니까?\n삭제된 계정은 복구할 수 없습니다."
+  );
+
+  if (!confirmed) return;
+
+  try {
+    const res = await fetch(
+      "http://localhost:5000/api/auth/delete-account",
+      {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userId,
+        }),
+      }
+    );
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      alert(data.message);
+      return;
+    }
+
+    localStorage.removeItem("userId");
+    localStorage.removeItem("userEmail");
+
+    alert("회원탈퇴가 완료되었습니다.");
+
+    router.push("/login");
+  } catch (err) {
+    console.error(err);
+    alert("회원탈퇴 실패");
   }
 };
 
@@ -890,7 +938,16 @@ const handleSubmit = async () => {
     📖 나만의 일기
   </Link>
 
+<button
+  type="button"
+  onClick={handleDeleteAccount}
+  className="w-full rounded-2xl bg-red-500 py-4 font-semibold text-white shadow-lg transition hover:bg-red-600"
+>
+  회원탈퇴
+</button>
+
 </div>
+
 
       
         </section>
