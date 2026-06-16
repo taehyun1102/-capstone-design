@@ -82,9 +82,32 @@ async function deleteUser(userId) {
   };
 }
 
+async function resetPassword(email, newPassword) {
+const user = await findUserByEmail(email);
+
+if (!user) {
+return { ok: false, error: "USER_NOT_FOUND" };
+}
+
+const hashedPassword = await bcrypt.hash(
+newPassword,
+SALT_ROUNDS
+);
+
+await User.updateOne(
+{ email: email.trim().toLowerCase() },
+{ password: hashedPassword }
+);
+
+return { ok: true };
+}
+
+
 module.exports = {
-  createUser,
-  authenticateUser,
-  isUsernameAvailable,
-  deleteUser,
+createUser,
+authenticateUser,
+isUsernameAvailable,
+deleteUser,
+resetPassword,
 };
+

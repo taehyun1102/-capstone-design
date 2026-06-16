@@ -54,7 +54,6 @@ export default function LoginPage() {
         return;
       }
 
-      // 로그인 정보 저장
       localStorage.setItem(
         "userId",
         data.userId
@@ -67,7 +66,7 @@ export default function LoginPage() {
 
       localStorage.setItem(
         "userName",
-       data.name
+        data.name || ""
       );
 
       alert("로그인 성공!");
@@ -147,17 +146,43 @@ export default function LoginPage() {
             : "로그인"}
         </button>
 
-        <p className="mt-4 text-center text-sm text-gray-500">
-          아직 계정이 없나요?{" "}
-          <span
-            className="cursor-pointer text-blue-500 hover:underline"
-            onClick={() =>
-              router.push("/signup")
-            }
-          >
-            회원가입
-          </span>
-        </p>
+        <div className="mt-4 text-center text-sm">
+          <div className="mb-3 flex justify-center gap-4">
+            <span
+              className="cursor-pointer text-blue-500 hover:underline"
+              onClick={() =>
+                router.push("/find-id")
+              }
+            >
+              아이디 찾기
+            </span>
+
+            <span className="text-gray-400">
+              |
+            </span>
+
+            <span
+              className="cursor-pointer text-blue-500 hover:underline"
+              onClick={() =>
+                router.push("/forgot-password")
+              }
+            >
+              비밀번호 찾기
+            </span>
+          </div>
+
+          <p className="text-gray-500">
+            아직 계정이 없나요?{" "}
+            <span
+              className="cursor-pointer text-blue-500 hover:underline"
+              onClick={() =>
+                router.push("/signup")
+              }
+            >
+              회원가입
+            </span>
+          </p>
+        </div>
       </form>
     </div>
   );
