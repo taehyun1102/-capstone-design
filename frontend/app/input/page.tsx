@@ -133,6 +133,7 @@ export default function InputPage() {
   const router = useRouter();
 
   const submitErrorRef = useRef<HTMLDivElement | null>(null);
+  const [userName, setUserName] = useState("");
 
   const [mainActivity, setMainActivity] = useState("");
   const [dayMood, setDayMood] = useState("");
@@ -173,6 +174,14 @@ export default function InputPage() {
     useState("");
 
   const [submitError, setSubmitError] = useState("");
+
+  useEffect(() => {
+  const name = localStorage.getItem("userName");
+
+  if (name) {
+    setUserName(name);
+  }
+}, []);
 
   useEffect(() => {
     return () => {
@@ -504,6 +513,7 @@ const handleDeleteAccount = async () => {
 
     localStorage.removeItem("userId");
     localStorage.removeItem("userEmail");
+    localStorage.removeItem("userName");
 
     alert("회원탈퇴가 완료되었습니다.");
 
@@ -612,9 +622,15 @@ const handleDeleteAccount = async () => {
             AI 기반 하루 흐름 분석 시스템
           </p>
 
+                   {userName && (
+          <p className="mb-2 text-lg font-semibold text-blue-600">
+             안녕하세요, {userName}님 👋
+          </p>
+          )}
+
           <h1 className="mb-3 text-3xl font-bold text-gray-900">
-            사용자 입력과 스크린샷을 바탕으로 하루를 분석합니다
-          </h1>
+            오늘 하루는 어떠셨나요?
+         </h1>
 
           <p className="leading-relaxed text-gray-600">
             사용자의 입력 정보와 사용 기록 스크린샷을 기반으로

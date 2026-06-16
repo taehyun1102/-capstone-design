@@ -64,7 +64,13 @@ async function authenticateUser(email, password) {
     return { ok: false };
   }
 
-  return { ok: true, userId: user.userId };
+  return {
+    ok: true,
+    userId: user.userId,
+    name: user.name,
+    username: user.username,
+    email: user.email,
+  };
 }
 
 // 회원 탈퇴

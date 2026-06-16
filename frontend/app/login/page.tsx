@@ -65,6 +65,11 @@ export default function LoginPage() {
         email
       );
 
+      localStorage.setItem(
+        "userName",
+       data.name
+      );
+
       alert("로그인 성공!");
 
       router.push("/input");
