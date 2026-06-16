@@ -148,18 +148,6 @@ export default function LoginPage() {
 
         <div className="mt-4 text-center text-sm">
           <div className="mb-3 flex justify-center gap-4">
-            <span
-              className="cursor-pointer text-blue-500 hover:underline"
-              onClick={() =>
-                router.push("/find-id")
-              }
-            >
-              아이디 찾기
-            </span>
-
-            <span className="text-gray-400">
-              |
-            </span>
 
             <span
               className="cursor-pointer text-blue-500 hover:underline"
@@ -167,7 +155,7 @@ export default function LoginPage() {
                 router.push("/forgot-password")
               }
             >
-              비밀번호 찾기
+              비밀번호 재설정
             </span>
           </div>
 
