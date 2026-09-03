@@ -739,7 +739,7 @@ const handleDeleteAccount = async () => {
                   <img
                     src={screenshotPreview}
                     alt="업로드된 사용 기록 스크린샷"
-                    className="max-h-[420px] w-full object-contain bg-gray-50"
+                    className="max-h-105 w-full object-contain bg-gray-50"
                   />
                 </div>
               </div>
@@ -949,7 +949,7 @@ const handleDeleteAccount = async () => {
 
   <Link
     href="/diary"
-    className="block w-full rounded-2xl bg-gradient-to-r from-purple-500 to-pink-500 py-4 text-center font-semibold text-black shadow-lg transition hover:opacity-90"
+    className="block w-full rounded-2xl bg-linear-to-r from-purple-500 to-pink-500 py-4 text-center font-semibold text-black shadow-lg transition hover:opacity-90"
   >
     📖 나만의 일기
   </Link>
