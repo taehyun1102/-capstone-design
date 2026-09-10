@@ -20,7 +20,7 @@ export default function ForgotPasswordPage() {
 
     try {
       const res = await fetch(
-        "http://localhost:5000/api/auth/send-code",
+        "https://capstone-design-ip8n.onrender.com/api/auth/send-code",
         {
           method: "POST",
           headers: {
@@ -47,7 +47,7 @@ export default function ForgotPasswordPage() {
   const handleVerifyCode = async () => {
     try {
       const res = await fetch(
-        "http://localhost:5000/api/auth/verify-code",
+        "https://capstone-design-ip8n.onrender.com/api/auth/verify-code",
         {
           method: "POST",
           headers: {
@@ -88,7 +88,7 @@ export default function ForgotPasswordPage() {
 
     try {
       const res = await fetch(
-        "http://localhost:5000/api/auth/reset-password",
+        "https://capstone-design-ip8n.onrender.com/api/auth/reset-password",
         {
           method: "POST",
           headers: {

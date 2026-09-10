@@ -27,7 +27,7 @@ export default function SignupPage() {
 
     try {
       const res = await fetch(
-        "http://localhost:5000/api/auth/check-username",
+        "https://capstone-design-ip8n.onrender.com/api/auth/check-username",
         {
           method: "POST",
           headers: {
@@ -59,7 +59,7 @@ export default function SignupPage() {
 
     try {
       const res = await fetch(
-        "http://localhost:5000/api/auth/send-code",
+        "https://capstone-design-ip8n.onrender.com/api/auth/send-code",
         {
           method: "POST",
           headers: {
@@ -91,7 +91,7 @@ export default function SignupPage() {
 
     try {
       const res = await fetch(
-        "http://localhost:5000/api/auth/verify-code",
+        "https://capstone-design-ip8n.onrender.com/api/auth/verify-code",
         {
           method: "POST",
           headers: {
@@ -160,7 +160,7 @@ export default function SignupPage() {
 
     try {
       const res = await fetch(
-        "http://localhost:5000/api/auth/signup",
+        "https://capstone-design-ip8n.onrender.com/api/auth/signup",
         {
           method: "POST",
           headers: {

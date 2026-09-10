@@ -39,7 +39,7 @@ export default function MyPage() {
 
     try {
       const res = await fetch(
-        "http://localhost:5000/api/auth/delete-account",
+  "https://capstone-design-ip8n.onrender.com/api/auth/delete-account",
         {
           method: "DELETE",
           headers: {

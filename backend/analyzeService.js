@@ -49,7 +49,8 @@ function parseAnalysisContent(content) {
       pattern: String(parsed.pattern),
       advice: String(parsed.advice),
     };
-  } catch {
+  } catch (error) {
+    console.error("❌ [AI 응답 파싱 에러]:", error); // 로그 추가
     return { ...FALLBACK_RESPONSE };
   }
 }
@@ -78,10 +79,10 @@ async function generateMobileAnalysis(input = {}) {
     if (!process.env.OPENAI_API_KEY) {
       throw new Error("OPENAI_API_KEY is not set");
     }
-
     const data = toPromptData(input);
     return await requestAnalysis(data);
-  } catch {
+  } catch (error) {
+    console.error("❌ [AI 분석 통신 에러]:", error); // 로그 추가
     return { ...FALLBACK_RESPONSE };
   }
 }

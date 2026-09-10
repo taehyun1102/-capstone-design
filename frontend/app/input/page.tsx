@@ -436,7 +436,7 @@ const handleSubmit = async () => {
 
     // 백엔드 API 요청
     const response = await fetch(
-      "http://localhost:5000/api/analyze",
+  "https://capstone-design-ip8n.onrender.com/api/analyze",
       {
         method: "POST",
         headers: {
@@ -492,7 +492,7 @@ const handleDeleteAccount = async () => {
 
   try {
     const res = await fetch(
-      "http://localhost:5000/api/auth/delete-account",
+  "https://capstone-design-ip8n.onrender.com/api/auth/delete-account",
       {
         method: "DELETE",
         headers: {
