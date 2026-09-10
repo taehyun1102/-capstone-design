@@ -122,8 +122,11 @@ if (!result.ok) {
 }
 
 res.json({
-  message: "로그인 성공",
+  message: "...", 
   userId: result.userId,
+  name: result.name,         // 이름 추가
+  username: result.username, // 유저네임 추가
+  email: result.email        // 이메일 추가
 });
 
 
