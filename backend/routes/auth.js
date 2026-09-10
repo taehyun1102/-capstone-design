@@ -4,9 +4,7 @@ createUser,
 authenticateUser,
 isUsernameAvailable,
 deleteUser,
-resetPassword,
 } = require("../authStore");
-const { isEmailVerified, clearVerification } = require("../verificationStore");
 
 const router = express.Router();
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+.[^\s@]+$/;
@@ -47,13 +45,6 @@ if (!EMAIL_REGEX.test(email.trim())) {
   });
 }
 
-if (!isEmailVerified(email)) {
-  return res.status(403).json({
-    error: "Email not verified",
-    message: "이메일 인증이 필요합니다.",
-  });
-}
-
 const result = await createUser({
   name,
   username,
@@ -75,7 +66,6 @@ if (!result.ok) {
   });
 }
 
-clearVerification(email);
 
 res.status(201).json({
   message: "회원가입 성공",
@@ -180,45 +170,6 @@ res.status(500).json({
 }
 });
 
-// 비밀번호 재설정
-router.post("/reset-password", async (req, res) => {
-try {
-const { email, newPassword } = req.body || {};
-
-
-if (!email || !newPassword) {
-  return res.status(400).json({
-    message: "email, newPassword는 필수입니다.",
-  });
-}
-
-const result = await resetPassword(
-  email,
-  newPassword
-);
-
-if (!result.ok) {
-  return res.status(404).json({
-    message: "사용자를 찾을 수 없습니다.",
-  });
-}
-
-res.json({
-  message: "비밀번호가 변경되었습니다.",
-});
-
-
-} catch (err) {
-console.error("reset-password error:", err);
-
-
-res.status(500).json({
-  message: "비밀번호 변경 실패",
-});
-
-
-}
-});
 
 // 회원탈퇴
 router.delete("/delete-account", async (req, res) => {

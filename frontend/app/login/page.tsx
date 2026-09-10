@@ -147,17 +147,6 @@ export default function LoginPage() {
         </button>
 
         <div className="mt-4 text-center text-sm">
-          <div className="mb-3 flex justify-center gap-4">
-
-            <span
-              className="cursor-pointer text-blue-500 hover:underline"
-              onClick={() =>
-                router.push("/forgot-password")
-              }
-            >
-              비밀번호 재설정
-            </span>
-          </div>
 
           <p className="text-gray-500">
             아직 계정이 없나요?{" "}

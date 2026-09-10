@@ -16,8 +16,6 @@ export default function SignupPage() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
-  const [code, setCode] = useState("");
-  const [isVerified, setIsVerified] = useState(false);
 
   const checkUsername = async () => {
     if (!username.trim()) {
@@ -51,72 +49,7 @@ export default function SignupPage() {
     }
   };
 
-  const sendCode = async () => {
-    if (!email.trim()) {
-      alert("이메일을 입력해주세요.");
-      return;
-    }
 
-    try {
-      const res = await fetch(
-        "https://capstone-design-ip8n.onrender.com/api/auth/send-code",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ email }),
-        }
-      );
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        alert(data.message || "인증 코드 전송 실패");
-        return;
-      }
-
-      alert("인증 코드가 이메일로 전송되었습니다.");
-    } catch (err) {
-      console.error(err);
-      alert("인증 코드 전송 실패");
-    }
-  };
-
-  const verifyCode = async () => {
-    if (!code.trim()) {
-      alert("인증 코드를 입력해주세요.");
-      return;
-    }
-
-    try {
-      const res = await fetch(
-        "https://capstone-design-ip8n.onrender.com/api/auth/verify-code",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            email,
-            code,
-          }),
-        }
-      );
-
-      const data = await res.json();
-
-      if (data.verified) {
-        setIsVerified(true);
-        alert("이메일 인증 완료!");
-      } else {
-        alert(data.message || "인증 실패");
-      }
-    } catch (err) {
-      console.error(err);
-      alert("인증 확인 실패");
-    }
-  };
 
   const handleSignup = async (
     e: React.FormEvent
@@ -140,11 +73,6 @@ export default function SignupPage() {
 
     if (isUsernameAvailable === false) {
       alert("이미 사용 중인 아이디입니다.");
-      return;
-    }
-
-    if (!isVerified) {
-      alert("이메일 인증을 완료해주세요.");
       return;
     }
 
@@ -241,51 +169,15 @@ export default function SignupPage() {
           </p>
         )}
 
-        <div className="mb-3 flex gap-2">
-          <input
-            type="email"
-            placeholder="이메일"
-            value={email}
-            disabled={isVerified}
-            onChange={(e) => setEmail(e.target.value)}
-            className="flex-1 rounded-lg border border-gray-300 p-3 text-gray-900 placeholder-gray-400 disabled:bg-gray-100"
-          />
 
-          <button
-            type="button"
-            onClick={sendCode}
-            disabled={!email || isVerified}
-            className="whitespace-nowrap rounded-lg bg-blue-500 px-3 text-sm text-white hover:bg-blue-600 disabled:bg-gray-400"
-          >
-            코드받기
-          </button>
-        </div>
+        <input
+  type="email"
+  placeholder="이메일"
+  value={email}
+  onChange={(e) => setEmail(e.target.value)}
+  className="mb-3 w-full rounded-lg border border-gray-300 p-3 text-gray-900 placeholder-gray-400"
+/>
 
-        <div className="mb-3 flex gap-2">
-          <input
-            type="text"
-            placeholder="인증 코드"
-            value={code}
-            disabled={isVerified}
-            onChange={(e) => setCode(e.target.value)}
-            className="flex-1 rounded-lg border border-gray-300 p-3 text-gray-900 placeholder-gray-400 disabled:bg-gray-100"
-          />
-
-          <button
-            type="button"
-            onClick={verifyCode}
-            disabled={isVerified}
-            className="whitespace-nowrap rounded-lg bg-green-500 px-3 text-sm text-white hover:bg-green-600 disabled:bg-gray-400"
-          >
-            확인
-          </button>
-        </div>
-
-        {isVerified && (
-          <p className="mb-3 text-center text-green-500">
-            이메일 인증 완료 ✔
-          </p>
-        )}
 
         <input
           type="password"

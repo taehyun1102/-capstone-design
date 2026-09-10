@@ -8,7 +8,6 @@ const {
   getAnalysesByUserId,
 } = require("./analysisStore");
 const authRouter = require("./routes/auth");
-const authVerificationRouter = require("./routes/authVerification");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -21,7 +20,6 @@ app.get("/health", (_req, res) => {
 });
 
 app.use("/api/auth", authRouter);
-app.use("/api/auth", authVerificationRouter);
 
 // 분석 생성 API입니다.
 app.post("/api/analyze", async (req, res) => {
