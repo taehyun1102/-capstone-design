@@ -54,22 +54,27 @@ export default function LoginPage() {
         return;
       }
 
-      localStorage.setItem(
-        "userId",
-        data.userId
-      );
+localStorage.setItem(
+  "userId",
+  data.userId
+);
 
-      localStorage.setItem(
-        "userEmail",
-        email
-      );
+localStorage.setItem(
+  "userEmail",
+  email
+);
 
-      localStorage.setItem(
-        "userName",
-        data.name || ""
-      );
+localStorage.setItem(
+  "userName",
+  data.name || ""
+);
 
-      alert("로그인 성공!");
+localStorage.setItem(
+  "username",
+  data.username || ""
+);
+
+alert("로그인 성공!");
 
       router.push("/input");
     } catch (error) {

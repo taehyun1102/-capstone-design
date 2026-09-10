@@ -7,17 +7,20 @@ export default function MyPage() {
   const router = useRouter();
 
   const [userName, setUserName] = useState("");
+  const [username, setUsername] = useState("");
   const [userEmail, setUserEmail] = useState("");
 
   useEffect(() => {
     setUserName(localStorage.getItem("userName") || "");
+    setUsername(localStorage.getItem("username") || "");
     setUserEmail(localStorage.getItem("userEmail") || "");
   }, []);
 
   const handleLogout = () => {
-    localStorage.removeItem("userId");
-    localStorage.removeItem("userEmail");
-    localStorage.removeItem("userName");
+localStorage.removeItem("userId");
+localStorage.removeItem("userEmail");
+localStorage.removeItem("userName");
+localStorage.removeItem("username");
 
     alert("로그아웃되었습니다.");
     router.push("/login");
@@ -55,10 +58,10 @@ export default function MyPage() {
         alert(data.message);
         return;
       }
-
-      localStorage.removeItem("userId");
-      localStorage.removeItem("userEmail");
-      localStorage.removeItem("userName");
+localStorage.removeItem("userId");
+localStorage.removeItem("userEmail");
+localStorage.removeItem("userName");
+localStorage.removeItem("username");
 
       alert("회원탈퇴가 완료되었습니다.");
       router.push("/login");
@@ -84,6 +87,10 @@ export default function MyPage() {
           <p className="mb-2 text-black">
             <strong>이름:</strong> {userName}
           </p>
+
+<p className="mb-2 text-black">
+  <strong>아이디:</strong> {username}
+</p>
 
           <p className="text-black">
             <strong>이메일:</strong> {userEmail}
