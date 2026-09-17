@@ -11,11 +11,8 @@ export default function SignupPage() {
   const [isUsernameAvailable, setIsUsernameAvailable] =
     useState<null | boolean>(null);
 
-  const [email, setEmail] = useState("");
-
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-
 
   const checkUsername = async () => {
     if (!username.trim()) {
@@ -48,8 +45,6 @@ export default function SignupPage() {
       alert("아이디 중복확인 실패");
     }
   };
-
-
 
   const handleSignup = async (
     e: React.FormEvent
@@ -97,7 +92,6 @@ export default function SignupPage() {
           body: JSON.stringify({
             name,
             username,
-            email,
             password,
           }),
         }
@@ -168,16 +162,6 @@ export default function SignupPage() {
             이미 사용 중인 아이디입니다 ❌
           </p>
         )}
-
-
-        <input
-  type="email"
-  placeholder="이메일"
-  value={email}
-  onChange={(e) => setEmail(e.target.value)}
-  className="mb-3 w-full rounded-lg border border-gray-300 p-3 text-gray-900 placeholder-gray-400"
-/>
-
 
         <input
           type="password"

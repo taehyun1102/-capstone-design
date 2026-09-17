@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 export default function LoginPage() {
   const router = useRouter();
 
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
   const [showPassword, setShowPassword] = useState(false);
@@ -17,8 +17,8 @@ export default function LoginPage() {
   ) => {
     e.preventDefault();
 
-    if (!email.trim()) {
-      alert("이메일을 입력해주세요.");
+    if (!username.trim()) {
+      alert("아이디를 입력해주세요.");
       return;
     }
 
@@ -31,14 +31,14 @@ export default function LoginPage() {
 
     try {
       const res = await fetch(
-  "https://capstone-design-ip8n.onrender.com/api/auth/login",
+        "https://capstone-design-ip8n.onrender.com/api/auth/login",
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            email,
+            username,
             password,
           }),
         }
@@ -49,32 +49,27 @@ export default function LoginPage() {
       if (!res.ok) {
         alert(
           data.message ||
-            "이메일 또는 비밀번호가 올바르지 않습니다."
+            "아이디 또는 비밀번호가 올바르지 않습니다."
         );
         return;
       }
 
-localStorage.setItem(
-  "userId",
-  data.userId
-);
+      localStorage.setItem(
+        "userId",
+        data.userId
+      );
 
-localStorage.setItem(
-  "userEmail",
-  email
-);
+      localStorage.setItem(
+        "userName",
+        data.name || ""
+      );
 
-localStorage.setItem(
-  "userName",
-  data.name || ""
-);
+      localStorage.setItem(
+        "username",
+        data.username || ""
+      );
 
-localStorage.setItem(
-  "username",
-  data.username || ""
-);
-
-alert("로그인 성공!");
+      alert("로그인 성공!");
 
       router.push("/input");
     } catch (error) {
@@ -100,11 +95,11 @@ alert("로그인 성공!");
         </h1>
 
         <input
-          type="email"
-          placeholder="이메일"
-          value={email}
+          type="text"
+          placeholder="아이디"
+          value={username}
           onChange={(e) =>
-            setEmail(e.target.value)
+            setUsername(e.target.value)
           }
           className="mb-3 w-full rounded-lg border border-gray-300 p-3 text-gray-900 placeholder-gray-400 focus:border-black focus:outline-none"
           required
@@ -152,7 +147,6 @@ alert("로그인 성공!");
         </button>
 
         <div className="mt-4 text-center text-sm">
-
           <p className="text-gray-500">
             아직 계정이 없나요?{" "}
             <span

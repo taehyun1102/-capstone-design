@@ -4,10 +4,6 @@ const User = require("./models/User");
 
 const SALT_ROUNDS = 10;
 
-async function findUserByEmail(email) {
-  return User.findOne({ email: email.trim().toLowerCase() });
-}
-
 async function findUserByUsername(username) {
   return User.findOne({ username: username.trim() });
 }
@@ -18,18 +14,13 @@ async function isUsernameAvailable(username) {
 }
 
 // 회원가입 데이터를 저장합니다.
-async function createUser({ name, username, email, password }) {
+async function createUser({ name, username, password }) {
   try {
     const trimmedUsername = username.trim();
-    const trimmedEmail = email.trim().toLowerCase();
     const trimmedName = name.trim();
 
-    const existingEmail = await findUserByEmail(trimmedEmail);
-    if (existingEmail) {
-      return { ok: false, error: "EMAIL_EXISTS" };
-    }
-
     const existingUsername = await findUserByUsername(trimmedUsername);
+
     if (existingUsername) {
       return { ok: false, error: "USERNAME_EXISTS" };
     }
@@ -41,7 +32,6 @@ async function createUser({ name, username, email, password }) {
       userId,
       name: trimmedName,
       username: trimmedUsername,
-      email: trimmedEmail,
       password: hashedPassword,
     });
 
@@ -51,15 +41,18 @@ async function createUser({ name, username, email, password }) {
       if (err.keyPattern?.username) {
         return { ok: false, error: "USERNAME_EXISTS" };
       }
-      return { ok: false, error: "EMAIL_EXISTS" };
+
+      throw err;
     }
+
     throw err;
   }
 }
 
 // 로그인 자격 증명을 확인합니다.
-async function authenticateUser(email, password) {
-  const user = await findUserByEmail(email);
+async function authenticateUser(username, password) {
+  const user = await findUserByUsername(username);
+
   if (!user || !(await bcrypt.compare(password, user.password))) {
     return { ok: false };
   }
@@ -69,7 +62,6 @@ async function authenticateUser(email, password) {
     userId: user.userId,
     name: user.name,
     username: user.username,
-    email: user.email,
   };
 }
 
@@ -82,13 +74,9 @@ async function deleteUser(userId) {
   };
 }
 
-
-
-
 module.exports = {
-createUser,
-authenticateUser,
-isUsernameAvailable,
-deleteUser,
+  createUser,
+  authenticateUser,
+  isUsernameAvailable,
+  deleteUser,
 };
-

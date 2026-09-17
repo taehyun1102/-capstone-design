@@ -512,8 +512,8 @@ const handleDeleteAccount = async () => {
     }
 
     localStorage.removeItem("userId");
-    localStorage.removeItem("userEmail");
     localStorage.removeItem("userName");
+    localStorage.removeItem("username");
 
     alert("회원탈퇴가 완료되었습니다.");
 
