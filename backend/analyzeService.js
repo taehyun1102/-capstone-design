@@ -98,6 +98,7 @@ async function generateMobileAnalysis(input = {}) {
 
     return await requestAnalysis(data);
     console.log("📤 [AI 분석 완료]");
+    return result;
   } catch (error) {
     console.error("❌ [AI 분석 통신 에러]:", error);
 
