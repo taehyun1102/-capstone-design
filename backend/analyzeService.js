@@ -7,9 +7,10 @@ const FALLBACK_RESPONSE = {
   advice: "내일은 오늘과 비슷한 시간대에 작은 목표를 세워 보세요.",
 };
 
-function getOpenAIClient() {
+function getGeminiClient() {
   return new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY,
+    apiKey: process.env.GEMINI_API_KEY,
+    baseURL: "https://generativelanguage.googleapis.com/v1beta/openai/",
   });
 }
 
@@ -32,12 +33,14 @@ function toPromptData(input = {}) {
 function parseAnalysisContent(content) {
   try {
     const trimmed = (content || "").trim();
+
     if (!trimmed) {
       return { ...FALLBACK_RESPONSE };
     }
 
     const fenced = trimmed.match(/```(?:json)?\s*([\s\S]*?)```/i);
     const jsonText = fenced ? fenced[1].trim() : trimmed;
+
     const parsed = JSON.parse(jsonText);
 
     if (!parsed.summary || !parsed.pattern || !parsed.advice) {
@@ -50,23 +53,30 @@ function parseAnalysisContent(content) {
       advice: String(parsed.advice),
     };
   } catch (error) {
-    console.error("❌ [AI 응답 파싱 에러]:", error); // 로그 추가
+    console.error("❌ [AI 응답 파싱 에러]:", error);
     return { ...FALLBACK_RESPONSE };
   }
 }
 
 async function requestAnalysis(data) {
-  const openai = getOpenAIClient();
-  const completion = await openai.chat.completions.create({
-    model: "gpt-4o-mini",
+  const gemini = getGeminiClient();
+
+  const completion = await gemini.chat.completions.create({
+    model: "gemini-3.6-flash",
     messages: [
-      { role: "system", content: SYSTEM_PROMPT },
-      { role: "user", content: buildUserPrompt(data) },
+      {
+        role: "system",
+        content: SYSTEM_PROMPT,
+      },
+      {
+        role: "user",
+        content: buildUserPrompt(data),
+      },
     ],
-    response_format: { type: "json_object" },
   });
 
   const content = completion.choices[0]?.message?.content;
+
   return parseAnalysisContent(content);
 }
 
@@ -76,13 +86,16 @@ async function requestAnalysis(data) {
  */
 async function generateMobileAnalysis(input = {}) {
   try {
-    if (!process.env.OPENAI_API_KEY) {
-      throw new Error("OPENAI_API_KEY is not set");
+    if (!process.env.GEMINI_API_KEY) {
+      throw new Error("GEMINI_API_KEY is not set");
     }
+
     const data = toPromptData(input);
+
     return await requestAnalysis(data);
   } catch (error) {
-    console.error("❌ [AI 분석 통신 에러]:", error); // 로그 추가
+    console.error("❌ [AI 분석 통신 에러]:", error);
+
     return { ...FALLBACK_RESPONSE };
   }
 }
