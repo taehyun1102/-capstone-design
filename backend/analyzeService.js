@@ -60,6 +60,7 @@ function parseAnalysisContent(content) {
 
 async function requestAnalysis(data) {
   console.log("🤖 [Gemini 분석 요청 시작]");
+
   const gemini = getGeminiClient();
 
   const completion = await gemini.chat.completions.create({
@@ -80,7 +81,13 @@ async function requestAnalysis(data) {
 
   const content = completion.choices[0]?.message?.content;
 
-  return parseAnalysisContent(content);
+  console.log("📄 [Gemini 응답 내용]:", content);
+
+  const result = parseAnalysisContent(content);
+
+  console.log("🔍 [AI 응답 파싱 완료]:", result);
+
+  return result;
 }
 
 /**
@@ -90,14 +97,17 @@ async function requestAnalysis(data) {
 async function generateMobileAnalysis(input = {}) {
   try {
     console.log("📥 [AI 분석 요청 수신]");
+
     if (!process.env.GEMINI_API_KEY) {
       throw new Error("GEMINI_API_KEY is not set");
     }
 
     const data = toPromptData(input);
 
-    return await requestAnalysis(data);
+    const result = await requestAnalysis(data);
+
     console.log("📤 [AI 분석 완료]");
+
     return result;
   } catch (error) {
     console.error("❌ [AI 분석 통신 에러]:", error);
