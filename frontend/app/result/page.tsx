@@ -226,9 +226,9 @@ export default function ResultPage() {
           </div>
 
           <div className="rounded-2xl bg-violet-50 p-5">
-            <p className="text-sm leading-7 text-violet-900">
-              {result.pattern}
-            </p>
+            <p className="whitespace-pre-line text-sm leading-7 text-violet-900">
+  {result.pattern}
+</p>
           </div>
         </section>
 
@@ -257,9 +257,9 @@ export default function ResultPage() {
 
           {showAdvice && (
             <div className="mt-5 rounded-2xl border border-emerald-100 bg-emerald-50 p-5">
-              <p className="text-sm leading-7 text-emerald-900">
-                {result.advice}
-              </p>
+              <p className="whitespace-pre-line text-sm leading-7 text-emerald-900">
+  {result.advice}
+</p>
             </div>
           )}
 
