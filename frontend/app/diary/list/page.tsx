@@ -15,54 +15,76 @@ export default function DiaryListPage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-purple-50 to-white p-5">
+  <div className="min-h-screen bg-gradient-to-b from-purple-50 to-white p-5">
+    <h1 className="text-3xl font-bold mb-6">
+      📚{" "}
+      <span className="bg-gradient-to-r from-blue-700 via-purple-600 to-pink-500 bg-clip-text text-transparent">
+        나만의 일기장
+      </span>
+    </h1>
 
-      <h1 className="text-3xl font-bold mb-6">
-        📚 나만의 일기장
-      </h1>
-
-      {diaries.length === 0 ? (
-        <div className="bg-white rounded-3xl shadow p-8 text-center">
-
-          <p className="text-5xl mb-3">
-            🥲
-          </p>
-
-          <p className="text-gray-500">
-            아직 저장된 일기가 없습니다.
-          </p>
-
-        </div>
-      ) : (
-        <div className="space-y-4">
-
-          {diaries.map((item) => (
-            <div
-              key={item.id}
-              className="bg-white rounded-3xl shadow p-5"
+    {diaries.length === 0 ? (
+      <div className="bg-white rounded-3xl shadow p-8 text-center">
+        <p className="text-5xl mb-3">🥲</p>
+        <p className="text-gray-500">
+          아직 저장된 일기가 없습니다.
+        </p>
+      </div>
+    ) : (
+      <div className="space-y-4">
+        {diaries.map((item) => (
+          <div
+            key={item.id}
+            className="w-full bg-white rounded-3xl shadow p-5 flex items-center justify-between"
+          >
+            <button
+              onClick={() =>
+                router.push(`/diary/detail?id=${item.id}`)
+              }
+              className="flex-1 text-left hover:scale-[1.01] transition"
             >
-
-              <p className="text-xs text-gray-400 mb-2">
-                {item.date}
+              <p className="text-xl font-bold text-purple-700 mb-2">
+                📖 {item.title}
               </p>
 
-              <p className="whitespace-pre-wrap text-sm leading-7">
-                {item.content}
+              <p className="text-sm text-black">
+                📅 {item.date}
               </p>
+            </button>
 
-            </div>
-          ))}
+            <button
+              onClick={() => {
+                const confirmed = confirm("이 일기를 삭제할까요?");
 
-        </div>
-      )}
+                if (!confirmed) return;
 
-      <button
-        onClick={() => router.back()}
-        className="w-full mt-6 bg-gray-200 py-3 rounded-2xl"
-      >
-        ← 이전
-      </button>
+                const updated = diaries.filter(
+                  (diary) => diary.id !== item.id
+                );
 
-    </div>
-  );
+                localStorage.setItem(
+                  "myDiary",
+                  JSON.stringify(updated)
+                );
+
+                setDiaries(updated);
+              }}
+              className="ml-3 px-3 py-2 text-xs text-red-500 border border-red-200 rounded-xl hover:bg-red-50"
+            >
+              삭제
+            </button>
+          </div>
+        ))}
+      </div>
+    )}
+
+    <button
+      onClick={() => router.back()}
+      className="w-full mt-6 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-500 text-white py-3 rounded-2xl font-semibold shadow-lg"
+    >
+      <span className="text-black">←</span>{" "}
+      <span className="text-white">이전</span>
+    </button>
+  </div>
+);
 }

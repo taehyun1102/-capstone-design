@@ -959,7 +959,7 @@ const handleDeleteAccount = async () => {
   onClick={() => router.push("/mypage")}
   className="w-full rounded-2xl bg-gray-700 py-4 font-semibold text-white shadow-lg transition hover:bg-gray-800"
 >
-  마이페이지
+  🪐✨ 마이페이지
 </button>
 
 </div>

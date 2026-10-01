@@ -72,7 +72,7 @@ export default function MyPage() {
     <main className="min-h-screen bg-gray-50 px-4 py-10">
       <div className="mx-auto max-w-2xl rounded-3xl bg-white p-8 shadow-sm">
         <h1 className="mb-6 text-3xl font-bold text-gray-900">
-          마이페이지
+          🌟 마이페이지
         </h1>
 
         <div className="mb-8 rounded-2xl border border-gray-200 p-5">
@@ -108,7 +108,7 @@ export default function MyPage() {
             onClick={handleDeleteAccount}
             className="rounded-2xl bg-red-500 py-4 font-semibold text-white hover:bg-red-600"
           >
-            회원탈퇴
+            🤔 회원탈퇴
           </button>
         </div>
       </div>
