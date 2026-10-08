@@ -21,7 +21,6 @@ app.get("/health", (_req, res) => {
 
 app.use("/api/auth", authRouter);
 
-// 분석 생성 API입니다.
 app.post("/api/analyze", async (req, res) => {
   const body = req.body;
 
@@ -43,7 +42,6 @@ app.post("/api/analyze", async (req, res) => {
     digitalFeeling,
     aiHint,
     memo,
-    hasScreenshot,
   } = body;
 
   if (!mood || !activity || !fatigue || !focusLevel) {
@@ -60,7 +58,6 @@ app.post("/api/analyze", async (req, res) => {
     });
   }
 
-  // userId가 없으면 임시 사용자 ID를 사용합니다.
   const userId = body.userId || TEMP_USER_ID;
 
   const result = await generateMobileAnalysis({
@@ -74,7 +71,6 @@ app.post("/api/analyze", async (req, res) => {
     digitalFeeling,
     aiHint,
     memo,
-    hasScreenshot,
   });
 
   await saveAnalysis({
@@ -93,7 +89,6 @@ app.post("/api/analyze", async (req, res) => {
   res.json(result);
 });
 
-// 분석 히스토리 조회 API입니다.
 app.get("/api/analysis/history", async (req, res) => {
   const userId = req.query.userId || TEMP_USER_ID;
   const history = await getAnalysesByUserId(userId);
@@ -104,7 +99,6 @@ app.use((_req, res) => {
   res.status(404).json({ error: "Not Found" });
 });
 
-// 공통 에러 처리
 app.use((err, _req, res, _next) => {
   if (err instanceof SyntaxError && err.status === 400 && "body" in err) {
     return res.status(400).json({
@@ -117,7 +111,6 @@ app.use((err, _req, res, _next) => {
   res.status(500).json({ error: "Internal Server Error" });
 });
 
-// DB 연결 성공 후 서버 시작
 connectDB()
   .then(() => {
     app.listen(PORT, () => {

@@ -1,7 +1,6 @@
 "use client";
 
 import {
-  ChangeEvent,
   useEffect,
   useRef,
   useState,
@@ -30,14 +29,6 @@ type AnalysisPayload = {
 
   userInput: UserInputData;
 
-  screenshotInfo: {
-    uploaded: boolean;
-    fileName: string;
-    analyzed: boolean;
-    skipped: boolean;
-    estimatedConfidence: number;
-  };
-
   // 백엔드 API용 필드
   mood: string;
   activity: string;
@@ -46,16 +37,10 @@ type AnalysisPayload = {
   distraction: string;
 
   memo: string;
-
-  hasScreenshot: boolean;
 };
-
-
 
 type NoticeTone = "red" | "amber" | "violet" | "green";
 
-const MAX_FILE_SIZE = 10 * 1024 * 1024;
-const ALLOWED_FILE_TYPES = ["image/png", "image/jpeg", "image/jpg"];
 const MEMO_MAX_LENGTH = 500;
 
 function NoticeBox({
@@ -92,7 +77,9 @@ function NoticeBox({
     >
       {withIcon ? (
         <div className="flex items-start gap-3">
-          <div className="mt-0.5 text-base">⚠️</div>
+          <div className="mt-0.5 text-base">
+            ⚠️
+          </div>
 
           <div>
             {title && (
@@ -117,231 +104,90 @@ function NoticeBox({
   );
 }
 
-function LoadingSpinner() {
-  return (
-    <div className="flex items-center gap-3">
-      <div className="h-5 w-5 animate-spin rounded-full border-2 border-violet-300 border-t-violet-700" />
-
-      <p className="text-sm font-medium text-violet-700">
-        스크린샷 분석 진행 중...
-      </p>
-    </div>
-  );
-}
-
 export default function InputPage() {
   const router = useRouter();
 
-  const submitErrorRef = useRef<HTMLDivElement | null>(null);
+  const submitErrorRef =
+    useRef<HTMLDivElement | null>(null);
+
   const [userName, setUserName] = useState("");
 
-  const [mainActivity, setMainActivity] = useState("");
-  const [dayMood, setDayMood] = useState("");
-  const [focusTime, setFocusTime] = useState("");
-  const [fatigueLevel, setFatigueLevel] = useState("");
-  const [impulseActivity, setImpulseActivity] = useState("");
-
-  const [hadGoal, setHadGoal] = useState("");
-  const [achievedGoal, setAchievedGoal] = useState("");
-
-  const [faceToFaceInteraction, setFaceToFaceInteraction] =
+  const [mainActivity, setMainActivity] =
     useState("");
 
-  const [memo, setMemo] = useState("");
-
-  const [screenshotFileName, setScreenshotFileName] =
+  const [dayMood, setDayMood] =
     useState("");
 
-  const [screenshotPreview, setScreenshotPreview] =
+  const [focusTime, setFocusTime] =
     useState("");
 
-  const [isScreenshotAnalyzing, setIsScreenshotAnalyzing] =
+  const [fatigueLevel, setFatigueLevel] =
+    useState("");
+
+  const [impulseActivity, setImpulseActivity] =
+    useState("");
+
+  const [hadGoal, setHadGoal] =
+    useState("");
+
+  const [achievedGoal, setAchievedGoal] =
+    useState("");
+
+  const [
+    faceToFaceInteraction,
+    setFaceToFaceInteraction,
+  ] = useState("");
+
+  const [memo, setMemo] =
+    useState("");
+
+  const [isSubmitting, setIsSubmitting] =
     useState(false);
 
-  const [isScreenshotAnalyzed, setIsScreenshotAnalyzed] =
-    useState(false);
-
-  const [isNoScreenshotMode, setIsNoScreenshotMode] =
-    useState(false);
-
-  const [analysisConfidence, setAnalysisConfidence] =
-    useState(0);
-
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const [fileError, setFileError] = useState("");
-  const [screenshotNotice, setScreenshotNotice] =
+  const [submitError, setSubmitError] =
     useState("");
-
-  const [submitError, setSubmitError] = useState("");
 
   useEffect(() => {
-  const name = localStorage.getItem("userName");
+    const name =
+      localStorage.getItem("userName");
 
-  if (name) {
-    setUserName(name);
-  }
-}, []);
-
-  useEffect(() => {
-    return () => {
-      if (screenshotPreview) {
-        URL.revokeObjectURL(screenshotPreview);
-      }
-    };
-  }, [screenshotPreview]);
+    if (name) {
+      setUserName(name);
+    }
+  }, []);
 
   const clearMessages = () => {
-    setFileError("");
-    setScreenshotNotice("");
     setSubmitError("");
-  };
-
-  const resetScreenshotState = () => {
-    if (screenshotPreview) {
-      URL.revokeObjectURL(screenshotPreview);
-    }
-
-    setScreenshotFileName("");
-    setScreenshotPreview("");
-
-    setIsScreenshotAnalyzing(false);
-    setIsScreenshotAnalyzed(false);
-    setIsNoScreenshotMode(false);
-
-    setAnalysisConfidence(0);
-
-    setFileError("");
-    setScreenshotNotice("");
   };
 
   const buildPayload = (): AnalysisPayload => ({
-  analyzedAt: new Date().toISOString(),
+    analyzedAt:
+      new Date().toISOString(),
 
-  userInput: {
-    mainActivity,
-    dayMood,
-    focusTime,
-    fatigueLevel,
-    impulseActivity,
+    userInput: {
+      mainActivity,
+      dayMood,
+      focusTime,
+      fatigueLevel,
+      impulseActivity,
 
-    hadGoal,
-    achievedGoal,
+      hadGoal,
+      achievedGoal,
 
-    faceToFaceInteraction,
+      faceToFaceInteraction,
+
+      memo: memo.trim(),
+    },
+
+    // 백엔드 API용 필드
+    mood: dayMood,
+    activity: mainActivity,
+    fatigue: fatigueLevel,
+    focusLevel: focusTime,
+    distraction: impulseActivity,
 
     memo: memo.trim(),
-  },
-
-  screenshotInfo: {
-    uploaded: Boolean(screenshotPreview),
-    fileName: screenshotFileName,
-    analyzed: isScreenshotAnalyzed,
-    skipped: isNoScreenshotMode,
-    estimatedConfidence: analysisConfidence,
-  },
-
-  // 백엔드 API용 필드
-  mood: dayMood,
-  activity: mainActivity,
-  fatigue: fatigueLevel,
-  focusLevel: focusTime,
-distraction: impulseActivity,
-
-  memo: memo.trim(),
-
-  hasScreenshot: Boolean(screenshotPreview),
-});
-
-  const handleScreenshotUpload = (
-    e: ChangeEvent<HTMLInputElement>
-  ) => {
-    const file = e.target.files?.[0];
-
-    clearMessages();
-
-    if (!file) return;
-
-    if (!ALLOWED_FILE_TYPES.includes(file.type)) {
-      resetScreenshotState();
-
-      setFileError(
-        "PNG 또는 JPG 형식의 이미지 파일만 업로드할 수 있습니다."
-      );
-
-      e.target.value = "";
-
-      return;
-    }
-
-    if (file.size > MAX_FILE_SIZE) {
-      resetScreenshotState();
-
-      setFileError(
-        "파일 크기는 10MB 이하만 업로드할 수 있습니다."
-      );
-
-      e.target.value = "";
-
-      return;
-    }
-
-    resetScreenshotState();
-
-    const previewUrl = URL.createObjectURL(file);
-
-    setScreenshotFileName(file.name);
-    setScreenshotPreview(previewUrl);
-
-    setScreenshotNotice(
-      "스크린샷이 업로드되었습니다. 분석 버튼을 눌러 진행할 수 있습니다."
-    );
-  };
-
-  const handleScreenshotAnalyze = () => {
-    clearMessages();
-
-    if (!screenshotPreview) {
-      setFileError(
-        "먼저 스크린샷 이미지를 업로드해 주세요."
-      );
-
-      return;
-    }
-
-    setIsScreenshotAnalyzing(true);
-    setIsScreenshotAnalyzed(false);
-
-    setTimeout(() => {
-      const confidence =
-        Math.floor(Math.random() * 12) + 82;
-
-      setIsScreenshotAnalyzing(false);
-      setIsScreenshotAnalyzed(true);
-
-      setAnalysisConfidence(confidence);
-
-      setScreenshotNotice(
-        "스크린샷 분석이 완료되었습니다."
-      );
-    }, 1800);
-  };
-
-  const handleRemoveScreenshot = () => {
-    resetScreenshotState();
-
-    setSubmitError("");
-  };
-
-  const handleSkipScreenshot = () => {
-    resetScreenshotState();
-
-    setIsNoScreenshotMode(true);
-
-    setScreenshotNotice(
-      "스크린샷 없이 분석을 진행합니다. 사용자 입력 기반 분석만 사용됩니다."
-    );
-  };
+  });
 
   const validateBeforeSubmit = () => {
     const requiredFields = [
@@ -354,7 +200,11 @@ distraction: impulseActivity,
       hadGoal,
     ];
 
-    if (requiredFields.some((field) => field === "")) {
+    if (
+      requiredFields.some(
+        (field) => field === ""
+      )
+    ) {
       setSubmitError(
         "모든 선택 항목을 입력해 주세요."
       );
@@ -373,28 +223,6 @@ distraction: impulseActivity,
       return false;
     }
 
-    if (
-      screenshotPreview &&
-      !isScreenshotAnalyzed
-    ) {
-      setSubmitError(
-        "업로드한 스크린샷이 있다면 분석을 먼저 완료해 주세요."
-      );
-
-      return false;
-    }
-
-    if (
-      !screenshotPreview &&
-      !isNoScreenshotMode
-    ) {
-      setSubmitError(
-        "스크린샷 업로드 또는 '스크린샷 없이 분석'을 선택해 주세요."
-      );
-
-      return false;
-    }
-
     if (memo.trim() === "") {
       setSubmitError(
         "오늘 하루를 한 문장 이상 입력해 주세요."
@@ -406,137 +234,165 @@ distraction: impulseActivity,
     return true;
   };
 
-const handleSubmit = async () => {
-  
-  clearMessages();
+  const handleSubmit = async () => {
+    clearMessages();
 
-  if (!validateBeforeSubmit()) {
-    setTimeout(() => {
-      submitErrorRef.current?.scrollIntoView({
-        behavior: "smooth",
-        block: "center",
-      });
-    }, 50);
+    if (!validateBeforeSubmit()) {
+      setTimeout(() => {
+        submitErrorRef.current?.scrollIntoView({
+          behavior: "smooth",
+          block: "center",
+        });
+      }, 50);
 
-    return;
-  }
-
-  setIsSubmitting(true);
-
-  try {
-    const payload = buildPayload();
-
-    console.log("최종 분석 요청 데이터:", payload);
-
-    // 입력 데이터 저장
-    sessionStorage.setItem(
-      "analysisPayload",
-      JSON.stringify(payload)
-    );
-
-    // 백엔드 API 요청
-    const response = await fetch(
-  "https://capstone-design-ip8n.onrender.com/api/analyze",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload),
-      }
-    );
-
-    // 서버 응답 실패 처리
-    if (!response.ok) {
-      throw new Error("서버 응답 실패");
-    }
-
-    // 분석 결과 JSON 변환
-    const result = await response.json();
-
-    console.log("분석 결과:", result);
-
-    // 결과 저장
-    sessionStorage.setItem(
-      "analysisResult",
-      JSON.stringify(result)
-    );
-
-    // 결과 페이지 이동
-    router.push("/result");
-
-  } catch (error) {
-    console.error(error);
-
-    setSubmitError(
-      "서버 연결 또는 분석 요청 중 오류가 발생했습니다."
-    );
-  } finally {
-    setIsSubmitting(false);
-  }
-};
-
-const handleDeleteAccount = async () => {
-  const userId = localStorage.getItem("userId");
-
-  if (!userId) {
-    alert("로그인 정보가 없습니다.");
-    return;
-  }
-
-  const confirmed = confirm(
-    "정말 회원탈퇴하시겠습니까?\n삭제된 계정은 복구할 수 없습니다."
-  );
-
-  if (!confirmed) return;
-
-  try {
-    const res = await fetch(
-  "https://capstone-design-ip8n.onrender.com/api/auth/delete-account",
-      {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          userId,
-        }),
-      }
-    );
-
-    const data = await res.json();
-
-    if (!res.ok) {
-      alert(data.message);
       return;
     }
 
-    localStorage.removeItem("userId");
-    localStorage.removeItem("userName");
-    localStorage.removeItem("username");
+    setIsSubmitting(true);
 
-    alert("회원탈퇴가 완료되었습니다.");
+    try {
+      const payload =
+        buildPayload();
 
-    router.push("/login");
-  } catch (err) {
-    console.error(err);
-    alert("회원탈퇴 실패");
-  }
-};
+      console.log(
+        "최종 분석 요청 데이터:",
+        payload
+      );
 
+      // 입력 데이터 저장
+      sessionStorage.setItem(
+        "analysisPayload",
+        JSON.stringify(payload)
+      );
 
+      // 백엔드 API 요청
+      const response = await fetch(
+        "https://capstone-design-ip8n.onrender.com/api/analyze",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type":
+              "application/json",
+          },
+          body: JSON.stringify(
+            payload
+          ),
+        }
+      );
 
-  const screenshotSummaryCards = [
-    "주요 사용 앱 흐름 분석",
-    "시간대별 사용 패턴 참고",
-    "앱 사용 비중 패턴 참고",
-  ];
+      // 서버 응답 실패 처리
+      if (!response.ok) {
+        throw new Error(
+          "서버 응답 실패"
+        );
+      }
+
+      // 분석 결과 JSON 변환
+      const result =
+        await response.json();
+
+      console.log(
+        "분석 결과:",
+        result
+      );
+
+      // 결과 저장
+      sessionStorage.setItem(
+        "analysisResult",
+        JSON.stringify(result)
+      );
+
+      // 결과 페이지 이동
+      router.push("/result");
+    } catch (error) {
+      console.error(error);
+
+      setSubmitError(
+        "서버 연결 또는 분석 요청 중 오류가 발생했습니다."
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleDeleteAccount =
+    async () => {
+      const userId =
+        localStorage.getItem(
+          "userId"
+        );
+
+      if (!userId) {
+        alert(
+          "로그인 정보가 없습니다."
+        );
+
+        return;
+      }
+
+      const confirmed = confirm(
+        "정말 회원탈퇴하시겠습니까?\n삭제된 계정은 복구할 수 없습니다."
+      );
+
+      if (!confirmed) return;
+
+      try {
+        const res =
+          await fetch(
+            "https://capstone-design-ip8n.onrender.com/api/auth/delete-account",
+            {
+              method: "DELETE",
+              headers: {
+                "Content-Type":
+                  "application/json",
+              },
+              body: JSON.stringify({
+                userId,
+              }),
+            }
+          );
+
+        const data =
+          await res.json();
+
+        if (!res.ok) {
+          alert(data.message);
+          return;
+        }
+
+        localStorage.removeItem(
+          "userId"
+        );
+
+        localStorage.removeItem(
+          "userName"
+        );
+
+        localStorage.removeItem(
+          "username"
+        );
+
+        alert(
+          "회원탈퇴가 완료되었습니다."
+        );
+
+        router.push("/login");
+      } catch (err) {
+        console.error(err);
+
+        alert(
+          "회원탈퇴 실패"
+        );
+      }
+    };
 
   const selectFields = [
     {
-      label: "오늘 가장 중심이 된 활동은 무엇이었나요?",
+      label:
+        "오늘 가장 중심이 된 활동은 무엇이었나요?",
       value: mainActivity,
-      onChange: setMainActivity,
+      onChange:
+        setMainActivity,
       options: [
         "목표 수행 (공부/일)",
         "콘텐츠 소비 (영상 시청/유튜브)",
@@ -547,7 +403,8 @@ const handleDeleteAccount = async () => {
     },
 
     {
-      label: "오늘 하루의 전반적인 상태는 어땠나요?",
+      label:
+        "오늘 하루의 전반적인 상태는 어땠나요?",
       value: dayMood,
       onChange: setDayMood,
       options: [
@@ -559,9 +416,12 @@ const handleDeleteAccount = async () => {
     },
 
     {
-      label: "오늘 실제 사람들과의 상호작용(대면/통화)은 어느 정도 있었나요?",
-      value: faceToFaceInteraction,
-      onChange: setFaceToFaceInteraction,
+      label:
+        "오늘 실제 사람들과의 상호작용(대면/통화)은 어느 정도 있었나요?",
+      value:
+        faceToFaceInteraction,
+      onChange:
+        setFaceToFaceInteraction,
       options: [
         "거의 없었음",
         "조금 있었음",
@@ -572,7 +432,8 @@ const handleDeleteAccount = async () => {
     },
 
     {
-      label: "집중이 가장 잘 된 시간대가 있었나요?",
+      label:
+        "집중이 가장 잘 된 시간대가 있었나요?",
       value: focusTime,
       onChange: setFocusTime,
       options: [
@@ -585,9 +446,11 @@ const handleDeleteAccount = async () => {
     },
 
     {
-      label: "오늘 하루 동안 피로도는 어느 정도였나요?",
+      label:
+        "오늘 하루 동안 피로도는 어느 정도였나요?",
       value: fatigueLevel,
-      onChange: setFatigueLevel,
+      onChange:
+        setFatigueLevel,
       options: [
         "매우 낮음",
         "낮음",
@@ -598,9 +461,12 @@ const handleDeleteAccount = async () => {
     },
 
     {
-      label: "오늘 가장 끌렸던 활동은 무엇인가요?",
-      value: impulseActivity,
-      onChange: setImpulseActivity,
+      label:
+        "오늘 가장 끌렸던 활동은 무엇인가요?",
+      value:
+        impulseActivity,
+      onChange:
+        setImpulseActivity,
       options: [
         "짧은 콘텐츠 (쇼츠/릴스)",
         "게임",
@@ -610,220 +476,260 @@ const handleDeleteAccount = async () => {
         "기타",
       ],
     },
-
   ];
 
   return (
     <main className="min-h-screen bg-gray-50 px-4 py-10">
       <div className="mx-auto flex max-w-4xl flex-col gap-8">
 
+        {/* 페이지 소개 */}
         <section>
           <p className="mb-2 text-sm font-semibold text-blue-600">
             AI 기반 하루 흐름 분석 시스템
           </p>
 
-                   {userName && (
-          <p className="mb-2 text-lg font-semibold text-blue-600">
-             안녕하세요, {userName}님 👋
-          </p>
+          {userName && (
+            <p className="mb-2 text-lg font-semibold text-blue-600">
+              안녕하세요, {userName}님 👋
+            </p>
           )}
 
           <h1 className="mb-3 text-3xl font-bold text-gray-900">
             오늘 하루는 어떠셨나요?
-         </h1>
+          </h1>
 
-          <p className="leading-relaxed text-gray-600">
-            사용자의 입력 정보와 사용 기록 스크린샷을 기반으로
-            하루 패턴 및 집중 흐름을 분석합니다.
+          {/* 기존 회색보다 한 단계 진하게 */}
+          <p className="leading-relaxed text-gray-700">
+            오늘의 활동과 상태를 기록하면 AI가
+            생활 패턴과 행동 경향을 분석하고,
+            더 나은 하루를 위한 방향을 찾아볼 수
+            있도록 도와드립니다.
           </p>
         </section>
 
-        <section className="flex flex-col gap-6 rounded-3xl border border-gray-100 bg-white p-7 shadow-sm">
-          <div>
+        {/* AI 분석 안내 */}
+        <section className="overflow-hidden rounded-3xl border border-violet-100 bg-white shadow-sm">
+
+          {/* 상단 */}
+          <div className="bg-linear-to-br from-violet-50 via-white to-blue-50 p-7">
+
             <div className="mb-3 flex flex-wrap items-center gap-2">
-              <span className="inline-flex rounded-full bg-violet-50 px-3 py-1 text-sm font-semibold text-violet-700">
-                스크린샷 입력 기반 분석
+
+              {/* 기존 보라색 유지 */}
+              <span className="inline-flex rounded-full bg-violet-100 px-3 py-1 text-sm font-semibold text-violet-700">
+                🧠 AI 생활 패턴 분석
               </span>
 
-              <span className="inline-flex rounded-full bg-gray-100 px-3 py-1 text-sm text-gray-600">
-                Digital Wellbeing / Screen Time 대응
-              </span>
+              <span
+  className="inline-flex rounded-full px-3 py-1 text-sm font-semibold"
+  style={{
+    backgroundColor: "#dbeafe",
+    color: "#1d4ed8",
+  }}
+>
+  진화심리학 기반
+</span>
+
             </div>
 
-            <h2 className="mb-2 text-xl font-semibold text-gray-900">
-              사용 기록 화면 업로드
+            <h2 className="mb-3 text-2xl font-bold leading-snug text-gray-900">
+              오늘의 나를 기록하면,
+              <br />
+              반복되는 생활 패턴이 보입니다.
             </h2>
 
-            <p className="text-sm leading-relaxed text-gray-500">
-              갤럭시 디지털 웰빙 또는 아이폰 스크린 타임 화면을
-              캡처하여 업로드하면 시스템이 사용 패턴 분석에
-              참고합니다.
+            {/* 흐린 회색만 진하게 수정 */}
+            <p className="max-w-3xl text-sm leading-7 text-gray-700">
+              하루 동안의 활동, 기분, 집중도,
+              피로도와 같은 정보를 바탕으로
+              AI가 오늘의 생활 흐름과 행동 경향을
+              분석합니다.
             </p>
+
           </div>
 
-          <div className="rounded-2xl border border-dashed border-gray-300 bg-gray-50 p-6">
-            <label className="flex cursor-pointer flex-col items-center justify-center gap-3 text-center">
-              <span className="text-sm font-medium text-gray-800">
-                스크린샷 이미지 업로드
-              </span>
+          {/* 설명 카드 */}
+          <div className="grid gap-4 p-7 md:grid-cols-3">
 
-              <span className="text-xs text-gray-500">
-                PNG, JPG 형식의 사용 기록 화면을 업로드해 주세요
-              </span>
+            {/* AI 분석 */}
+            <div className="rounded-2xl border border-violet-100 bg-violet-50/60 p-5">
 
-              <span className="inline-flex rounded-xl bg-violet-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-violet-700">
-                파일 선택
-              </span>
+              <div className="mb-3 text-2xl">
+                🧠
+              </div>
 
-              <input
-                type="file"
-                accept="image/png, image/jpeg, image/jpg"
-                onChange={handleScreenshotUpload}
-                className="hidden"
-              />
-            </label>
-          </div>
+              <h3 className="mb-2 font-semibold text-gray-900">
+                AI 생활 패턴 분석
+              </h3>
 
-          <div className="flex flex-col gap-3 md:flex-row">
-            <button
-              type="button"
-              onClick={handleSkipScreenshot}
-              className={`w-full rounded-2xl border px-5 py-3 text-sm font-semibold transition md:w-fit ${
-                isNoScreenshotMode
-                  ? "border-violet-300 bg-violet-50 text-violet-700"
-                  : "border-violet-200 bg-white text-violet-700 hover:bg-violet-50"
-              }`}
-            >
-              스크린샷 없이 분석
-            </button>
-          </div>
-
-          {fileError && (
-            <NoticeBox
-              message={fileError}
-              tone="red"
-            />
-          )}
-
-          {screenshotNotice && (
-            <NoticeBox
-              message={screenshotNotice}
-              tone="amber"
-            />
-          )}
-
-          {screenshotFileName && (
-            <div className="flex flex-col gap-3 rounded-2xl border border-violet-200 bg-violet-50 p-4 md:flex-row md:items-center md:justify-between">
-              <p className="text-sm font-medium text-violet-700">
-                업로드된 파일: {screenshotFileName}
+              {/* 설명 글씨만 진하게 */}
+              <p className="text-sm leading-6 text-gray-700">
+                입력한 하루의 데이터를 종합하여
+                반복적으로 나타나는 행동과
+                생활 패턴을 살펴봅니다.
               </p>
 
-              <button
-                type="button"
-                onClick={handleRemoveScreenshot}
-                className="rounded-xl border border-violet-200 bg-white px-4 py-2 text-sm font-medium text-violet-700 transition hover:bg-violet-100"
-              >
-                업로드 제거
-              </button>
             </div>
-          )}
 
-          {screenshotPreview && (
-            <div className="flex flex-col gap-4">
-              <div>
-                <p className="mb-3 text-sm font-medium text-gray-800">
-                  업로드된 스크린샷 미리보기
+            {/* 진화심리학 */}
+            <div className="rounded-2xl border border-blue-100 bg-blue-50/60 p-5">
+
+              <div className="mb-3 text-2xl">
+                🧬
+              </div>
+
+              <h3 className="mb-2 font-semibold text-gray-900">
+                진화심리학적 관점
+              </h3>
+
+              {/* 설명 글씨만 진하게 */}
+              <p className="text-sm leading-6 text-gray-700">
+                보상 추구, 위험 회피, 사회적 관계,
+                에너지 절약과 같은 인간의 기본적인
+                행동 경향을 참고하여 행동의 배경을
+                해석합니다.
+              </p>
+
+            </div>
+
+            {/* 자기 이해 */}
+            <div className="rounded-2xl border border-emerald-100 bg-emerald-50/60 p-5">
+
+              <div className="mb-3 text-2xl">
+                🌱
+              </div>
+
+              <h3 className="mb-2 font-semibold text-gray-900">
+                나를 이해하는 과정
+              </h3>
+
+              {/* 설명 글씨만 진하게 */}
+              <p className="text-sm leading-6 text-gray-700">
+                단순히 하루를 평가하는 것이 아니라
+                자신의 행동 패턴을 돌아보고 앞으로의
+                행동을 생각해볼 수 있도록 돕습니다.
+              </p>
+
+            </div>
+
+          </div>
+
+          {/* 타겟 사용자 공감 문구 */}
+          <div className="border-t border-gray-100 px-7 py-6">
+
+            <div className="rounded-2xl border border-gray-200 bg-gray-50 p-5">
+
+              {/* 보라색 유지 */}
+              <p className="mb-3 text-sm font-semibold text-violet-700">
+                이런 생각을 해본 적이 있다면
+              </p>
+
+              {/* 기존 회색보다 진하게 */}
+              <div className="grid gap-2 text-sm font-medium text-gray-800 md:grid-cols-2">
+
+                <p>
+                  • 열심히 살고 있는데 왜 이렇게 지칠까?
                 </p>
 
-                <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white">
-                  <img
-                    src={screenshotPreview}
-                    alt="업로드된 사용 기록 스크린샷"
-                    className="max-h-105 w-full object-contain bg-gray-50"
-                  />
-                </div>
-              </div>
-
-              <div className="flex flex-col gap-3 md:flex-row">
-                <button
-                  type="button"
-                  onClick={handleScreenshotAnalyze}
-                  className="w-full rounded-2xl bg-violet-600 px-6 py-3 font-semibold text-white transition hover:bg-violet-700 md:w-fit"
-                >
-                  업로드한 스크린샷 분석하기
-                </button>
-
-                <button
-                  type="button"
-                  onClick={handleRemoveScreenshot}
-                  className="w-full rounded-2xl border border-gray-200 bg-white px-6 py-3 font-semibold text-gray-700 transition hover:bg-gray-100 md:w-fit"
-                >
-                  다른 이미지로 다시 업로드하기
-                </button>
-              </div>
-            </div>
-          )}
-
-          {isScreenshotAnalyzing && (
-            <div className="rounded-2xl border border-violet-200 bg-violet-50 p-5">
-              <LoadingSpinner />
-            </div>
-          )}
-
-          {isScreenshotAnalyzed && (
-            <div className="flex flex-col gap-4 rounded-2xl border border-violet-200 bg-violet-50 p-5">
-              <div>
-                <h3 className="mb-2 font-semibold text-violet-900">
-                  스크린샷 기반 분석 요약
-                </h3>
-
-                <p className="text-sm leading-relaxed text-violet-700">
-                  업로드된 화면에서 앱 사용 시간, 주요 사용 앱,
-                  시간대별 사용 흐름 기반 참고 정보를 확보했습니다.
-                </p>
-              </div>
-
-              <div className="rounded-2xl border border-violet-200 bg-white p-4">
-                <p className="mb-1 text-xs text-violet-600">
-                  예상 분석 신뢰도
+                <p>
+                  • 나는 하루를 어떻게 보내고 있을까?
                 </p>
 
-                <p className="text-lg font-bold text-violet-900">
-                  {analysisConfidence}%
+                <p>
+                  • 왜 해야 할 일을 자꾸 미루게 될까?
                 </p>
+
+                <p>
+                  • 나에게 반복되는 행동 패턴이 있을까?
+                </p>
+
               </div>
 
-              <div className="grid gap-3 md:grid-cols-3">
-                {screenshotSummaryCards.map((item, index) => (
-                  <div
-                    key={item}
-                    className="rounded-2xl border border-violet-200 bg-white p-4"
-                  >
-                    <p className="mb-1 text-xs text-violet-600">
-                      추정 정보 {index + 1}
-                    </p>
-
-                    <p className="font-semibold text-gray-900">
-                      {item}
-                    </p>
-                  </div>
-                ))}
-              </div>
             </div>
-          )}
+
+          </div>
+
+          {/* 분석 과정 */}
+<div className="px-7 pb-7">
+  <div className="rounded-2xl border border-violet-200 bg-violet-50 p-5">
+
+    <p className="mb-4 text-sm font-bold text-violet-900">
+      AI 분석 과정
+    </p>
+
+    <div className="grid gap-4 text-sm md:grid-cols-4">
+
+      <div className="rounded-xl bg-white p-4 shadow-sm">
+        <p className="mb-2 font-bold text-gray-900">
+          01. 기록
+        </p>
+
+        <p className="leading-6 text-gray-800">
+          오늘의 활동과 상태를 입력합니다.
+        </p>
+      </div>
+
+      <div className="rounded-xl bg-white p-4 shadow-sm">
+        <p className="mb-2 font-bold text-gray-900">
+          02. 패턴 발견
+        </p>
+
+        <p className="leading-6 text-gray-800">
+          입력된 데이터를 종합적으로 살펴봅니다.
+        </p>
+      </div>
+
+      <div className="rounded-xl bg-white p-4 shadow-sm">
+        <p className="mb-2 font-bold text-gray-900">
+          03. 행동 이해
+        </p>
+
+        <p className="leading-6 text-gray-800">
+          행동의 배경과 경향을 해석합니다.
+        </p>
+      </div>
+
+      <div className="rounded-xl bg-white p-4 shadow-sm">
+        <p className="mb-2 font-bold text-gray-900">
+          04. 행동 추천
+        </p>
+
+        <p className="leading-6 text-gray-800">
+          더 나은 하루를 위한 방향을 제안합니다.
+        </p>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+          {/* 핵심 문구 */}
+          <div className="border-t border-violet-100 bg-violet-50 px-7 py-5 text-center">
+
+            <p className="font-semibold text-violet-900">
+              나를 바꾸기 전에,
+              먼저 나의 하루를 이해해보세요.
+            </p>
+
+          </div>
+
         </section>
 
+        {/* 사용자 입력 */}
         <section className="flex flex-col gap-6 rounded-3xl border border-gray-100 bg-white p-7 shadow-sm">
+
           <div>
             <h2 className="mb-2 text-xl font-semibold text-gray-900">
               사용자 입력
             </h2>
 
-            <p className="text-sm text-gray-500">
+            {/* 기존보다 조금 진하게 */}
+            <p className="text-sm text-gray-600">
               오늘 하루의 활동 및 상태를 입력해 주세요.
             </p>
           </div>
 
+          {/* 오류 메시지 */}
           {submitError && (
             <NoticeBox
               message={submitError}
@@ -835,33 +741,52 @@ const handleDeleteAccount = async () => {
           )}
 
           <div className="flex flex-col gap-5">
-            {selectFields.map((field) => (
-              <div key={field.label}>
-                <label className="mb-2 block text-sm font-medium text-gray-800">
-                  {field.label}
-                </label>
 
-                <select
-                  className="w-full rounded-xl border border-gray-200 bg-white p-3 text-gray-900 outline-none transition focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
-                  value={field.value}
-                  onChange={(e) =>
-                    field.onChange(e.target.value)
-                  }
+            {/* 선택 항목 */}
+            {selectFields.map(
+              (field) => (
+                <div
+                  key={field.label}
                 >
-                  <option value="" disabled hidden>
-                    선택해 주세요
-                  </option>
+                  <label className="mb-2 block text-sm font-medium text-gray-800">
+                    {field.label}
+                  </label>
 
-                  {field.options.map((option) => (
-                    <option key={option} value={option}>
-                      {option}
+                  <select
+                    className="w-full rounded-xl border border-gray-200 bg-white p-3 text-gray-900 outline-none transition focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
+                    value={field.value}
+                    onChange={(e) =>
+                      field.onChange(
+                        e.target.value
+                      )
+                    }
+                  >
+                    <option
+                      value=""
+                      disabled
+                      hidden
+                    >
+                      선택해 주세요
                     </option>
-                  ))}
-                </select>
-              </div>
-            ))}
 
+                    {field.options.map(
+                      (option) => (
+                        <option
+                          key={option}
+                          value={option}
+                        >
+                          {option}
+                        </option>
+                      )
+                    )}
+                  </select>
+                </div>
+              )
+            )}
+
+            {/* 목표 여부 */}
             <div>
+
               <label className="mb-2 block text-sm font-medium text-gray-800">
                 오늘의 목표가 있었나요?
               </label>
@@ -869,107 +794,158 @@ const handleDeleteAccount = async () => {
               <select
                 className="w-full rounded-xl border border-gray-200 bg-white p-3 text-gray-900 outline-none transition focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
                 value={hadGoal}
-                onChange={(e) => setHadGoal(e.target.value)}
+                onChange={(e) =>
+                  setHadGoal(
+                    e.target.value
+                  )
+                }
               >
-                <option value="" disabled hidden>
+                <option
+                  value=""
+                  disabled
+                  hidden
+                >
                   선택해 주세요
                 </option>
 
-                <option value="네">네</option>
-                <option value="아니요">아니요</option>
+                <option value="네">
+                  네
+                </option>
+
+                <option value="아니요">
+                  아니요
+                </option>
+
               </select>
+
             </div>
 
+            {/* 목표 달성 여부 */}
             {hadGoal === "네" && (
               <div className="animate-in fade-in duration-300">
+
                 <label className="mb-2 block text-sm font-medium text-gray-800">
                   오늘의 목표를 달성했나요?
                 </label>
 
                 <select
                   className="w-full rounded-xl border border-gray-200 bg-white p-3 text-gray-900 outline-none transition focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
-                  value={achievedGoal}
+                  value={
+                    achievedGoal
+                  }
                   onChange={(e) =>
-                    setAchievedGoal(e.target.value)
+                    setAchievedGoal(
+                      e.target.value
+                    )
                   }
                 >
-                  <option value="" disabled hidden>
+                  <option
+                    value=""
+                    disabled
+                    hidden
+                  >
                     선택해 주세요
                   </option>
 
-                  <option value="네">네</option>
-                  <option value="아니요">아니요</option>
+                  <option value="네">
+                    네
+                  </option>
+
+                  <option value="아니요">
+                    아니요
+                  </option>
+
                 </select>
+
               </div>
             )}
 
+            {/* 하루 메모 */}
             <div>
+
               <div className="mb-2 flex items-center justify-between">
+
                 <label className="block text-sm font-medium text-gray-800">
                   오늘 하루는 어떤 하루였나요?
                 </label>
 
                 <span
                   className={`text-xs font-medium ${
-                    memo.length >= MEMO_MAX_LENGTH
+                    memo.length >=
+                    MEMO_MAX_LENGTH
                       ? "text-red-500"
-                      : "text-gray-400"
+                      : "text-gray-500"
                   }`}
                 >
-                  {memo.length}/{MEMO_MAX_LENGTH}
+                  {memo.length}/
+                  {MEMO_MAX_LENGTH}
                 </span>
+
               </div>
 
               <textarea
-                maxLength={MEMO_MAX_LENGTH}
-                className="h-28 w-full resize-none rounded-2xl border border-gray-200 bg-white p-4 text-gray-900 outline-none transition focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
+                maxLength={
+                  MEMO_MAX_LENGTH
+                }
+                className="h-28 w-full resize-none rounded-2xl border border-gray-200 bg-white p-4 text-gray-900 outline-none transition placeholder:text-gray-500 focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
                 placeholder="일기 쓰듯이 편하게 적어주세요."
                 value={memo}
-                onChange={(e) => setMemo(e.target.value)}
+                onChange={(e) =>
+                  setMemo(
+                    e.target.value
+                  )
+                }
               />
+
             </div>
+
           </div>
 
+          {/* 버튼 */}
+          <div className="flex flex-col gap-4">
 
-<div className="flex flex-col gap-4">
+            <button
+              disabled={
+                isSubmitting
+              }
+              onClick={
+                handleSubmit
+              }
+              className="flex w-full items-center justify-center gap-2 rounded-2xl bg-blue-600 py-4 font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-70"
+            >
+              {isSubmitting && (
+                <div className="h-5 w-5 animate-spin rounded-full border-2 border-white border-t-blue-300" />
+              )}
 
-  <button
-    disabled={isSubmitting}
-    onClick={handleSubmit}
-    className="flex w-full items-center justify-center gap-2 rounded-2xl bg-blue-600 py-4 font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-70"
-  >
-    {isSubmitting && (
-      <div className="h-5 w-5 animate-spin rounded-full border-2 border-white border-t-blue-300" />
-    )}
+              {isSubmitting
+                ? "결과 페이지로 이동 중..."
+                : "입력 내용으로 최종 결과 보기"}
+            </button>
 
-    {isSubmitting
-      ? "결과 페이지로 이동 중..."
-      : "입력 내용으로 최종 결과 보기"}
-  </button>
+            <Link
+              href="/diary"
+              className="block w-full rounded-2xl bg-linear-to-r from-purple-500 to-pink-500 py-4 text-center font-semibold text-black shadow-lg transition hover:opacity-90"
+            >
+              📖 나만의 일기
+            </Link>
 
-  <Link
-    href="/diary"
-    className="block w-full rounded-2xl bg-linear-to-r from-purple-500 to-pink-500 py-4 text-center font-semibold text-black shadow-lg transition hover:opacity-90"
-  >
-    📖 나만의 일기
-  </Link>
+            <button
+              type="button"
+              onClick={() =>
+                router.push(
+                  "/mypage"
+                )
+              }
+              className="w-full rounded-2xl bg-gray-700 py-4 font-semibold text-white shadow-lg transition hover:bg-gray-800"
+            >
+              🪐✨ 마이페이지
+            </button>
 
-<button
-  type="button"
-  onClick={() => router.push("/mypage")}
-  className="w-full rounded-2xl bg-gray-700 py-4 font-semibold text-white shadow-lg transition hover:bg-gray-800"
->
-  🪐✨ 마이페이지
-</button>
+          </div>
 
-</div>
-
-
-      
         </section>
 
       </div>
     </main>
   );
 }
-

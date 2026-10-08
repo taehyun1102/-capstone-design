@@ -32,33 +32,57 @@ function toPromptData(input = {}) {
     focusLevel: input.focusLevel ?? "",
     distraction: input.distraction ?? "",
     memo: input.memo ?? "",
-    hasScreenshot: Boolean(input.hasScreenshot),
     sleepQuality: input.sleepQuality ?? "",
     stressLevel: input.stressLevel ?? "",
     digitalFeeling: input.digitalFeeling ?? "",
     aiHint: input.aiHint ?? "",
+
+    // prompt.js에서 사용하는 항목
+    socialInteraction: input.socialInteraction ?? "",
+    focusedTime: input.focusedTime ?? "",
+    frequentActivity: input.frequentActivity ?? "",
+    temptingActivity: input.temptingActivity ?? "",
+    hasGoal: Boolean(input.hasGoal),
+    goalResult: input.goalResult ?? "",
   };
 }
 
 function parseRadarChart(radarChart) {
   if (!Array.isArray(radarChart)) {
+    console.warn(
+      "⚠️ [radar_chart 없음] fallback 값을 사용합니다."
+    );
+
     return FALLBACK_RADAR_CHART;
   }
 
   const parsed = radarChart
-    .filter(
-      (item) =>
+    .filter((item) => {
+      return (
         item &&
         typeof item.axis === "string" &&
         typeof item.value === "number" &&
         Number.isFinite(item.value)
-    )
-    .map((item) => ({
-      axis: item.axis,
-      value: Math.max(1, Math.min(5, item.value)),
-    }));
+      );
+    })
+    .map((item) => {
+      const value = Math.max(
+        1,
+        Math.min(5, Math.round(item.value))
+      );
 
-  if (parsed.length === 0) {
+      return {
+        axis: item.axis,
+        value,
+      };
+    });
+
+  if (parsed.length !== 6) {
+    console.warn(
+      "⚠️ [radar_chart 항목 수 오류] 받은 항목 수:",
+      parsed.length
+    );
+
     return FALLBACK_RADAR_CHART;
   }
 
@@ -71,10 +95,12 @@ function parseAnalysisContent(content) {
 
     if (!trimmed) {
       console.warn("⚠️ [AI 응답 내용 없음]");
-      return { ...FALLBACK_RESPONSE };
+
+      return {
+        ...FALLBACK_RESPONSE,
+      };
     }
 
-    // AI가 ```json ... ``` 형태로 응답하는 경우 처리
     const fenced = trimmed.match(
       /```(?:json)?\s*([\s\S]*?)```/i
     );
@@ -95,18 +121,18 @@ function parseAnalysisContent(content) {
      *     "secondary_driver": "...",
      *     "adaptive_mechanism": "..."
      *   },
+     *
+     *   "radar_chart": [
+     *     {
+     *       "axis": "신체 활력",
+     *       "value": 4
+     *     }
+     *   ],
+     *
      *   "action_plan": {
      *     "environmental_friction": "...",
      *     "alternative_action": "..."
-     *   },
-     *   "radar_chart": [
-     *     { "axis": "신체 활력", "value": 1 },
-     *     { "axis": "인지 몰입도", "value": 1 },
-     *     { "axis": "목표 주도성", "value": 1 },
-     *     { "axis": "사회적 유대", "value": 1 },
-     *     { "axis": "자극 방어력", "value": 1 },
-     *     { "axis": "심리적 안정", "value": 1 }
-     *   ]
+     *   }
      * }
      */
 
@@ -158,6 +184,9 @@ function parseAnalysisContent(content) {
         );
       }
 
+      const radarChart =
+        parseRadarChart(parsed.radar_chart);
+
       return {
         summary: String(summary),
 
@@ -173,9 +202,7 @@ function parseAnalysisContent(content) {
             : FALLBACK_RESPONSE.advice
         ),
 
-        radar_chart: parseRadarChart(
-          parsed.radar_chart
-        ),
+        radar_chart: radarChart,
       };
     }
 
@@ -210,14 +237,18 @@ function parseAnalysisContent(content) {
       parsed
     );
 
-    return { ...FALLBACK_RESPONSE };
+    return {
+      ...FALLBACK_RESPONSE,
+    };
   } catch (error) {
     console.error(
       "❌ [AI 응답 파싱 에러]:",
       error
     );
 
-    return { ...FALLBACK_RESPONSE };
+    return {
+      ...FALLBACK_RESPONSE,
+    };
   }
 }
 
@@ -272,15 +303,6 @@ async function requestAnalysis(data) {
   return result;
 }
 
-/**
- * @param {object} input 모바일 앱 req.body
- * @returns {Promise<{
- *   summary: string,
- *   pattern: string,
- *   advice: string,
- *   radar_chart: Array<{axis: string, value: number}>
- * }>}
- */
 async function generateMobileAnalysis(
   input = {}
 ) {
