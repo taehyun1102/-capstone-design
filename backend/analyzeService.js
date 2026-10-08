@@ -1,10 +1,20 @@
 const OpenAI = require("openai");
 const { SYSTEM_PROMPT, buildUserPrompt } = require("./prompt");
 
+const FALLBACK_RADAR_CHART = [
+  { axis: "신체 활력", value: 1 },
+  { axis: "인지 몰입도", value: 1 },
+  { axis: "목표 주도성", value: 1 },
+  { axis: "사회적 유대", value: 1 },
+  { axis: "자극 방어력", value: 1 },
+  { axis: "심리적 안정", value: 1 },
+];
+
 const FALLBACK_RESPONSE = {
   summary: "입력하신 정보를 바탕으로 오늘 하루를 요약했습니다.",
   pattern: "제공된 데이터 범위에서 행동 경향을 해석했습니다.",
   advice: "내일은 오늘과 비슷한 시간대에 작은 목표를 세워 보세요.",
+  radar_chart: FALLBACK_RADAR_CHART,
 };
 
 function getOpenRouterClient() {
@@ -28,6 +38,31 @@ function toPromptData(input = {}) {
     digitalFeeling: input.digitalFeeling ?? "",
     aiHint: input.aiHint ?? "",
   };
+}
+
+function parseRadarChart(radarChart) {
+  if (!Array.isArray(radarChart)) {
+    return FALLBACK_RADAR_CHART;
+  }
+
+  const parsed = radarChart
+    .filter(
+      (item) =>
+        item &&
+        typeof item.axis === "string" &&
+        typeof item.value === "number" &&
+        Number.isFinite(item.value)
+    )
+    .map((item) => ({
+      axis: item.axis,
+      value: Math.max(1, Math.min(5, item.value)),
+    }));
+
+  if (parsed.length === 0) {
+    return FALLBACK_RADAR_CHART;
+  }
+
+  return parsed;
 }
 
 function parseAnalysisContent(content) {
@@ -63,7 +98,15 @@ function parseAnalysisContent(content) {
      *   "action_plan": {
      *     "environmental_friction": "...",
      *     "alternative_action": "..."
-     *   }
+     *   },
+     *   "radar_chart": [
+     *     { "axis": "신체 활력", "value": 1 },
+     *     { "axis": "인지 몰입도", "value": 1 },
+     *     { "axis": "목표 주도성", "value": 1 },
+     *     { "axis": "사회적 유대", "value": 1 },
+     *     { "axis": "자극 방어력", "value": 1 },
+     *     { "axis": "심리적 안정", "value": 1 }
+     *   ]
      * }
      */
 
@@ -129,6 +172,10 @@ function parseAnalysisContent(content) {
             ? adviceParts.join("\n\n")
             : FALLBACK_RESPONSE.advice
         ),
+
+        radar_chart: parseRadarChart(
+          parsed.radar_chart
+        ),
       };
     }
 
@@ -138,7 +185,8 @@ function parseAnalysisContent(content) {
      * {
      *   "summary": "...",
      *   "pattern": "...",
-     *   "advice": "..."
+     *   "advice": "...",
+     *   "radar_chart": [...]
      * }
      */
 
@@ -151,6 +199,9 @@ function parseAnalysisContent(content) {
         summary: String(parsed.summary),
         pattern: String(parsed.pattern),
         advice: String(parsed.advice),
+        radar_chart: parseRadarChart(
+          parsed.radar_chart
+        ),
       };
     }
 
@@ -226,7 +277,8 @@ async function requestAnalysis(data) {
  * @returns {Promise<{
  *   summary: string,
  *   pattern: string,
- *   advice: string
+ *   advice: string,
+ *   radar_chart: Array<{axis: string, value: number}>
  * }>}
  */
 async function generateMobileAnalysis(
