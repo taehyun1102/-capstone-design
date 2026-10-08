@@ -33,18 +33,24 @@ app.post("/api/analyze", async (req, res) => {
   }
 
   const {
-    mood,
-    activity,
-    fatigue,
-    focusLevel,
-    sleepQuality,
-    stressLevel,
-    distraction,
-    digitalFeeling,
-    aiHint,
-    memo,
-    hasScreenshot,
-  } = body;
+  mood,
+  activity,
+  fatigue,
+  focusLevel,
+  sleepQuality,
+  stressLevel,
+  distraction,
+  digitalFeeling,
+  aiHint,
+  memo,
+  hasScreenshot,
+  socialInteraction,
+  focusedTime,
+  frequentActivity,
+  temptingActivity,
+  hasGoal,
+  goalResult,
+} = body;
 
   if (!mood || !activity || !fatigue || !focusLevel) {
     return res.status(400).json({
@@ -64,18 +70,24 @@ app.post("/api/analyze", async (req, res) => {
   const userId = body.userId || TEMP_USER_ID;
 
   const result = await generateMobileAnalysis({
-    mood,
-    activity,
-    fatigue,
-    focusLevel,
-    sleepQuality,
-    stressLevel,
-    distraction,
-    digitalFeeling,
-    aiHint,
-    memo,
-    hasScreenshot,
-  });
+  mood,
+  activity,
+  fatigue,
+  focusLevel,
+  sleepQuality,
+  stressLevel,
+  distraction,
+  digitalFeeling,
+  aiHint,
+  memo,
+  hasScreenshot,
+  socialInteraction,
+  focusedTime,
+  frequentActivity,
+  temptingActivity,
+  hasGoal,
+  goalResult,
+});
 
   await saveAnalysis({
     userId,

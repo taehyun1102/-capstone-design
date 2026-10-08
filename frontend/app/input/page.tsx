@@ -27,9 +27,7 @@ type UserInputData = {
 
 type AnalysisPayload = {
   analyzedAt: string;
-
   userInput: UserInputData;
-
   screenshotInfo: {
     uploaded: boolean;
     fileName: string;
@@ -46,8 +44,14 @@ type AnalysisPayload = {
   distraction: string;
 
   memo: string;
-
   hasScreenshot: boolean;
+
+  socialInteraction: string;
+  focusedTime: string;
+  frequentActivity: string;
+  temptingActivity: string;
+  hasGoal: boolean;
+  goalResult: string;
 };
 
 
@@ -241,16 +245,21 @@ export default function InputPage() {
     estimatedConfidence: analysisConfidence,
   },
 
-  // 백엔드 API용 필드
-  mood: dayMood,
-  activity: mainActivity,
-  fatigue: fatigueLevel,
-  focusLevel: focusTime,
+// 백엔드 API용 필드
+mood: dayMood,
+activity: mainActivity,
+fatigue: fatigueLevel,
+focusLevel: focusTime,
 distraction: impulseActivity,
+memo: memo.trim(),
+hasScreenshot: Boolean(screenshotPreview),
 
-  memo: memo.trim(),
-
-  hasScreenshot: Boolean(screenshotPreview),
+socialInteraction: faceToFaceInteraction,
+focusedTime: focusTime,
+frequentActivity: mainActivity,
+temptingActivity: impulseActivity,
+hasGoal: hadGoal === "네",
+goalResult: achievedGoal,
 });
 
   const handleScreenshotUpload = (

@@ -37,6 +37,13 @@ function toPromptData(input = {}) {
     stressLevel: input.stressLevel ?? "",
     digitalFeeling: input.digitalFeeling ?? "",
     aiHint: input.aiHint ?? "",
+
+    socialInteraction: input.socialInteraction ?? "",
+    focusedTime: input.focusedTime ?? "",
+    frequentActivity: input.frequentActivity ?? "",
+    temptingActivity: input.temptingActivity ?? "",
+    hasGoal: Boolean(input.hasGoal),
+    goalResult: input.goalResult ?? "",
   };
 }
 
@@ -159,14 +166,15 @@ function parseAnalysisContent(content) {
       }
 
       return {
-        summary: String(summary),
+  summary: String(summary),
 
-        pattern: String(
-          patternParts.length > 0
-            ? patternParts.join("\n\n")
-            : FALLBACK_RESPONSE.pattern
-        ),
+  pattern: String(
+    patternParts.length > 0
+      ? patternParts.join("\n\n")
+      : FALLBACK_RESPONSE.pattern
+  ),
 
+<<<<<<< Updated upstream
         advice: String(
           adviceParts.length > 0
             ? adviceParts.join("\n\n")
@@ -177,6 +185,18 @@ function parseAnalysisContent(content) {
           parsed.radar_chart
         ),
       };
+=======
+  advice: String(
+    adviceParts.length > 0
+      ? adviceParts.join("\n\n")
+      : FALLBACK_RESPONSE.advice
+  ),
+
+  radar_chart: Array.isArray(parsed.radar_chart)
+    ? parsed.radar_chart
+    : [],
+};
+>>>>>>> Stashed changes
     }
 
     /*
