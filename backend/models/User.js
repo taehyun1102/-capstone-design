@@ -23,6 +23,19 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+
+  // 비밀번호 찾기용 보안 질문
+  securityQuestion: {
+    type: String,
+    required: true,
+  },
+
+  // 비밀번호 찾기용 보안 질문 답변
+  // 실제 저장할 때는 bcrypt로 해시해서 저장
+  securityAnswer: {
+    type: String,
+    required: true,
+  },
 });
 
 module.exports = mongoose.model("User", userSchema);

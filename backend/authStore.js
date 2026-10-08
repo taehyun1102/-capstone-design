@@ -14,10 +14,18 @@ async function isUsernameAvailable(username) {
 }
 
 // 회원가입 데이터를 저장합니다.
-async function createUser({ name, username, password }) {
+async function createUser({
+  name,
+  username,
+  password,
+  securityQuestion,
+  securityAnswer,
+}) {
   try {
     const trimmedUsername = username.trim();
     const trimmedName = name.trim();
+    const trimmedSecurityQuestion = securityQuestion.trim();
+    const trimmedSecurityAnswer = securityAnswer.trim();
 
     const existingUsername = await findUserByUsername(trimmedUsername);
 
@@ -26,13 +34,26 @@ async function createUser({ name, username, password }) {
     }
 
     const userId = `user-${crypto.randomUUID()}`;
-    const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
+
+    // 비밀번호 해시
+    const hashedPassword = await bcrypt.hash(
+      password,
+      SALT_ROUNDS
+    );
+
+    // 보안 질문 답변도 해시해서 저장
+    const hashedSecurityAnswer = await bcrypt.hash(
+      trimmedSecurityAnswer,
+      SALT_ROUNDS
+    );
 
     await User.create({
       userId,
       name: trimmedName,
       username: trimmedUsername,
       password: hashedPassword,
+      securityQuestion: trimmedSecurityQuestion,
+      securityAnswer: hashedSecurityAnswer,
     });
 
     return { ok: true, userId };

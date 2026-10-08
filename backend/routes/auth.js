@@ -12,12 +12,25 @@ const router = express.Router();
 // 회원가입
 router.post("/signup", async (req, res) => {
   try {
-    const { name, username, password } = req.body || {};
+    const {
+      name,
+      username,
+      password,
+      securityQuestion,
+      securityAnswer,
+    } = req.body || {};
 
-    if (!name || !username || !password) {
+    if (
+      !name ||
+      !username ||
+      !password ||
+      !securityQuestion ||
+      !securityAnswer
+    ) {
       return res.status(400).json({
         error: "Missing required fields",
-        message: "name, username, password는 필수입니다.",
+        message:
+          "name, username, password, securityQuestion, securityAnswer는 필수입니다.",
       });
     }
 
@@ -25,9 +38,13 @@ router.post("/signup", async (req, res) => {
       typeof name !== "string" ||
       typeof username !== "string" ||
       typeof password !== "string" ||
+      typeof securityQuestion !== "string" ||
+      typeof securityAnswer !== "string" ||
       name.trim() === "" ||
       username.trim() === "" ||
-      password.trim() === ""
+      password.trim() === "" ||
+      securityQuestion.trim() === "" ||
+      securityAnswer.trim() === ""
     ) {
       return res.status(400).json({
         error: "Invalid fields",
@@ -39,6 +56,8 @@ router.post("/signup", async (req, res) => {
       name,
       username,
       password,
+      securityQuestion,
+      securityAnswer,
     });
 
     if (!result.ok) {

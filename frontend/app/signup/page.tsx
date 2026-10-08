@@ -14,6 +14,20 @@ export default function SignupPage() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
+  // 보안 질문 / 답변
+  const [securityQuestion, setSecurityQuestion] = useState("");
+  const [securityAnswer, setSecurityAnswer] = useState("");
+
+  const securityQuestions = [
+    "나의 고향은?",
+    "내가 가장 좋아하는 음식은?",
+    "내가 가장 좋아하는 색깔은?",
+    "나의 첫 학교는?",
+    "내가 가장 좋아하는 동물은?",
+    "내가 가장 좋아하는 영화는?",
+    "내가 가장 좋아하는 취미는?",
+  ];
+
   const checkUsername = async () => {
     if (!username.trim()) {
       alert("아이디를 입력해주세요.");
@@ -46,9 +60,7 @@ export default function SignupPage() {
     }
   };
 
-  const handleSignup = async (
-    e: React.FormEvent
-  ) => {
+  const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!name.trim()) {
@@ -81,6 +93,17 @@ export default function SignupPage() {
       return;
     }
 
+    // 보안 질문 / 답변 검사
+    if (!securityQuestion) {
+      alert("보안 질문을 선택해주세요.");
+      return;
+    }
+
+    if (!securityAnswer.trim()) {
+      alert("보안 질문의 답변을 입력해주세요.");
+      return;
+    }
+
     try {
       const res = await fetch(
         "https://capstone-design-ip8n.onrender.com/api/auth/signup",
@@ -93,6 +116,8 @@ export default function SignupPage() {
             name,
             username,
             password,
+            securityQuestion,
+            securityAnswer,
           }),
         }
       );
@@ -175,9 +200,7 @@ export default function SignupPage() {
           type="password"
           placeholder="비밀번호 확인"
           value={confirmPassword}
-          onChange={(e) =>
-            setConfirmPassword(e.target.value)
-          }
+          onChange={(e) => setConfirmPassword(e.target.value)}
           className="mb-2 w-full rounded-lg border border-gray-300 p-3 text-gray-900 placeholder-gray-400"
         />
 
@@ -194,6 +217,30 @@ export default function SignupPage() {
               : "비밀번호가 일치하지 않습니다 ❌"}
           </p>
         )}
+
+        {/* 보안 질문 */}
+        <select
+          value={securityQuestion}
+          onChange={(e) => setSecurityQuestion(e.target.value)}
+          className="mb-3 w-full rounded-lg border border-gray-300 bg-white p-3 text-gray-900"
+        >
+          <option value="">보안 질문을 선택해주세요</option>
+
+          {securityQuestions.map((question) => (
+            <option key={question} value={question}>
+              {question}
+            </option>
+          ))}
+        </select>
+
+        {/* 보안 답변 */}
+        <input
+          type="text"
+          placeholder="보안 질문의 답변"
+          value={securityAnswer}
+          onChange={(e) => setSecurityAnswer(e.target.value)}
+          className="mb-4 w-full rounded-lg border border-gray-300 p-3 text-gray-900 placeholder-gray-400"
+        />
 
         <button
           type="submit"
