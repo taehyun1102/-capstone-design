@@ -2,11 +2,23 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import {
+  Radar,
+  RadarChart,
+  PolarGrid,
+  PolarAngleAxis,
+  PolarRadiusAxis,
+  ResponsiveContainer,
+} from "recharts";
 
 type AnalysisResult = {
   summary: string;
   pattern: string;
   advice: string;
+  radar_chart?: {
+    axis: string;
+    value: number;
+  }[];
 };
 
 type UserInputData = {
@@ -213,6 +225,64 @@ export default function ResultPage() {
           </p>
         </section>
 
+                {/* 6대 상태 밸런스 */}
+        <section className="rounded-3xl border border-gray-100 bg-white p-6 shadow-sm">
+          <div className="mb-4">
+            <h2 className="text-lg font-bold text-gray-900">
+              📈 오늘의 상태 밸런스
+            </h2>
+            <p className="mt-1 text-sm text-gray-500">
+              AI가 분석한 오늘의 6가지 상태 수준입니다.
+            </p>
+          </div>
+
+          {result.radar_chart && result.radar_chart.length > 0 ? (
+            <div className="h-[360px] w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <RadarChart
+                  data={result.radar_chart}
+                  cx="50%"
+                  cy="50%"
+                  outerRadius="70%"
+                >
+                  <PolarGrid />
+
+                  <PolarAngleAxis
+                    dataKey="axis"
+                    tick={{
+                      fontSize: 13,
+                      fill: "#374151",
+                    }}
+                  />
+
+                  <PolarRadiusAxis
+                    angle={30}
+                    domain={[0, 5]}
+                    tick={{
+                      fontSize: 10,
+                      fill: "#9CA3AF",
+                    }}
+                  />
+
+                  <Radar
+                    name="오늘의 상태"
+                    dataKey="value"
+                    stroke="#2563EB"
+                    fill="#3B82F6"
+                    fillOpacity={0.25}
+                  />
+                </RadarChart>
+              </ResponsiveContainer>
+            </div>
+          ) : (
+            <div className="rounded-2xl bg-gray-50 p-5 text-center">
+              <p className="text-sm text-gray-500">
+                상태 밸런스 데이터를 불러오지 못했습니다.
+              </p>
+            </div>
+          )}
+        </section>
+        
         {/* 패턴 분석 */}
         <section className="rounded-3xl border border-gray-100 bg-white p-6 shadow-sm">
           <div className="mb-4">

@@ -42,6 +42,13 @@ app.post("/api/analyze", async (req, res) => {
     digitalFeeling,
     aiHint,
     memo,
+    hasScreenshot,
+    socialInteraction,
+    focusedTime,
+    frequentActivity,
+    temptingActivity,
+    hasGoal,
+    goalResult,
   } = body;
 
   if (!mood || !activity || !fatigue || !focusLevel) {
@@ -71,6 +78,13 @@ app.post("/api/analyze", async (req, res) => {
     digitalFeeling,
     aiHint,
     memo,
+    hasScreenshot,
+    socialInteraction,
+    focusedTime,
+    frequentActivity,
+    temptingActivity,
+    hasGoal,
+    goalResult,
   });
 
   await saveAnalysis({

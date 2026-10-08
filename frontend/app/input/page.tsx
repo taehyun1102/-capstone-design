@@ -26,7 +26,6 @@ type UserInputData = {
 
 type AnalysisPayload = {
   analyzedAt: string;
-
   userInput: UserInputData;
 
   // 백엔드 API용 필드
@@ -37,6 +36,14 @@ type AnalysisPayload = {
   distraction: string;
 
   memo: string;
+
+  // 행동 분석에 사용하는 추가 필드
+  socialInteraction: string;
+  focusedTime: string;
+  frequentActivity: string;
+  temptingActivity: string;
+  hasGoal: boolean;
+  goalResult: string;
 };
 
 type NoticeTone = "red" | "amber" | "violet" | "green";
@@ -179,7 +186,7 @@ export default function InputPage() {
       memo: memo.trim(),
     },
 
-    // 백엔드 API용 필드
+    // 백엔드 API용 기본 필드
     mood: dayMood,
     activity: mainActivity,
     fatigue: fatigueLevel,
@@ -187,6 +194,25 @@ export default function InputPage() {
     distraction: impulseActivity,
 
     memo: memo.trim(),
+
+    // 행동 분석에 사용하는 추가 필드
+    socialInteraction:
+      faceToFaceInteraction,
+
+    focusedTime:
+      focusTime,
+
+    frequentActivity:
+      mainActivity,
+
+    temptingActivity:
+      impulseActivity,
+
+    hasGoal:
+      hadGoal === "네",
+
+    goalResult:
+      achievedGoal,
   });
 
   const validateBeforeSubmit = () => {
@@ -498,7 +524,6 @@ export default function InputPage() {
             오늘 하루는 어떠셨나요?
           </h1>
 
-          {/* 기존 회색보다 한 단계 진하게 */}
           <p className="leading-relaxed text-gray-700">
             오늘의 활동과 상태를 기록하면 AI가
             생활 패턴과 행동 경향을 분석하고,
@@ -515,20 +540,19 @@ export default function InputPage() {
 
             <div className="mb-3 flex flex-wrap items-center gap-2">
 
-              {/* 기존 보라색 유지 */}
               <span className="inline-flex rounded-full bg-violet-100 px-3 py-1 text-sm font-semibold text-violet-700">
                 🧠 AI 생활 패턴 분석
               </span>
 
               <span
-  className="inline-flex rounded-full px-3 py-1 text-sm font-semibold"
-  style={{
-    backgroundColor: "#dbeafe",
-    color: "#1d4ed8",
-  }}
->
-  진화심리학 기반
-</span>
+                className="inline-flex rounded-full px-3 py-1 text-sm font-semibold"
+                style={{
+                  backgroundColor: "#dbeafe",
+                  color: "#1d4ed8",
+                }}
+              >
+                진화심리학 기반
+              </span>
 
             </div>
 
@@ -538,7 +562,6 @@ export default function InputPage() {
               반복되는 생활 패턴이 보입니다.
             </h2>
 
-            {/* 흐린 회색만 진하게 수정 */}
             <p className="max-w-3xl text-sm leading-7 text-gray-700">
               하루 동안의 활동, 기분, 집중도,
               피로도와 같은 정보를 바탕으로
@@ -562,7 +585,6 @@ export default function InputPage() {
                 AI 생활 패턴 분석
               </h3>
 
-              {/* 설명 글씨만 진하게 */}
               <p className="text-sm leading-6 text-gray-700">
                 입력한 하루의 데이터를 종합하여
                 반복적으로 나타나는 행동과
@@ -582,7 +604,6 @@ export default function InputPage() {
                 진화심리학적 관점
               </h3>
 
-              {/* 설명 글씨만 진하게 */}
               <p className="text-sm leading-6 text-gray-700">
                 보상 추구, 위험 회피, 사회적 관계,
                 에너지 절약과 같은 인간의 기본적인
@@ -603,7 +624,6 @@ export default function InputPage() {
                 나를 이해하는 과정
               </h3>
 
-              {/* 설명 글씨만 진하게 */}
               <p className="text-sm leading-6 text-gray-700">
                 단순히 하루를 평가하는 것이 아니라
                 자신의 행동 패턴을 돌아보고 앞으로의
@@ -619,12 +639,10 @@ export default function InputPage() {
 
             <div className="rounded-2xl border border-gray-200 bg-gray-50 p-5">
 
-              {/* 보라색 유지 */}
               <p className="mb-3 text-sm font-semibold text-violet-700">
                 이런 생각을 해본 적이 있다면
               </p>
 
-              {/* 기존 회색보다 진하게 */}
               <div className="grid gap-2 text-sm font-medium text-gray-800 md:grid-cols-2">
 
                 <p>
@@ -650,58 +668,58 @@ export default function InputPage() {
           </div>
 
           {/* 분석 과정 */}
-<div className="px-7 pb-7">
-  <div className="rounded-2xl border border-violet-200 bg-violet-50 p-5">
+          <div className="px-7 pb-7">
+            <div className="rounded-2xl border border-violet-200 bg-violet-50 p-5">
 
-    <p className="mb-4 text-sm font-bold text-violet-900">
-      AI 분석 과정
-    </p>
+              <p className="mb-4 text-sm font-bold text-violet-900">
+                AI 분석 과정
+              </p>
 
-    <div className="grid gap-4 text-sm md:grid-cols-4">
+              <div className="grid gap-4 text-sm md:grid-cols-4">
 
-      <div className="rounded-xl bg-white p-4 shadow-sm">
-        <p className="mb-2 font-bold text-gray-900">
-          01. 기록
-        </p>
+                <div className="rounded-xl bg-white p-4 shadow-sm">
+                  <p className="mb-2 font-bold text-gray-900">
+                    01. 기록
+                  </p>
 
-        <p className="leading-6 text-gray-800">
-          오늘의 활동과 상태를 입력합니다.
-        </p>
-      </div>
+                  <p className="leading-6 text-gray-800">
+                    오늘의 활동과 상태를 입력합니다.
+                  </p>
+                </div>
 
-      <div className="rounded-xl bg-white p-4 shadow-sm">
-        <p className="mb-2 font-bold text-gray-900">
-          02. 패턴 발견
-        </p>
+                <div className="rounded-xl bg-white p-4 shadow-sm">
+                  <p className="mb-2 font-bold text-gray-900">
+                    02. 패턴 발견
+                  </p>
 
-        <p className="leading-6 text-gray-800">
-          입력된 데이터를 종합적으로 살펴봅니다.
-        </p>
-      </div>
+                  <p className="leading-6 text-gray-800">
+                    입력된 데이터를 종합적으로 살펴봅니다.
+                  </p>
+                </div>
 
-      <div className="rounded-xl bg-white p-4 shadow-sm">
-        <p className="mb-2 font-bold text-gray-900">
-          03. 행동 이해
-        </p>
+                <div className="rounded-xl bg-white p-4 shadow-sm">
+                  <p className="mb-2 font-bold text-gray-900">
+                    03. 행동 이해
+                  </p>
 
-        <p className="leading-6 text-gray-800">
-          행동의 배경과 경향을 해석합니다.
-        </p>
-      </div>
+                  <p className="leading-6 text-gray-800">
+                    행동의 배경과 경향을 해석합니다.
+                  </p>
+                </div>
 
-      <div className="rounded-xl bg-white p-4 shadow-sm">
-        <p className="mb-2 font-bold text-gray-900">
-          04. 행동 추천
-        </p>
+                <div className="rounded-xl bg-white p-4 shadow-sm">
+                  <p className="mb-2 font-bold text-gray-900">
+                    04. 행동 추천
+                  </p>
 
-        <p className="leading-6 text-gray-800">
-          더 나은 하루를 위한 방향을 제안합니다.
-        </p>
-      </div>
+                  <p className="leading-6 text-gray-800">
+                    더 나은 하루를 위한 방향을 제안합니다.
+                  </p>
+                </div>
 
-    </div>
-  </div>
-</div>
+              </div>
+            </div>
+          </div>
 
           {/* 핵심 문구 */}
           <div className="border-t border-violet-100 bg-violet-50 px-7 py-5 text-center">
@@ -723,7 +741,6 @@ export default function InputPage() {
               사용자 입력
             </h2>
 
-            {/* 기존보다 조금 진하게 */}
             <p className="text-sm text-gray-600">
               오늘 하루의 활동 및 상태를 입력해 주세요.
             </p>
