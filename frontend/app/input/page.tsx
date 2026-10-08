@@ -56,7 +56,7 @@ type NoticeTone = "red" | "amber" | "violet" | "green";
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024;
 const ALLOWED_FILE_TYPES = ["image/png", "image/jpeg", "image/jpg"];
-const MEMO_MAX_LENGTH = 120;
+const MEMO_MAX_LENGTH = 500;
 
 function NoticeBox({
   message,
