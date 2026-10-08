@@ -12,9 +12,7 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleLogin = async (
-    e: React.FormEvent
-  ) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!username.trim()) {
@@ -54,10 +52,7 @@ export default function LoginPage() {
         return;
       }
 
-      localStorage.setItem(
-        "userId",
-        data.userId
-      );
+      localStorage.setItem("userId", data.userId);
 
       localStorage.setItem(
         "userName",
@@ -98,25 +93,17 @@ export default function LoginPage() {
           type="text"
           placeholder="아이디"
           value={username}
-          onChange={(e) =>
-            setUsername(e.target.value)
-          }
+          onChange={(e) => setUsername(e.target.value)}
           className="mb-3 w-full rounded-lg border border-gray-300 p-3 text-gray-900 placeholder-gray-400 focus:border-black focus:outline-none"
           required
         />
 
         <div className="relative mb-5">
           <input
-            type={
-              showPassword
-                ? "text"
-                : "password"
-            }
+            type={showPassword ? "text" : "password"}
             placeholder="비밀번호"
             value={password}
-            onChange={(e) =>
-              setPassword(e.target.value)
-            }
+            onChange={(e) => setPassword(e.target.value)}
             className="w-full rounded-lg border border-gray-300 p-3 pr-16 text-gray-900 placeholder-gray-400 focus:border-black focus:outline-none"
             required
           />
@@ -124,15 +111,11 @@ export default function LoginPage() {
           <button
             type="button"
             onClick={() =>
-              setShowPassword(
-                !showPassword
-              )
+              setShowPassword(!showPassword)
             }
             className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-blue-500 hover:text-blue-700"
           >
-            {showPassword
-              ? "숨김"
-              : "보기"}
+            {showPassword ? "숨김" : "보기"}
           </button>
         </div>
 
@@ -141,9 +124,7 @@ export default function LoginPage() {
           disabled={isLoading}
           className="w-full rounded-lg bg-black py-3 text-white transition hover:bg-gray-800 disabled:cursor-not-allowed disabled:bg-gray-500"
         >
-          {isLoading
-            ? "로그인 중..."
-            : "로그인"}
+          {isLoading ? "로그인 중..." : "로그인"}
         </button>
 
         <div className="mt-4 text-center text-sm">
@@ -151,11 +132,20 @@ export default function LoginPage() {
             아직 계정이 없나요?{" "}
             <span
               className="cursor-pointer text-blue-500 hover:underline"
-              onClick={() =>
-                router.push("/signup")
-              }
+              onClick={() => router.push("/signup")}
             >
               회원가입
+            </span>
+
+            <span className="mx-2 text-gray-300">|</span>
+
+            <span
+              className="cursor-pointer text-blue-500 hover:underline"
+              onClick={() =>
+                router.push("/forgot-password")
+              }
+            >
+              비밀번호 찾기
             </span>
           </p>
         </div>
