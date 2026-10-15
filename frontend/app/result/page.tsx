@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useEffect, useState } from "react";
@@ -36,13 +37,6 @@ type UserInputData = {
 type AnalysisPayload = {
   analyzedAt: string;
   userInput: UserInputData;
-  screenshotInfo: {
-    uploaded: boolean;
-    fileName: string;
-    analyzed: boolean;
-    skipped: boolean;
-    estimatedConfidence: number;
-  };
 };
 
 export default function ResultPage() {
@@ -108,7 +102,6 @@ export default function ResultPage() {
   return (
     <main className="min-h-screen bg-gray-50 px-4 py-10">
       <div className="mx-auto flex max-w-3xl flex-col gap-6">
-
         {/* 헤더 */}
         <section className="rounded-3xl bg-white p-7 shadow-sm">
           <p className="mb-2 text-sm font-semibold text-blue-600">
@@ -138,7 +131,6 @@ export default function ResultPage() {
             </div>
 
             <div className="grid gap-3 sm:grid-cols-2">
-
               <div className="rounded-2xl bg-gray-50 p-4">
                 <p className="mb-1 text-xs font-medium text-gray-500">
                   주요 활동
@@ -192,7 +184,6 @@ export default function ResultPage() {
                   {user.faceToFaceInteraction}
                 </p>
               </div>
-
             </div>
 
             {/* 메모 */}
@@ -225,12 +216,13 @@ export default function ResultPage() {
           </p>
         </section>
 
-                {/* 6대 상태 밸런스 */}
+        {/* 6대 상태 밸런스 */}
         <section className="rounded-3xl border border-gray-100 bg-white p-6 shadow-sm">
           <div className="mb-4">
             <h2 className="text-lg font-bold text-gray-900">
               📈 오늘의 상태 밸런스
             </h2>
+
             <p className="mt-1 text-sm text-gray-500">
               AI가 분석한 오늘의 6가지 상태 수준입니다.
             </p>
@@ -282,7 +274,7 @@ export default function ResultPage() {
             </div>
           )}
         </section>
-        
+
         {/* 패턴 분석 */}
         <section className="rounded-3xl border border-gray-100 bg-white p-6 shadow-sm">
           <div className="mb-4">
@@ -297,14 +289,13 @@ export default function ResultPage() {
 
           <div className="rounded-2xl bg-violet-50 p-5">
             <p className="whitespace-pre-line text-sm leading-7 text-violet-900">
-  {result.pattern}
-</p>
+              {result.pattern}
+            </p>
           </div>
         </section>
 
         {/* 행동 추천 */}
         <section className="rounded-3xl border border-gray-100 bg-white p-6 shadow-sm">
-
           <button
             type="button"
             onClick={() => setShowAdvice(!showAdvice)}
@@ -328,56 +319,14 @@ export default function ResultPage() {
           {showAdvice && (
             <div className="mt-5 rounded-2xl border border-emerald-100 bg-emerald-50 p-5">
               <p className="whitespace-pre-line text-sm leading-7 text-emerald-900">
-  {result.advice}
-</p>
+                {result.advice}
+              </p>
             </div>
           )}
-
         </section>
-
-        {/* 스크린샷 정보 */}
-        {payload?.screenshotInfo && (
-          <section className="rounded-3xl border border-gray-100 bg-white p-6 shadow-sm">
-
-            <h2 className="mb-4 text-lg font-bold text-gray-900">
-              📱 사용 기록 입력 정보
-            </h2>
-
-            {payload.screenshotInfo.uploaded ? (
-              <div className="rounded-2xl bg-gray-50 p-4">
-                <p className="text-sm font-semibold text-gray-900">
-                  스크린샷이 입력되었습니다.
-                </p>
-
-                {payload.screenshotInfo.fileName && (
-                  <p className="mt-1 text-xs text-gray-500">
-                    파일명: {payload.screenshotInfo.fileName}
-                  </p>
-                )}
-
-                <p className="mt-3 text-xs leading-relaxed text-gray-500">
-                  현재 시스템에서는 업로드된 스크린샷의 존재 여부를
-                  분석 요청에 전달하고 있습니다.
-                </p>
-              </div>
-            ) : (
-              <div className="rounded-2xl bg-gray-50 p-4">
-                <p className="text-sm font-semibold text-gray-900">
-                  스크린샷 없이 분석했습니다.
-                </p>
-
-                <p className="mt-1 text-xs leading-relaxed text-gray-500">
-                  사용자 입력 정보를 기반으로 분석이 진행되었습니다.
-                </p>
-              </div>
-            )}
-
-          </section>
-        )}
 
         {/* 하단 버튼 */}
         <section className="flex flex-col gap-3 sm:flex-row">
-
           <button
             type="button"
             onClick={() => router.push("/input")}
@@ -393,9 +342,7 @@ export default function ResultPage() {
           >
             마이페이지
           </button>
-
         </section>
-
       </div>
     </main>
   );

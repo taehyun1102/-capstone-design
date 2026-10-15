@@ -1,3 +1,4 @@
+
 const express = require("express");
 const cors = require("cors");
 const { connectDB } = require("./db");
@@ -42,7 +43,6 @@ app.post("/api/analyze", async (req, res) => {
     digitalFeeling,
     aiHint,
     memo,
-    hasScreenshot,
     socialInteraction,
     focusedTime,
     frequentActivity,
@@ -78,7 +78,6 @@ app.post("/api/analyze", async (req, res) => {
     digitalFeeling,
     aiHint,
     memo,
-    hasScreenshot,
     socialInteraction,
     focusedTime,
     frequentActivity,
