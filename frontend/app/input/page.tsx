@@ -634,38 +634,7 @@ export default function InputPage() {
 
           </div>
 
-          {/* 타겟 사용자 공감 문구 */}
-          <div className="border-t border-gray-100 px-7 py-6">
-
-            <div className="rounded-2xl border border-gray-200 bg-gray-50 p-5">
-
-              <p className="mb-3 text-sm font-semibold text-violet-700">
-                이런 생각을 해본 적이 있다면
-              </p>
-
-              <div className="grid gap-2 text-sm font-medium text-gray-800 md:grid-cols-2">
-
-                <p>
-                  • 열심히 살고 있는데 왜 이렇게 지칠까?
-                </p>
-
-                <p>
-                  • 나는 하루를 어떻게 보내고 있을까?
-                </p>
-
-                <p>
-                  • 왜 해야 할 일을 자꾸 미루게 될까?
-                </p>
-
-                <p>
-                  • 나에게 반복되는 행동 패턴이 있을까?
-                </p>
-
-              </div>
-
-            </div>
-
-          </div>
+          
 
           {/* 분석 과정 */}
           <div className="px-7 pb-7">
@@ -721,15 +690,7 @@ export default function InputPage() {
             </div>
           </div>
 
-          {/* 핵심 문구 */}
-          <div className="border-t border-violet-100 bg-violet-50 px-7 py-5 text-center">
-
-            <p className="font-semibold text-violet-900">
-              나를 바꾸기 전에,
-              먼저 나의 하루를 이해해보세요.
-            </p>
-
-          </div>
+          
 
         </section>
 
