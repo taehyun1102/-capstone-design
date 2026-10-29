@@ -3,7 +3,7 @@ const OpenAI = require("openai");
 const {
   SYSTEM_PROMPT,
   buildUserPrompt,
-} = require("../AI/diaryMoodAnalysisPrompt");
+} = require("./diaryMoodAnalysisPrompt");
 
 async function generateDiaryMoodAnalysis(diaryText) {
   if (!process.env.OPENROUTER_API_KEY) {
