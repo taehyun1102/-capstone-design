@@ -22,6 +22,13 @@ type AnalysisResult = {
   }[];
 };
 
+type SavedAnalysis = {
+  id: string;
+  analyzedAt: string;
+  payload: AnalysisPayload | null;
+  result: AnalysisResult;
+};
+
 type UserInputData = {
   mainActivity: string;
   dayMood: string;
@@ -45,6 +52,75 @@ export default function ResultPage() {
   const [result, setResult] = useState<AnalysisResult | null>(null);
   const [payload, setPayload] = useState<AnalysisPayload | null>(null);
   const [showAdvice, setShowAdvice] = useState(false);
+
+    
+  const handleSaveAnalysis = () => {
+    if (!result) {
+      alert("저장할 분석 결과가 없습니다.");
+      return;
+    }
+
+    if (!payload?.userInput) {
+      alert("설문 입력 정보를 찾을 수 없습니다.");
+      return;
+    }
+
+    try {
+      const storageKey = "savedAnalyses";
+      const stored = localStorage.getItem(storageKey);
+
+      const savedAnalyses: SavedAnalysis[] = stored
+        ? JSON.parse(stored)
+        : [];
+
+      const currentInput = payload.userInput;
+
+      // 설문 답변과 추가 메모가 모두 같은 기록이 있는지 확인
+      const isDuplicate = savedAnalyses.some((item) => {
+        const savedInput = item.payload?.userInput;
+
+        if (!savedInput) {
+          return false;
+        }
+
+        return (
+          savedInput.mainActivity === currentInput.mainActivity &&
+          savedInput.dayMood === currentInput.dayMood &&
+          savedInput.focusTime === currentInput.focusTime &&
+          savedInput.fatigueLevel === currentInput.fatigueLevel &&
+          savedInput.impulseActivity === currentInput.impulseActivity &&
+          savedInput.hadGoal === currentInput.hadGoal &&
+          savedInput.achievedGoal === currentInput.achievedGoal &&
+          savedInput.faceToFaceInteraction ===
+            currentInput.faceToFaceInteraction &&
+          savedInput.memo === currentInput.memo
+        );
+      });
+
+      if (isDuplicate) {
+        alert("동일한 설문 답변과 추가 메모가 이미 저장되어 있습니다.");
+        return;
+      }
+
+      // 중복이 아니면 새 분석 기록 저장
+      const newAnalysis: SavedAnalysis = {
+        id: crypto.randomUUID(),
+        analyzedAt: payload.analyzedAt || new Date().toISOString(),
+        payload,
+        result,
+      };
+
+      savedAnalyses.unshift(newAnalysis);
+
+      localStorage.setItem(storageKey, JSON.stringify(savedAnalyses));
+
+      alert("분석 결과가 저장되었습니다!");
+    } catch (error) {
+      console.error("분석 결과 저장 실패:", error);
+      alert("분석 결과 저장에 실패했습니다. 브라우저 저장 공간을 확인해 주세요.");
+    }
+  };
+
 
   useEffect(() => {
     try {
@@ -325,8 +401,16 @@ export default function ResultPage() {
           )}
         </section>
 
-        {/* 하단 버튼 */}
+                {/* 하단 버튼 */}
         <section className="flex flex-col gap-3 sm:flex-row">
+          <button
+            type="button"
+            onClick={handleSaveAnalysis}
+            className="w-full rounded-2xl bg-blue-600 py-4 font-semibold text-white shadow-sm transition hover:bg-blue-700"
+          >
+            💾 분석 결과 저장하기
+          </button>
+
           <button
             type="button"
             onClick={() => router.push("/input")}

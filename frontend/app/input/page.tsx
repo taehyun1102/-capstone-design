@@ -285,6 +285,8 @@ export default function InputPage() {
         payload
       );
 
+      sessionStorage.removeItem("currentAnalysisSaveId");
+
       // 입력 데이터 저장
       sessionStorage.setItem(
         "analysisPayload",
@@ -508,29 +510,46 @@ export default function InputPage() {
     <main className="min-h-screen bg-gray-50 px-4 py-10">
       <div className="mx-auto flex max-w-4xl flex-col gap-8">
 
-        {/* 페이지 소개 */}
-        <section>
-          <p className="mb-2 text-sm font-semibold text-blue-600">
-            AI 기반 하루 흐름 분석 시스템
-          </p>
+        
+{/* 페이지 소개 */}
+<section>
+  <div className="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
+    {/* 왼쪽: 기존 페이지 소개 */}
+    <div className="min-w-0 flex-1">
+      <p className="mb-2 text-sm font-semibold text-blue-600">
+        AI 기반 하루 흐름 분석 시스템
+      </p>
 
-          {userName && (
-            <p className="mb-2 text-lg font-semibold text-blue-600">
-              안녕하세요, {userName}님 👋
-            </p>
-          )}
+      {userName && (
+        <p className="mb-2 text-lg font-semibold text-blue-600">
+          안녕하세요, {userName}님 👋
+        </p>
+      )}
 
-          <h1 className="mb-3 text-3xl font-bold text-gray-900">
-            오늘 하루는 어떠셨나요?
-          </h1>
+      <h1 className="mb-3 text-3xl font-bold text-gray-900">
+        오늘 하루는 어떠셨나요?
+      </h1>
 
-          <p className="leading-relaxed text-gray-700">
-            오늘의 활동과 상태를 기록하면 AI가
-            생활 패턴과 행동 경향을 분석하고,
-            더 나은 하루를 위한 방향을 찾아볼 수
-            있도록 도와드립니다.
-          </p>
-        </section>
+      <p className="leading-relaxed text-gray-700">
+        오늘의 활동과 상태를 기록하면 AI가
+        생활 패턴과 행동 경향을 분석하고,
+        더 나은 하루를 위한 방향을 찾아볼 수
+        있도록 도와드립니다.
+      </p>
+    </div>
+
+    {/* 오른쪽 위: 오늘의 심리 상태 대시보드 */}
+    <button
+      type="button"
+      onClick={() => router.push("/today-dashboard")}
+      className="inline-flex shrink-0 items-center justify-center gap-2 self-start rounded-2xl border border-purple-200 bg-white px-5 py-3 font-semibold text-purple-700 shadow-sm transition hover:-translate-y-0.5 hover:border-purple-300 hover:bg-purple-50 hover:shadow-md"
+    >
+      <span>📅</span>
+      <span>오늘의 심리 상태 대시보드</span>
+    </button>
+  </div>
+</section>
+
 
         {/* AI 분석 안내 */}
         <section className="overflow-hidden rounded-3xl border border-violet-100 bg-white shadow-sm">
@@ -879,47 +898,53 @@ export default function InputPage() {
 
           </div>
 
-          {/* 버튼 */}
-          <div className="flex flex-col gap-4">
+          
+{/* 버튼 */}
+<div className="flex flex-col gap-4">
 
-            <button
-              disabled={
-                isSubmitting
-              }
-              onClick={
-                handleSubmit
-              }
-              className="flex w-full items-center justify-center gap-2 rounded-2xl bg-blue-600 py-4 font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-70"
-            >
-              {isSubmitting && (
-                <div className="h-5 w-5 animate-spin rounded-full border-2 border-white border-t-blue-300" />
-              )}
+  {/* 입력 내용을 분석하고 결과 페이지로 이동 */}
+  <button
+    type="button"
+    disabled={isSubmitting}
+    onClick={handleSubmit}
+    className="flex w-full items-center justify-center gap-2 rounded-2xl bg-blue-600 py-4 font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-70"
+  >
+    {isSubmitting && (
+      <div className="h-5 w-5 animate-spin rounded-full border-2 border-white border-t-blue-300" />
+    )}
 
-              {isSubmitting
-                ? "결과 페이지로 이동 중..."
-                : "입력 내용으로 최종 결과 보기"}
-            </button>
+    {isSubmitting
+      ? "결과 페이지로 이동 중..."
+      : "입력 내용으로 최종 결과 보기"}
+  </button>
 
-            <Link
-              href="/diary"
-              className="block w-full rounded-2xl bg-linear-to-r from-purple-500 to-pink-500 py-4 text-center font-semibold text-black shadow-lg transition hover:opacity-90"
-            >
-              📖 나만의 일기
-            </Link>
+  {/* 저장된 분석 기록 페이지로 이동 */}
+  <button
+    type="button"
+    onClick={() => router.push("/analysis-history")}
+    className="w-full rounded-2xl bg-purple-600 py-4 font-semibold text-white shadow-lg transition hover:bg-purple-700"
+  >
+    📚 분석 기록 보기
+  </button>
 
-            <button
-              type="button"
-              onClick={() =>
-                router.push(
-                  "/mypage"
-                )
-              }
-              className="w-full rounded-2xl bg-gray-700 py-4 font-semibold text-white shadow-lg transition hover:bg-gray-800"
-            >
-              🪐✨ 마이페이지
-            </button>
+  {/* 나만의 일기 페이지로 이동 */}
+  <Link
+    href="/diary"
+    className="block w-full rounded-2xl bg-linear-to-r from-purple-500 to-pink-500 py-4 text-center font-semibold text-black shadow-lg transition hover:opacity-90"
+  >
+    📖 나만의 일기
+  </Link>
 
-          </div>
+  {/* 마이페이지로 이동 */}
+  <button
+    type="button"
+    onClick={() => router.push("/mypage")}
+    className="w-full rounded-2xl bg-gray-700 py-4 font-semibold text-white shadow-lg transition hover:bg-gray-800"
+  >
+    🪐✨ 마이페이지
+  </button>
+</div>
+
 
         </section>
 

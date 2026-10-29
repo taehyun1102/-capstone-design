@@ -9,6 +9,8 @@ type Diary = {
   title: string;
   date: string;
   content: string;
+  analysisResult?: string;
+  analyzedAt?: string;
 };
 
 export default function DiaryDetailPage() {
@@ -25,17 +27,20 @@ export default function DiaryDetailPage() {
     if (!id) return;
 
     try {
-      const saved = JSON.parse(
+      const saved: Diary[] = JSON.parse(
         localStorage.getItem("myDiary") || "[]"
       );
 
       const found = saved.find(
-        (item: Diary) => String(item.id) === String(id)
+        (item) => String(item.id) === String(id)
       );
 
       setDiary(found || null);
-    } catch {
+      setAnalysisResult(found?.analysisResult || "");
+    } catch (error) {
+      console.error("일기 불러오기 실패:", error);
       setDiary(null);
+      setAnalysisResult("");
     }
   }, [searchParams]);
 
@@ -43,9 +48,7 @@ export default function DiaryDetailPage() {
     if (!diary || isAnalyzing) return;
 
     setErrorMessage("");
-    setAnalysisResult("");
 
-    // 팀원이 알려 준 '전체 API 경로'를 환경변수로 설정해야 합니다.
     const apiUrl =
       process.env.NEXT_PUBLIC_DIARY_ANALYSIS_API_URL;
 
@@ -64,7 +67,6 @@ export default function DiaryDetailPage() {
         headers: {
           "Content-Type": "application/json",
         },
-        // 임시 가정: 실제 API 요청 형식과 일치하는지 확인 필요
         body: JSON.stringify({
           diaryText: diary.content,
         }),
@@ -80,7 +82,6 @@ export default function DiaryDetailPage() {
         );
       }
 
-      // 임시 가정: 실제 API 응답 필드와 일치하는지 확인 필요
       const result = data?.closing_mood_analysis;
 
       if (typeof result !== "string" || !result.trim()) {
@@ -89,8 +90,35 @@ export default function DiaryDetailPage() {
         );
       }
 
-      setAnalysisResult(result);
+      // 최신 저장 일기 목록을 가져온 뒤 현재 일기만 갱신
+      const saved: Diary[] = JSON.parse(
+        localStorage.getItem("myDiary") || "[]"
+      );
+
+      const updated = saved.map((item) =>
+        String(item.id) === String(diary.id)
+          ? {
+              ...item,
+              analysisResult: result,
+              analyzedAt: new Date().toISOString(),
+            }
+          : item
+      );
+
+      localStorage.setItem("myDiary", JSON.stringify(updated));
+
+      const updatedDiary = updated.find(
+        (item) => String(item.id) === String(diary.id)
+      );
+
+      if (updatedDiary) {
+        setDiary(updatedDiary);
+        setAnalysisResult(updatedDiary.analysisResult || "");
+      }
+
+      alert("일기 분석 결과를 저장했습니다!");
     } catch (error) {
+      console.error("일기 분석 실패:", error);
       setErrorMessage(
         error instanceof Error
           ? error.message
@@ -105,9 +133,7 @@ export default function DiaryDetailPage() {
     return (
       <div className="min-h-screen bg-gradient-to-b from-white to-pink-50 p-5">
         <div className="rounded-3xl bg-white p-8 text-center shadow">
-          <p className="text-gray-500">
-            일기를 찾을 수 없습니다.
-          </p>
+          <p className="text-gray-500">일기를 찾을 수 없습니다.</p>
         </div>
 
         <button
@@ -141,7 +167,11 @@ export default function DiaryDetailPage() {
         disabled={isAnalyzing}
         className="mt-5 w-full rounded-2xl bg-gradient-to-r from-purple-500 to-pink-500 py-4 font-semibold text-white shadow-lg disabled:cursor-not-allowed disabled:opacity-60"
       >
-        {isAnalyzing ? "🧠 일기 분석 중..." : "🧠 분석하기"}
+        {isAnalyzing
+          ? "🧠 일기 분석 중..."
+          : analysisResult
+            ? "🔄 다시 분석하기"
+            : "🧠 분석하기"}
       </button>
 
       {errorMessage && (
@@ -158,9 +188,17 @@ export default function DiaryDetailPage() {
           <h2 className="mb-3 text-lg font-bold text-purple-700">
             🌙 하루 마무리 감정 분석
           </h2>
+
           <p className="whitespace-pre-wrap leading-8 text-gray-800">
             {analysisResult}
           </p>
+
+          {diary.analyzedAt && (
+            <p className="mt-4 text-xs text-gray-400">
+              마지막 분석:{" "}
+              {new Date(diary.analyzedAt).toLocaleString("ko-KR")}
+            </p>
+          )}
         </section>
       )}
 
