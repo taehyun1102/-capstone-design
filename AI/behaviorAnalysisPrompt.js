@@ -67,7 +67,6 @@ const buildUserPrompt = (data) => {
 - 목표 설정 여부: ${data.hasGoal ? '있음' : '없음'}
 - 목표 달성 여부: ${data.goalResult || '해당 없음'}
 - 메모: "${data.memo?.trim() || '없음'}"
-- 스크린샷 첨부: ${data.hasScreenshot ? '있음' : '없음'}
   `.trim();
 };
 
