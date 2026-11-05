@@ -5,74 +5,131 @@ import { useEffect, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 
 type Diary = {
-  id: string | number;
+  id: string;
   title: string;
   date: string;
   content: string;
   analysisResult?: string;
-  analyzedAt?: string;
+  analyzedAt?: string | null;
 };
+
+const API_BASE_URL =
+  process.env.NEXT_PUBLIC_API_URL ||
+  "https://capstone-design-ip8n.onrender.com";
 
 export default function DiaryDetailPage() {
   const searchParams = useSearchParams();
   const router = useRouter();
 
   const [diary, setDiary] = useState<Diary | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysisResult, setAnalysisResult] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 
+  // MongoDB에서 해당 일기 조회
   useEffect(() => {
-    const id = searchParams.get("id");
-    if (!id) return;
+    const fetchDiary = async () => {
+      const id = searchParams.get("id");
 
-    try {
-      const saved: Diary[] = JSON.parse(
-        localStorage.getItem("myDiary") || "[]"
-      );
+      if (!id) {
+        setDiary(null);
+        setIsLoading(false);
+        return;
+      }
 
-      const found = saved.find(
-        (item) => String(item.id) === String(id)
-      );
+      const token = localStorage.getItem("token");
 
-      setDiary(found || null);
-      setAnalysisResult(found?.analysisResult || "");
-    } catch (error) {
-      console.error("일기 불러오기 실패:", error);
-      setDiary(null);
-      setAnalysisResult("");
-    }
-  }, [searchParams]);
+      if (!token) {
+        alert("로그인이 필요합니다. 다시 로그인해주세요.");
+        router.push("/login");
+        return;
+      }
 
+      try {
+        const response = await fetch(
+          `${API_BASE_URL}/api/diary/${id}`,
+          {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        const data = await response.json();
+
+        if (response.status === 401) {
+          alert("로그인 정보가 만료되었습니다. 다시 로그인해주세요.");
+          localStorage.removeItem("token");
+          router.push("/login");
+          return;
+        }
+
+        if (!response.ok) {
+          throw new Error(
+            data.message || "일기를 불러오지 못했습니다."
+          );
+        }
+
+        const foundDiary = data.diary;
+
+        setDiary(foundDiary || null);
+        setAnalysisResult(foundDiary?.analysisResult || "");
+      } catch (error) {
+        console.error("일기 불러오기 실패:", error);
+
+        setDiary(null);
+        setAnalysisResult("");
+
+        setErrorMessage(
+          error instanceof Error
+            ? error.message
+            : "일기를 불러오는 중 오류가 발생했습니다."
+        );
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchDiary();
+  }, [searchParams, router]);
+
+  // AI 감정 분석
   const handleAnalyze = async () => {
     if (!diary || isAnalyzing) return;
 
     setErrorMessage("");
 
-    const apiUrl =
-      process.env.NEXT_PUBLIC_DIARY_ANALYSIS_API_URL;
+    const token = localStorage.getItem("token");
 
-    if (!apiUrl) {
-      setErrorMessage(
-        "일기 분석 API 주소가 설정되지 않았습니다. 팀원에게 전달받은 전체 API 경로를 설정해 주세요."
-      );
+    if (!token) {
+      alert("로그인이 필요합니다. 다시 로그인해주세요.");
+      router.push("/login");
       return;
     }
 
     setIsAnalyzing(true);
 
     try {
-      const response = await fetch(apiUrl, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          diaryText: diary.content,
-        }),
-      });
+      const response = await fetch(
+        `${API_BASE_URL}/api/diary/${diary.id}/analyze`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       const data = await response.json();
+
+      if (response.status === 401) {
+        alert("로그인 정보가 만료되었습니다. 다시 로그인해주세요.");
+        localStorage.removeItem("token");
+        router.push("/login");
+        return;
+      }
 
       if (!response.ok) {
         throw new Error(
@@ -86,39 +143,18 @@ export default function DiaryDetailPage() {
 
       if (typeof result !== "string" || !result.trim()) {
         throw new Error(
-          "분석 응답 형식이 예상과 다릅니다. 팀원에게 응답 데이터 형식을 확인해 주세요."
+          "분석 결과가 올바른 형식으로 전달되지 않았습니다."
         );
       }
 
-      // 최신 저장 일기 목록을 가져온 뒤 현재 일기만 갱신
-      const saved: Diary[] = JSON.parse(
-        localStorage.getItem("myDiary") || "[]"
-      );
-
-      const updated = saved.map((item) =>
-        String(item.id) === String(diary.id)
-          ? {
-              ...item,
-              analysisResult: result,
-              analyzedAt: new Date().toISOString(),
-            }
-          : item
-      );
-
-      localStorage.setItem("myDiary", JSON.stringify(updated));
-
-      const updatedDiary = updated.find(
-        (item) => String(item.id) === String(diary.id)
-      );
-
-      if (updatedDiary) {
-        setDiary(updatedDiary);
-        setAnalysisResult(updatedDiary.analysisResult || "");
-      }
+      // 서버에서 저장된 일기 정보 갱신
+      setDiary(data.diary);
+      setAnalysisResult(result);
 
       alert("일기 분석 결과를 저장했습니다!");
     } catch (error) {
       console.error("일기 분석 실패:", error);
+
       setErrorMessage(
         error instanceof Error
           ? error.message
@@ -129,11 +165,27 @@ export default function DiaryDetailPage() {
     }
   };
 
+  // 일기 불러오는 중
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-white to-pink-50 p-5">
+        <div className="rounded-3xl bg-white p-8 text-center shadow">
+          <p className="text-gray-500">
+            일기를 불러오는 중입니다...
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  // 일기를 찾을 수 없는 경우
   if (!diary) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-white to-pink-50 p-5">
         <div className="rounded-3xl bg-white p-8 text-center shadow">
-          <p className="text-gray-500">일기를 찾을 수 없습니다.</p>
+          <p className="text-gray-500">
+            {errorMessage || "일기를 찾을 수 없습니다."}
+          </p>
         </div>
 
         <button

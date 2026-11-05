@@ -1,7 +1,12 @@
+
 "use client";
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+
+const API_BASE_URL =
+  process.env.NEXT_PUBLIC_API_URL ||
+  "https://capstone-design-ip8n.onrender.com";
 
 export default function MyPage() {
   const router = useRouter();
@@ -14,20 +19,30 @@ export default function MyPage() {
     setUsername(localStorage.getItem("username") || "");
   }, []);
 
-  const handleLogout = () => {
+  // 로그인 정보 전체 삭제
+  const clearLoginInfo = () => {
+    localStorage.removeItem("token");
     localStorage.removeItem("userId");
     localStorage.removeItem("userName");
     localStorage.removeItem("username");
+  };
+
+  // 로그아웃
+  const handleLogout = () => {
+    clearLoginInfo();
 
     alert("로그아웃되었습니다.");
     router.push("/login");
   };
 
+  // 회원탈퇴
   const handleDeleteAccount = async () => {
     const userId = localStorage.getItem("userId");
+    const token = localStorage.getItem("token");
 
-    if (!userId) {
-      alert("로그인 정보가 없습니다.");
+    if (!userId || !token) {
+      alert("로그인 정보가 없습니다. 다시 로그인해주세요.");
+      router.push("/login");
       return;
     }
 
@@ -39,11 +54,12 @@ export default function MyPage() {
 
     try {
       const res = await fetch(
-        "https://capstone-design-ip8n.onrender.com/api/auth/delete-account",
+        `${API_BASE_URL}/api/auth/delete-account`,
         {
           method: "DELETE",
           headers: {
             "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({ userId }),
         }
@@ -52,19 +68,17 @@ export default function MyPage() {
       const data = await res.json();
 
       if (!res.ok) {
-        alert(data.message);
+        alert(data.message || "회원탈퇴에 실패했습니다.");
         return;
       }
 
-      localStorage.removeItem("userId");
-      localStorage.removeItem("userName");
-      localStorage.removeItem("username");
+      clearLoginInfo();
 
       alert("회원탈퇴가 완료되었습니다.");
       router.push("/login");
     } catch (err) {
-      console.error(err);
-      alert("회원탈퇴 실패");
+      console.error("회원탈퇴 오류:", err);
+      alert("회원탈퇴 중 오류가 발생했습니다.");
     }
   };
 

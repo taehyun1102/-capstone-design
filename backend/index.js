@@ -2,14 +2,17 @@
 const express = require("express");
 const cors = require("cors");
 const { connectDB } = require("./db");
+
 const { generateMobileAnalysis } = require("./analyzeService");
+
 const {
-  TEMP_USER_ID,
   saveAnalysis,
   getAnalysesByUserId,
 } = require("./analysisStore");
-const { generateDiaryMoodAnalysis } = require("./diaryMoodAnalysisService");
+
 const authRouter = require("./routes/auth");
+const diaryRouter = require("./routes/diary");
+const authenticateToken = require("./middleware/auth");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -17,14 +20,20 @@ const PORT = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json({ limit: "1mb" }));
 
+// 서버 상태 확인
 app.get("/health", (_req, res) => {
   res.json({ status: "ok" });
 });
 
+// 회원가입 및 로그인 API
 app.use("/api/auth", authRouter);
 
-// 기존 하루 분석 API
-app.post("/api/analyze", async (req, res, next) => {
+// 일기 CRUD 및 감정 분석 API
+app.use("/api/diary", diaryRouter);
+
+// 하루 생활 패턴 분석 API
+// 로그인한 사용자만 분석 가능
+app.post("/api/analyze", authenticateToken, async (req, res, next) => {
   try {
     const body = req.body;
 
@@ -68,7 +77,8 @@ app.post("/api/analyze", async (req, res, next) => {
       });
     }
 
-    const userId = body.userId || TEMP_USER_ID;
+    // 요청 body의 userId가 아닌 인증된 사용자 ID 사용
+    const userId = req.userId;
 
     const result = await generateMobileAnalysis({
       mood,
@@ -99,6 +109,11 @@ app.post("/api/analyze", async (req, res, next) => {
       summary: result.summary,
       pattern: result.pattern,
       advice: result.advice,
+      radar_chart: result.radar_chart,
+      payload: {
+        userInput: body,
+      },
+      result,
       createdAt: new Date(),
     });
 
@@ -108,40 +123,29 @@ app.post("/api/analyze", async (req, res, next) => {
   }
 });
 
-// 새 일기 감정 분석 API
-app.post("/api/diary/analyze", async (req, res, next) => {
-  try {
-    const { diaryText } = req.body || {};
+// 로그인한 사용자의 분석 기록만 조회
+app.get(
+  "/api/analysis/history",
+  authenticateToken,
+  async (req, res, next) => {
+    try {
+      const history = await getAnalysesByUserId(req.userId);
 
-    if (typeof diaryText !== "string" || !diaryText.trim()) {
-      return res.status(400).json({
-        error: "Missing required fields",
-        message: "diaryText는 필수입니다.",
-      });
+      return res.json(history);
+    } catch (err) {
+      next(err);
     }
-
-    const result = await generateDiaryMoodAnalysis(diaryText);
-    return res.json(result);
-  } catch (err) {
-    next(err);
   }
-});
+);
 
-// 기존 분석 기록 조회 API
-app.get("/api/analysis/history", async (req, res, next) => {
-  try {
-    const userId = req.query.userId || TEMP_USER_ID;
-    const history = await getAnalysesByUserId(userId);
-    return res.json(history);
-  } catch (err) {
-    next(err);
-  }
-});
-
+// 존재하지 않는 API 요청 처리
 app.use((_req, res) => {
-  res.status(404).json({ error: "Not Found" });
+  res.status(404).json({
+    error: "Not Found",
+  });
 });
 
+// 공통 오류 처리
 app.use((err, _req, res, _next) => {
   if (err instanceof SyntaxError && err.status === 400 && "body" in err) {
     return res.status(400).json({
@@ -158,6 +162,7 @@ app.use((err, _req, res, _next) => {
   });
 });
 
+// MongoDB 연결 후 서버 실행
 connectDB()
   .then(() => {
     app.listen(PORT, () => {

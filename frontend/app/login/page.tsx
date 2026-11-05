@@ -1,7 +1,12 @@
+
 "use client";
 
-import { useState } from "react";
+import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
+
+const API_BASE_URL =
+  process.env.NEXT_PUBLIC_API_URL ||
+  "https://capstone-design-ip8n.onrender.com";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -12,7 +17,7 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleLogin = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (!username.trim()) {
@@ -29,14 +34,14 @@ export default function LoginPage() {
 
     try {
       const res = await fetch(
-        "https://capstone-design-ip8n.onrender.com/api/auth/login",
+        `${API_BASE_URL}/api/auth/login`,
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            username,
+            username: username.trim(),
             password,
           }),
         }
@@ -52,23 +57,27 @@ export default function LoginPage() {
         return;
       }
 
+      // 서버에서 발급한 인증 토큰 확인
+      if (!data.token) {
+        console.error("로그인 응답에 token이 없습니다:", data);
+
+        alert(
+          "인증 토큰을 받지 못했습니다. 서버 로그인 API를 확인해주세요."
+        );
+        return;
+      }
+
+      // 로그인 정보 저장
+      localStorage.setItem("token", data.token);
       localStorage.setItem("userId", data.userId);
-
-      localStorage.setItem(
-        "userName",
-        data.name || ""
-      );
-
-      localStorage.setItem(
-        "username",
-        data.username || ""
-      );
+      localStorage.setItem("userName", data.name || "");
+      localStorage.setItem("username", data.username || "");
 
       alert("로그인 성공!");
 
       router.push("/input");
     } catch (error) {
-      console.error(error);
+      console.error("로그인 오류:", error);
       alert("서버 연결 실패");
     } finally {
       setIsLoading(false);
@@ -110,9 +119,7 @@ export default function LoginPage() {
 
           <button
             type="button"
-            onClick={() =>
-              setShowPassword(!showPassword)
-            }
+            onClick={() => setShowPassword(!showPassword)}
             className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-blue-500 hover:text-blue-700"
           >
             {showPassword ? "숨김" : "보기"}
@@ -141,9 +148,7 @@ export default function LoginPage() {
 
             <span
               className="cursor-pointer text-blue-500 hover:underline"
-              onClick={() =>
-                router.push("/forgot-password")
-              }
+              onClick={() => router.push("/forgot-password")}
             >
               비밀번호 찾기
             </span>

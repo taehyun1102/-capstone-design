@@ -1,12 +1,108 @@
+
 const crypto = require("crypto");
 const bcrypt = require("bcrypt");
 const User = require("./models/User");
 
 const SALT_ROUNDS = 10;
 
+// 로그인 인증 토큰 유효 기간: 7일
+const AUTH_TOKEN_EXPIRES_IN = 7 * 24 * 60 * 60;
+
 // 비밀번호 찾기 본인확인 토큰 저장
 // token -> { userId, expiresAt }
 const passwordResetTokens = new Map();
+
+// 인증 토큰 서명에 사용할 비밀키
+function getAuthSecret() {
+  const secret = process.env.AUTH_TOKEN_SECRET;
+
+  if (!secret) {
+    throw new Error(
+      "AUTH_TOKEN_SECRET 환경변수가 설정되지 않았습니다."
+    );
+  }
+
+  return secret;
+}
+
+// 로그인 인증 토큰 생성
+function createAuthToken(userId) {
+  const payload = {
+    userId,
+    exp: Math.floor(Date.now() / 1000) + AUTH_TOKEN_EXPIRES_IN,
+  };
+
+  const encodedPayload = Buffer.from(
+    JSON.stringify(payload)
+  ).toString("base64url");
+
+  const signature = crypto
+    .createHmac("sha256", getAuthSecret())
+    .update(encodedPayload)
+    .digest("base64url");
+
+  return `${encodedPayload}.${signature}`;
+}
+
+// 로그인 인증 토큰 검증
+function verifyAuthToken(token) {
+  try {
+    if (typeof token !== "string") {
+      return null;
+    }
+
+    const parts = token.split(".");
+
+    if (parts.length !== 2) {
+      return null;
+    }
+
+    const [encodedPayload, receivedSignature] = parts;
+
+    const expectedSignature = crypto
+      .createHmac("sha256", getAuthSecret())
+      .update(encodedPayload)
+      .digest();
+
+    const receivedSignatureBuffer = Buffer.from(
+      receivedSignature,
+      "base64url"
+    );
+
+    if (
+      expectedSignature.length !== receivedSignatureBuffer.length ||
+      !crypto.timingSafeEqual(
+        expectedSignature,
+        receivedSignatureBuffer
+      )
+    ) {
+      return null;
+    }
+
+    const payload = JSON.parse(
+      Buffer.from(encodedPayload, "base64url").toString("utf8")
+    );
+
+    if (
+      !payload.userId ||
+      !payload.exp ||
+      Math.floor(Date.now() / 1000) >= payload.exp
+    ) {
+      return null;
+    }
+
+    return {
+      userId: payload.userId,
+    };
+  } catch (err) {
+    return null;
+  }
+}
+
+// 사용자 ID로 회원 정보 조회
+async function getUserById(userId) {
+  return User.findOne({ userId });
+}
 
 async function findUserByUsername(username) {
   return User.findOne({ username: username.trim() });
@@ -17,7 +113,7 @@ async function isUsernameAvailable(username) {
   return !user;
 }
 
-// 회원가입 데이터를 저장합니다.
+// 회원가입
 async function createUser({
   name,
   username,
@@ -31,21 +127,24 @@ async function createUser({
     const trimmedSecurityQuestion = securityQuestion.trim();
     const trimmedSecurityAnswer = securityAnswer.trim();
 
-    const existingUsername = await findUserByUsername(trimmedUsername);
+    const existingUsername = await findUserByUsername(
+      trimmedUsername
+    );
 
     if (existingUsername) {
-      return { ok: false, error: "USERNAME_EXISTS" };
+      return {
+        ok: false,
+        error: "USERNAME_EXISTS",
+      };
     }
 
     const userId = `user-${crypto.randomUUID()}`;
 
-    // 비밀번호 해시
     const hashedPassword = await bcrypt.hash(
       password,
       SALT_ROUNDS
     );
 
-    // 보안 질문 답변도 해시해서 저장
     const hashedSecurityAnswer = await bcrypt.hash(
       trimmedSecurityAnswer,
       SALT_ROUNDS
@@ -60,11 +159,17 @@ async function createUser({
       securityAnswer: hashedSecurityAnswer,
     });
 
-    return { ok: true, userId };
+    return {
+      ok: true,
+      userId,
+    };
   } catch (err) {
     if (err.code === 11000) {
       if (err.keyPattern?.username) {
-        return { ok: false, error: "USERNAME_EXISTS" };
+        return {
+          ok: false,
+          error: "USERNAME_EXISTS",
+        };
       }
 
       throw err;
@@ -74,19 +179,27 @@ async function createUser({
   }
 }
 
-// 로그인 자격 증명을 확인합니다.
+// 로그인
 async function authenticateUser(username, password) {
   const user = await findUserByUsername(username);
 
-  if (!user || !(await bcrypt.compare(password, user.password))) {
-    return { ok: false };
+  if (
+    !user ||
+    !(await bcrypt.compare(password, user.password))
+  ) {
+    return {
+      ok: false,
+    };
   }
+
+  const token = createAuthToken(user.userId);
 
   return {
     ok: true,
     userId: user.userId,
     name: user.name,
     username: user.username,
+    token,
   };
 }
 
@@ -115,7 +228,10 @@ async function getSecurityQuestion(username) {
 }
 
 // 비밀번호 찾기 - 보안 질문 답변 확인
-async function verifySecurityAnswer(username, securityAnswer) {
+async function verifySecurityAnswer(
+  username,
+  securityAnswer
+) {
   const user = await findUserByUsername(username);
 
   if (!user) {
@@ -144,10 +260,8 @@ async function verifySecurityAnswer(username, securityAnswer) {
     };
   }
 
-  // 본인 확인 성공 시 임시 토큰 생성
   const resetToken = crypto.randomBytes(32).toString("hex");
 
-  // 10분 동안만 사용할 수 있도록 설정
   const expiresAt = Date.now() + 10 * 60 * 1000;
 
   passwordResetTokens.set(resetToken, {
@@ -172,7 +286,6 @@ async function resetPassword(resetToken, newPassword) {
     };
   }
 
-  // 토큰 만료 확인
   if (Date.now() > tokenData.expiresAt) {
     passwordResetTokens.delete(resetToken);
 
@@ -210,7 +323,6 @@ async function resetPassword(resetToken, newPassword) {
     };
   }
 
-  // 토큰은 한 번 사용하면 삭제
   passwordResetTokens.delete(resetToken);
 
   return {
@@ -218,7 +330,7 @@ async function resetPassword(resetToken, newPassword) {
   };
 }
 
-// 회원 탈퇴
+// 회원탈퇴
 async function deleteUser(userId) {
   const result = await User.deleteOne({ userId });
 
@@ -235,4 +347,7 @@ module.exports = {
   verifySecurityAnswer,
   resetPassword,
   deleteUser,
+  createAuthToken,
+  verifyAuthToken,
+  getUserById,
 };

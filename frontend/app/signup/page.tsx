@@ -1,7 +1,12 @@
+
 "use client";
 
-import { useState } from "react";
+import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
+
+const API_BASE_URL =
+  process.env.NEXT_PUBLIC_API_URL ||
+  "https://capstone-design-ip8n.onrender.com";
 
 export default function SignupPage() {
   const router = useRouter();
@@ -14,9 +19,10 @@ export default function SignupPage() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
-  // 보안 질문 / 답변
   const [securityQuestion, setSecurityQuestion] = useState("");
   const [securityAnswer, setSecurityAnswer] = useState("");
+
+  const [isLoading, setIsLoading] = useState(false);
 
   const securityQuestions = [
     "나의 고향은?",
@@ -28,6 +34,7 @@ export default function SignupPage() {
     "내가 가장 좋아하는 취미는?",
   ];
 
+  // 아이디 중복 확인
   const checkUsername = async () => {
     if (!username.trim()) {
       alert("아이디를 입력해주세요.");
@@ -36,13 +43,15 @@ export default function SignupPage() {
 
     try {
       const res = await fetch(
-        "https://capstone-design-ip8n.onrender.com/api/auth/check-username",
+        `${API_BASE_URL}/api/auth/check-username`,
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ username }),
+          body: JSON.stringify({
+            username: username.trim(),
+          }),
         }
       );
 
@@ -60,7 +69,8 @@ export default function SignupPage() {
     }
   };
 
-  const handleSignup = async (e: React.FormEvent) => {
+  // 회원가입
+  const handleSignup = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (!name.trim()) {
@@ -93,7 +103,6 @@ export default function SignupPage() {
       return;
     }
 
-    // 보안 질문 / 답변 검사
     if (!securityQuestion) {
       alert("보안 질문을 선택해주세요.");
       return;
@@ -105,19 +114,21 @@ export default function SignupPage() {
     }
 
     try {
+      setIsLoading(true);
+
       const res = await fetch(
-        "https://capstone-design-ip8n.onrender.com/api/auth/signup",
+        `${API_BASE_URL}/api/auth/signup`,
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            name,
-            username,
+            name: name.trim(),
+            username: username.trim(),
             password,
             securityQuestion,
-            securityAnswer,
+            securityAnswer: securityAnswer.trim(),
           }),
         }
       );
@@ -132,8 +143,10 @@ export default function SignupPage() {
       alert("회원가입 성공!");
       router.push("/login");
     } catch (err) {
-      console.error(err);
+      console.error("회원가입 오류:", err);
       alert("서버 연결 실패");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -244,9 +257,10 @@ export default function SignupPage() {
 
         <button
           type="submit"
-          className="w-full rounded-lg bg-black py-3 font-medium text-white transition hover:bg-gray-800"
+          disabled={isLoading}
+          className="w-full rounded-lg bg-black py-3 font-medium text-white transition hover:bg-gray-800 disabled:cursor-not-allowed disabled:bg-gray-500"
         >
-          회원가입
+          {isLoading ? "가입 중..." : "회원가입"}
         </button>
 
         <p className="mt-4 text-center text-sm text-gray-600">

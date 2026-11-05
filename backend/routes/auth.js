@@ -1,3 +1,4 @@
+
 const express = require("express");
 
 const {
@@ -132,6 +133,7 @@ router.post("/login", async (req, res) => {
       userId: result.userId,
       name: result.name,
       username: result.username,
+      token: result.token,
     });
   } catch (err) {
     console.error("login error:", err);
