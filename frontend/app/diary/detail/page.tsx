@@ -137,7 +137,7 @@ export default function DiaryDetailPage() {
         </div>
 
         <button
-          onClick={() => router.push("/diary/list")}
+          onClick={() => router.push("/diary")}
           className="mt-5 w-full rounded-2xl bg-gray-200 py-3"
         >
           ← 일기장으로 돌아가기
@@ -203,13 +203,13 @@ export default function DiaryDetailPage() {
       )}
 
       <button
-        onClick={() => router.push("/diary/list")}
-        className="mt-3 w-full rounded-2xl bg-gradient-to-r from-pink-300 via-purple-300 to-blue-300 py-3 font-semibold shadow-md"
-      >
-        <span className="text-purple-800">
-          ← 일기장으로 돌아가기
-        </span>
-      </button>
+  onClick={() => router.push("/diary")}
+  className="mt-3 w-full rounded-2xl bg-gradient-to-r from-pink-300 via-purple-300 to-blue-300 py-3 font-semibold shadow-md"
+>
+  <span className="text-purple-800">
+    ← 일기장으로 돌아가기
+  </span>
+</button>
     </div>
   );
 }

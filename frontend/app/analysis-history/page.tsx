@@ -2,6 +2,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import {
   RadarChart,
   PolarGrid,
@@ -48,6 +49,8 @@ type SavedAnalysis = {
 };
 
 export default function AnalysisHistoryPage() {
+  const router = useRouter();
+
   const [records, setRecords] = useState<SavedAnalysis[]>([]);
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -353,6 +356,16 @@ export default function AnalysisHistoryPage() {
             </div>
           </>
         )}
+              <button
+  type="button"
+  onClick={() => router.push("/input")}
+  className="mt-8 w-full rounded-2xl bg-gradient-to-r from-purple-600 via-purple-500 to-pink-500 py-4 font-bold text-white shadow-lg shadow-purple-200 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-purple-300 active:translate-y-0"
+>
+  <span className="flex items-center justify-center gap-2">
+    <span className="text-xl">←</span>
+    메인페이지로 돌아가기
+  </span>
+</button>
       </div>
     </main>
   );
