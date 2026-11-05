@@ -4,11 +4,11 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
-  Radar,
   RadarChart,
   PolarGrid,
   PolarAngleAxis,
   PolarRadiusAxis,
+  Radar,
   ResponsiveContainer,
 } from "recharts";
 
@@ -20,13 +20,6 @@ type AnalysisResult = {
     axis: string;
     value: number;
   }[];
-};
-
-type SavedAnalysis = {
-  id: string;
-  analyzedAt: string;
-  payload: AnalysisPayload | null;
-  result: AnalysisResult;
 };
 
 type UserInputData = {
@@ -53,81 +46,10 @@ export default function ResultPage() {
   const [payload, setPayload] = useState<AnalysisPayload | null>(null);
   const [showAdvice, setShowAdvice] = useState(false);
 
-    
-  const handleSaveAnalysis = () => {
-    if (!result) {
-      alert("저장할 분석 결과가 없습니다.");
-      return;
-    }
-
-    if (!payload?.userInput) {
-      alert("설문 입력 정보를 찾을 수 없습니다.");
-      return;
-    }
-
-    try {
-      const storageKey = "savedAnalyses";
-      const stored = localStorage.getItem(storageKey);
-
-      const savedAnalyses: SavedAnalysis[] = stored
-        ? JSON.parse(stored)
-        : [];
-
-      const currentInput = payload.userInput;
-
-      // 설문 답변과 추가 메모가 모두 같은 기록이 있는지 확인
-      const isDuplicate = savedAnalyses.some((item) => {
-        const savedInput = item.payload?.userInput;
-
-        if (!savedInput) {
-          return false;
-        }
-
-        return (
-          savedInput.mainActivity === currentInput.mainActivity &&
-          savedInput.dayMood === currentInput.dayMood &&
-          savedInput.focusTime === currentInput.focusTime &&
-          savedInput.fatigueLevel === currentInput.fatigueLevel &&
-          savedInput.impulseActivity === currentInput.impulseActivity &&
-          savedInput.hadGoal === currentInput.hadGoal &&
-          savedInput.achievedGoal === currentInput.achievedGoal &&
-          savedInput.faceToFaceInteraction ===
-            currentInput.faceToFaceInteraction &&
-          savedInput.memo === currentInput.memo
-        );
-      });
-
-      if (isDuplicate) {
-        alert("동일한 설문 답변과 추가 메모가 이미 저장되어 있습니다.");
-        return;
-      }
-
-      // 중복이 아니면 새 분석 기록 저장
-      const newAnalysis: SavedAnalysis = {
-        id: crypto.randomUUID(),
-        analyzedAt: payload.analyzedAt || new Date().toISOString(),
-        payload,
-        result,
-      };
-
-      savedAnalyses.unshift(newAnalysis);
-
-      localStorage.setItem(storageKey, JSON.stringify(savedAnalyses));
-
-      alert("분석 결과가 저장되었습니다!");
-    } catch (error) {
-      console.error("분석 결과 저장 실패:", error);
-      alert("분석 결과 저장에 실패했습니다. 브라우저 저장 공간을 확인해 주세요.");
-    }
-  };
-
-
+  // 분석 결과 및 입력 정보 불러오기
   useEffect(() => {
     try {
-      // 실제 AI/백엔드 분석 결과
       const storedResult = sessionStorage.getItem("analysisResult");
-
-      // 사용자가 입력한 데이터
       const storedPayload = sessionStorage.getItem("analysisPayload");
 
       if (storedResult) {
@@ -151,6 +73,12 @@ export default function ResultPage() {
       console.error("분석 결과 불러오기 실패:", error);
     }
   }, []);
+
+  // 분석 기록 화면으로 이동
+  // 분석 결과는 백엔드에서 이미 MongoDB에 자동 저장됨
+  const handleGoToHistory = () => {
+    router.push("/analysis-history");
+  };
 
   // 결과를 불러오는 중
   if (!result) {
@@ -401,14 +329,14 @@ export default function ResultPage() {
           )}
         </section>
 
-                {/* 하단 버튼 */}
+        {/* 하단 버튼 */}
         <section className="flex flex-col gap-3 sm:flex-row">
           <button
             type="button"
-            onClick={handleSaveAnalysis}
+            onClick={handleGoToHistory}
             className="w-full rounded-2xl bg-blue-600 py-4 font-semibold text-white shadow-sm transition hover:bg-blue-700"
           >
-            💾 분석 결과 저장하기
+            📂 분석 기록 확인하기
           </button>
 
           <button

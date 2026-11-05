@@ -8,6 +8,7 @@ const { generateMobileAnalysis } = require("./analyzeService");
 const {
   saveAnalysis,
   getAnalysesByUserId,
+  deleteAnalysisById,
 } = require("./analysisStore");
 
 const authRouter = require("./routes/auth");
@@ -77,7 +78,7 @@ app.post("/api/analyze", authenticateToken, async (req, res, next) => {
       });
     }
 
-    // 요청 body의 userId가 아닌 인증된 사용자 ID 사용
+    // 요청 body가 아닌 인증된 사용자 ID 사용
     const userId = req.userId;
 
     const result = await generateMobileAnalysis({
@@ -99,6 +100,7 @@ app.post("/api/analyze", authenticateToken, async (req, res, next) => {
       goalResult,
     });
 
+    // 분석 결과는 MongoDB에 자동 저장
     await saveAnalysis({
       userId,
       mood,
@@ -130,8 +132,34 @@ app.get(
   async (req, res, next) => {
     try {
       const history = await getAnalysesByUserId(req.userId);
-
       return res.json(history);
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
+// 로그인한 사용자의 분석 기록만 삭제
+app.delete(
+  "/api/analysis/history/:id",
+  authenticateToken,
+  async (req, res, next) => {
+    try {
+      const deletedRecord = await deleteAnalysisById(
+        req.userId,
+        req.params.id
+      );
+
+      if (!deletedRecord) {
+        return res.status(404).json({
+          error: "Not Found",
+          message: "삭제할 분석 기록을 찾을 수 없습니다.",
+        });
+      }
+
+      return res.json({
+        message: "분석 기록이 삭제되었습니다.",
+      });
     } catch (err) {
       next(err);
     }
