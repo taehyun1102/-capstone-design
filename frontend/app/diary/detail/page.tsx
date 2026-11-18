@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 
 type Diary = {
@@ -17,7 +17,7 @@ const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_URL ||
   "https://capstone-design-ip8n.onrender.com";
 
-export default function DiaryDetailPage() {
+function DiaryDetailContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
 
@@ -168,100 +168,181 @@ export default function DiaryDetailPage() {
   // 일기 불러오는 중
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-white to-pink-50 p-5">
-        <div className="rounded-3xl bg-white p-8 text-center shadow">
-          <p className="text-gray-500">
+      <main className="relative min-h-screen overflow-hidden bg-[#080d20] px-5 py-10 text-white">
+        <div className="pointer-events-none absolute -right-20 -top-20 h-80 w-80 rounded-full bg-violet-500/15 blur-[100px]" />
+        <div className="relative mx-auto max-w-4xl rounded-3xl border border-violet-200/15 bg-white/[0.06] p-10 text-center shadow-xl backdrop-blur-xl">
+          <p className="mb-4 text-4xl">☾</p>
+          <p className="text-slate-300">
             일기를 불러오는 중입니다...
           </p>
         </div>
-      </div>
+      </main>
     );
   }
 
   // 일기를 찾을 수 없는 경우
   if (!diary) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-white to-pink-50 p-5">
-        <div className="rounded-3xl bg-white p-8 text-center shadow">
-          <p className="text-gray-500">
+      <main className="relative min-h-screen overflow-hidden bg-[#080d20] px-5 py-10 text-white">
+        <div className="pointer-events-none absolute -right-20 -top-20 h-80 w-80 rounded-full bg-violet-500/15 blur-[100px]" />
+
+        <div className="relative mx-auto max-w-4xl rounded-3xl border border-violet-200/15 bg-white/[0.06] p-8 text-center shadow-xl backdrop-blur-xl">
+          <p className="mb-4 text-4xl">🌙</p>
+          <p className="leading-7 text-slate-300">
             {errorMessage || "일기를 찾을 수 없습니다."}
           </p>
         </div>
 
         <button
           onClick={() => router.push("/diary")}
-          className="mt-5 w-full rounded-2xl bg-gray-200 py-3"
+          className="relative mt-5 w-full rounded-2xl border border-white/10 bg-white/[0.07] py-4 text-slate-200 transition hover:bg-white/10"
         >
           ← 일기장으로 돌아가기
         </button>
-      </div>
+      </main>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white to-pink-50 p-5">
-      <h1 className="mb-2 text-2xl font-bold text-purple-700">
-        📖 {diary.title}
-      </h1>
+    
+<main
+  className="relative min-h-screen overflow-hidden bg-[#080d20] bg-cover bg-center bg-fixed px-5 py-10 text-white"
+  style={{
+    backgroundImage:
+      "linear-gradient(rgba(5, 8, 25, 0.42), rgba(5, 8, 25, 0.52)), url('/images/diary-library-bg.png')",
+  }}
+>
+  
 
-      <p className="mb-6 text-sm text-gray-500">
-        {diary.date}
-      </p>
+      <div className="relative mx-auto w-full max-w-4xl">
+        {/* 상단 제목 */}
+        <header className="mb-8 text-center">
+          <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-violet-300/20 bg-violet-300/10 px-4 py-2 text-sm text-violet-200">
+            <span>☾</span>
+            <span>MOONLIGHT MEMORY</span>
+            <span>✦</span>
+          </div>
 
-      <div className="rounded-3xl bg-white p-6 shadow">
-        <p className="whitespace-pre-wrap leading-8 text-gray-900">
-          {diary.content}
+          <h1 className="break-words text-3xl font-bold tracking-wide sm:text-4xl">
+            <span className="bg-gradient-to-r from-violet-200 via-pink-200 to-cyan-200 bg-clip-text text-transparent">
+              {diary.title}
+            </span>
+          </h1>
+
+          <p className="mt-4 text-sm text-slate-400">
+            ☾ {diary.date}
+          </p>
+        </header>
+
+        {/* 일기 본문 */}
+        <section className="rounded-3xl border border-violet-200/15 bg-white/[0.06] p-6 shadow-[0_20px_80px_rgba(0,0,0,0.25)] backdrop-blur-xl sm:p-8">
+          <div className="mb-6 flex items-center gap-3 border-b border-white/10 pb-5">
+            <span className="flex h-11 w-11 items-center justify-center rounded-xl border border-violet-200/15 bg-violet-400/10 text-xl text-violet-200">
+              ✧
+            </span>
+
+            <div>
+              <h2 className="font-semibold text-violet-100">
+                오늘의 이야기
+              </h2>
+              <p className="mt-1 text-xs text-slate-500">
+                MY PERSONAL DIARY
+              </p>
+            </div>
+          </div>
+
+          <p className="whitespace-pre-wrap break-words leading-8 text-slate-200">
+            {diary.content}
+          </p>
+        </section>
+
+        {/* AI 분석 버튼 */}
+        <button
+          onClick={handleAnalyze}
+          disabled={isAnalyzing}
+          className="mt-6 w-full rounded-2xl bg-gradient-to-r from-violet-600 via-purple-600 to-indigo-600 py-4 font-semibold text-white shadow-[0_0_25px_rgba(139,92,246,0.25)] transition duration-300 hover:brightness-110 hover:shadow-[0_0_35px_rgba(139,92,246,0.4)] disabled:cursor-not-allowed disabled:opacity-60"
+        >
+          {isAnalyzing
+            ? "🧠 일기 분석 중..."
+            : analysisResult
+              ? "🔄 다시 분석하기"
+              : "🧠 AI 감정 분석하기"}
+        </button>
+
+        {/* 오류 메시지 */}
+        {errorMessage && (
+          <div
+            role="alert"
+            className="mt-5 rounded-2xl border border-rose-300/20 bg-rose-400/10 p-4 text-sm leading-7 text-rose-200"
+          >
+            {errorMessage}
+          </div>
+        )}
+
+        {/* AI 분석 결과 */}
+        {analysisResult && (
+          <section className="mt-6 rounded-3xl border border-violet-300/20 bg-gradient-to-br from-violet-400/[0.10] via-white/[0.05] to-cyan-400/[0.07] p-6 shadow-[0_15px_60px_rgba(0,0,0,0.25)] backdrop-blur-xl sm:p-8">
+            <div className="mb-6 flex items-center gap-3 border-b border-violet-200/15 pb-5">
+              <span className="flex h-12 w-12 items-center justify-center rounded-xl border border-violet-200/20 bg-violet-400/10 text-2xl">
+                🌙
+              </span>
+
+              <div>
+                <h2 className="text-lg font-bold text-violet-100">
+                  하루 마무리 감정 분석
+                </h2>
+                <p className="mt-1 text-xs tracking-wider text-slate-500">
+                  AI CLOSING MOOD ANALYSIS
+                </p>
+              </div>
+            </div>
+
+            <p className="whitespace-pre-wrap break-words leading-8 text-slate-200">
+              {analysisResult}
+            </p>
+
+            {diary.analyzedAt && (
+              <p className="mt-6 border-t border-white/10 pt-4 text-xs text-slate-500">
+                마지막 분석:{" "}
+                {new Date(diary.analyzedAt).toLocaleString("ko-KR")}
+              </p>
+            )}
+          </section>
+        )}
+
+        {/* 일기장으로 돌아가기 */}
+        <button
+          onClick={() => router.push("/diary")}
+          className="mt-6 w-full rounded-2xl border border-white/10 bg-white/[0.05] py-4 font-semibold text-slate-300 transition hover:bg-white/10 hover:text-white"
+        >
+          ← 일기장으로 돌아가기
+        </button>
+
+        <p className="mt-6 text-center text-xs tracking-wider text-slate-600">
+          UNDER THE MOONLIGHT · YOUR STORY MATTERS
         </p>
       </div>
+    </main>
+  );
+}
 
-      <button
-        onClick={handleAnalyze}
-        disabled={isAnalyzing}
-        className="mt-5 w-full rounded-2xl bg-gradient-to-r from-purple-500 to-pink-500 py-4 font-semibold text-white shadow-lg disabled:cursor-not-allowed disabled:opacity-60"
-      >
-        {isAnalyzing
-          ? "🧠 일기 분석 중..."
-          : analysisResult
-            ? "🔄 다시 분석하기"
-            : "🧠 분석하기"}
-      </button>
+export default function DiaryDetailPage() {
+  return (
+    <Suspense
+      fallback={
+        <main className="relative min-h-screen overflow-hidden bg-[#080d20] px-5 py-10 text-white">
+          <div className="pointer-events-none absolute -right-20 -top-20 h-80 w-80 rounded-full bg-violet-500/15 blur-[100px]" />
 
-      {errorMessage && (
-        <div
-          role="alert"
-          className="mt-4 rounded-2xl border border-red-200 bg-red-50 p-4 text-sm leading-6 text-red-700"
-        >
-          {errorMessage}
-        </div>
-      )}
-
-      {analysisResult && (
-        <section className="mt-5 rounded-3xl border border-purple-100 bg-white p-6 shadow">
-          <h2 className="mb-3 text-lg font-bold text-purple-700">
-            🌙 하루 마무리 감정 분석
-          </h2>
-
-          <p className="whitespace-pre-wrap leading-8 text-gray-800">
-            {analysisResult}
-          </p>
-
-          {diary.analyzedAt && (
-            <p className="mt-4 text-xs text-gray-400">
-              마지막 분석:{" "}
-              {new Date(diary.analyzedAt).toLocaleString("ko-KR")}
+          <div className="relative mx-auto max-w-4xl rounded-3xl border border-violet-200/15 bg-white/[0.06] p-10 text-center shadow-xl backdrop-blur-xl">
+            <p className="mb-4 text-4xl">☾</p>
+            <p className="text-slate-300">
+              일기를 불러오는 중입니다...
             </p>
-          )}
-        </section>
-      )}
-
-      <button
-  onClick={() => router.push("/diary")}
-  className="mt-3 w-full rounded-2xl bg-gradient-to-r from-pink-300 via-purple-300 to-blue-300 py-3 font-semibold shadow-md"
->
-  <span className="text-purple-800">
-    ← 일기장으로 돌아가기
-  </span>
-</button>
-    </div>
+          </div>
+        </main>
+      }
+    >
+      <DiaryDetailContent />
+    </Suspense>
   );
 }

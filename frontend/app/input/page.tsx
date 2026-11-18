@@ -8,7 +8,7 @@ import {
   RefObject,
 } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
+
 
 type UserInputData = {
   mainActivity: string;
@@ -63,18 +63,18 @@ function NoticeBox({
   withIcon?: boolean;
   innerRef?: RefObject<HTMLDivElement | null>;
 }) {
-  const styles = {
-    red: "border-red-200 bg-red-50 text-red-700",
-    amber: "border-amber-300 bg-amber-50 text-amber-700",
-    violet: "border-violet-200 bg-violet-50 text-violet-700",
-    green: "border-emerald-200 bg-emerald-50 text-emerald-700",
+    const styles = {
+    red: "border-rose-300/20 bg-rose-400/10 text-rose-200",
+    amber: "border-amber-300/20 bg-amber-400/10 text-amber-200",
+    violet: "border-violet-300/20 bg-violet-400/10 text-violet-200",
+    green: "border-emerald-300/20 bg-emerald-400/10 text-emerald-200",
   };
 
   const titleStyles = {
-    red: "text-red-800",
-    amber: "text-amber-800",
-    violet: "text-violet-900",
-    green: "text-emerald-900",
+    red: "text-rose-100",
+    amber: "text-amber-100",
+    violet: "text-violet-100",
+    green: "text-emerald-100",
   };
 
   return (
@@ -456,189 +456,181 @@ export default function InputPage() {
     },
   ];
 
+  
   return (
-    <main className="min-h-screen bg-gray-50 px-4 py-10">
-      <div className="mx-auto flex max-w-4xl flex-col gap-8">
+    <main className="relative min-h-screen overflow-hidden bg-[#080d20] px-5 py-10 text-white">
+      {/* 달빛 정원 배경 */}
+      <div className="pointer-events-none absolute inset-0 overflow-hidden">
+        <div className="absolute -right-32 -top-32 h-96 w-96 rounded-full bg-violet-500/15 blur-[100px]" />
+        <div className="absolute -bottom-32 -left-24 h-96 w-96 rounded-full bg-cyan-500/10 blur-[100px]" />
+        <div className="absolute left-1/2 top-1/3 h-64 w-64 -translate-x-1/2 rounded-full bg-indigo-500/10 blur-[100px]" />
 
+        <div className="absolute left-[12%] top-[20%] h-1.5 w-1.5 rounded-full bg-cyan-200 shadow-[0_0_12px_3px_rgba(165,243,252,0.5)]" />
+        <div className="absolute right-[15%] top-[30%] h-2 w-2 rounded-full bg-violet-200 shadow-[0_0_15px_4px_rgba(196,181,253,0.5)]" />
+        <div className="absolute right-[25%] bottom-[20%] h-1.5 w-1.5 rounded-full bg-pink-200 shadow-[0_0_12px_3px_rgba(251,207,232,0.5)]" />
+      </div>
+
+      <div className="relative mx-auto flex max-w-4xl flex-col gap-8">
         {/* 페이지 소개 */}
         <section>
           <div className="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
             <div className="min-w-0 flex-1">
-              <p className="mb-2 text-sm font-semibold text-blue-600">
-                AI 기반 하루 흐름 분석 시스템
-              </p>
+              <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-violet-300/20 bg-violet-300/10 px-4 py-2 text-sm text-violet-200">
+                <span>☾</span>
+                <span>MOONLIGHT MIND LAB</span>
+                <span>✦</span>
+              </div>
 
               {userName && (
-                <p className="mb-2 text-lg font-semibold text-blue-600">
-                  안녕하세요, {userName}님 👋
+                <p className="mb-3 text-lg font-semibold text-violet-200">
+                  안녕하세요, {userName}님 ✨
                 </p>
               )}
 
-              <h1 className="mb-3 text-3xl font-bold text-gray-900">
-                오늘 하루는 어떠셨나요?
+              <h1 className="mb-4 text-3xl font-bold leading-snug sm:text-4xl">
+                <span className="bg-gradient-to-r from-violet-200 via-pink-200 to-cyan-200 bg-clip-text text-transparent">
+                  오늘 하루는 어떠셨나요?
+                </span>
               </h1>
 
-              <p className="leading-relaxed text-gray-700">
-                오늘의 활동과 상태를 기록하면 AI가
-                생활 패턴과 행동 경향을 분석하고,
-                더 나은 하루를 위한 방향을 찾아볼 수
-                있도록 도와드립니다.
+              <p className="max-w-2xl leading-8 text-slate-400">
+                오늘의 활동과 상태를 기록하면 AI가 생활 패턴과 행동 경향을
+                분석하고, 더 나은 하루를 위한 방향을 찾아볼 수 있도록
+                도와드립니다.
               </p>
             </div>
 
-            {/* 오늘의 심리 상태 대시보드 */}
+            {/* 이전 페이지 버튼 */}
             <button
-              type="button"
-              onClick={() => router.push("/today-dashboard")}
-              className="inline-flex shrink-0 items-center justify-center gap-2 self-start rounded-2xl border border-purple-200 bg-white px-5 py-3 font-semibold text-purple-700 shadow-sm transition hover:-translate-y-0.5 hover:border-purple-300 hover:bg-purple-50 hover:shadow-md"
+            type="button"
+            onClick={() => router.push("/garden")}
+            className="inline-flex shrink-0 items-center justify-center gap-2 self-start rounded-2xl border border-violet-300/20 bg-white/[0.06] px-5 py-3 font-semibold text-violet-200 shadow-lg backdrop-blur-xl transition hover:border-violet-300/50 hover:bg-violet-400/10"
             >
-              <span>📅</span>
-              <span>오늘의 심리 상태 대시보드</span>
-            </button>
+            <span>←</span>
+            <span>이전</span>
+          </button>
           </div>
         </section>
 
         {/* AI 분석 안내 */}
-        <section className="overflow-hidden rounded-3xl border border-violet-100 bg-white shadow-sm">
-
-          <div className="bg-linear-to-br from-violet-50 via-white to-blue-50 p-7">
-            <div className="mb-3 flex flex-wrap items-center gap-2">
-              <span className="inline-flex rounded-full bg-violet-100 px-3 py-1 text-sm font-semibold text-violet-700">
+        <section className="overflow-hidden rounded-3xl border border-violet-200/15 bg-white/[0.05] shadow-[0_20px_80px_rgba(0,0,0,0.25)] backdrop-blur-xl">
+          <div className="bg-gradient-to-br from-violet-400/10 via-transparent to-cyan-400/10 p-7 sm:p-9">
+            <div className="mb-5 flex flex-wrap items-center gap-2">
+              <span className="rounded-full border border-violet-300/20 bg-violet-400/10 px-3 py-1.5 text-sm font-semibold text-violet-200">
                 🧠 AI 생활 패턴 분석
               </span>
 
-              <span
-                className="inline-flex rounded-full px-3 py-1 text-sm font-semibold"
-                style={{
-                  backgroundColor: "#dbeafe",
-                  color: "#1d4ed8",
-                }}
-              >
+              <span className="rounded-full border border-blue-300/20 bg-blue-400/10 px-3 py-1.5 text-sm font-semibold text-blue-200">
                 진화심리학 기반
               </span>
             </div>
 
-            <h2 className="mb-3 text-2xl font-bold leading-snug text-gray-900">
+            <h2 className="mb-4 text-2xl font-bold leading-snug text-white sm:text-3xl">
               오늘의 나를 기록하면,
               <br />
-              반복되는 생활 패턴이 보입니다.
+              <span className="text-violet-200">
+                반복되는 생활 패턴이 보입니다.
+              </span>
             </h2>
 
-            <p className="max-w-3xl text-sm leading-7 text-gray-700">
-              하루 동안의 활동, 기분, 집중도,
-              피로도와 같은 정보를 바탕으로
-              AI가 오늘의 생활 흐름과 행동 경향을
-              분석합니다.
+            <p className="max-w-3xl text-sm leading-7 text-slate-400">
+              하루 동안의 활동, 기분, 집중도, 피로도와 같은 정보를 바탕으로
+              AI가 오늘의 생활 흐름과 행동 경향을 분석합니다.
             </p>
           </div>
 
           {/* 설명 카드 */}
-          <div className="grid gap-4 p-7 md:grid-cols-3">
-
-            <div className="rounded-2xl border border-violet-100 bg-violet-50/60 p-5">
+          <div className="grid gap-4 p-6 md:grid-cols-3 sm:p-7">
+            <div className="rounded-2xl border border-violet-300/15 bg-violet-400/[0.07] p-5">
               <div className="mb-3 text-2xl">🧠</div>
-
-              <h3 className="mb-2 font-semibold text-gray-900">
+              <h3 className="mb-2 font-semibold text-violet-100">
                 AI 생활 패턴 분석
               </h3>
-
-              <p className="text-sm leading-6 text-gray-700">
-                입력한 하루의 데이터를 종합하여
-                반복적으로 나타나는 행동과
+              <p className="text-sm leading-7 text-slate-400">
+                입력한 하루의 데이터를 종합하여 반복적으로 나타나는 행동과
                 생활 패턴을 살펴봅니다.
               </p>
             </div>
 
-            <div className="rounded-2xl border border-blue-100 bg-blue-50/60 p-5">
+            <div className="rounded-2xl border border-blue-300/15 bg-blue-400/[0.07] p-5">
               <div className="mb-3 text-2xl">🧬</div>
-
-              <h3 className="mb-2 font-semibold text-gray-900">
+              <h3 className="mb-2 font-semibold text-blue-100">
                 진화심리학적 관점
               </h3>
-
-              <p className="text-sm leading-6 text-gray-700">
-                보상 추구, 위험 회피, 사회적 관계,
-                에너지 절약과 같은 인간의 기본적인
-                행동 경향을 참고하여 행동의 배경을
-                해석합니다.
+              <p className="text-sm leading-7 text-slate-400">
+                보상 추구, 위험 회피, 사회적 관계, 에너지 절약과 같은 인간의
+                기본적인 행동 경향을 참고하여 행동의 배경을 해석합니다.
               </p>
             </div>
 
-            <div className="rounded-2xl border border-emerald-100 bg-emerald-50/60 p-5">
+            <div className="rounded-2xl border border-emerald-300/15 bg-emerald-400/[0.07] p-5">
               <div className="mb-3 text-2xl">🌱</div>
-
-              <h3 className="mb-2 font-semibold text-gray-900">
+              <h3 className="mb-2 font-semibold text-emerald-100">
                 나를 이해하는 과정
               </h3>
-
-              <p className="text-sm leading-6 text-gray-700">
-                단순히 하루를 평가하는 것이 아니라
-                자신의 행동 패턴을 돌아보고 앞으로의
-                행동을 생각해볼 수 있도록 돕습니다.
+              <p className="text-sm leading-7 text-slate-400">
+                단순히 하루를 평가하는 것이 아니라 자신의 행동 패턴을
+                돌아보고 앞으로의 행동을 생각해볼 수 있도록 돕습니다.
               </p>
             </div>
-
           </div>
 
           {/* 분석 과정 */}
-          <div className="px-7 pb-7">
-            <div className="rounded-2xl border border-violet-200 bg-violet-50 p-5">
-              <p className="mb-4 text-sm font-bold text-violet-900">
-                AI 분석 과정
+          <div className="px-6 pb-7 sm:px-7">
+            <div className="rounded-2xl border border-violet-300/20 bg-violet-400/[0.07] p-5">
+              <p className="mb-4 text-sm font-bold text-violet-100">
+                ✧ AI 분석 과정
               </p>
 
               <div className="grid gap-4 text-sm md:grid-cols-4">
-
-                <div className="rounded-xl bg-white p-4 shadow-sm">
-                  <p className="mb-2 font-bold text-gray-900">
-                    01. 기록
-                  </p>
-                  <p className="leading-6 text-gray-800">
-                    오늘의 활동과 상태를 입력합니다.
-                  </p>
-                </div>
-
-                <div className="rounded-xl bg-white p-4 shadow-sm">
-                  <p className="mb-2 font-bold text-gray-900">
-                    02. 패턴 발견
-                  </p>
-                  <p className="leading-6 text-gray-800">
-                    입력된 데이터를 종합적으로 살펴봅니다.
-                  </p>
-                </div>
-
-                <div className="rounded-xl bg-white p-4 shadow-sm">
-                  <p className="mb-2 font-bold text-gray-900">
-                    03. 행동 이해
-                  </p>
-                  <p className="leading-6 text-gray-800">
-                    행동의 배경과 경향을 해석합니다.
-                  </p>
-                </div>
-
-                <div className="rounded-xl bg-white p-4 shadow-sm">
-                  <p className="mb-2 font-bold text-gray-900">
-                    04. 행동 추천
-                  </p>
-                  <p className="leading-6 text-gray-800">
-                    더 나은 하루를 위한 방향을 제안합니다.
-                  </p>
-                </div>
-
+                {[
+                  {
+                    number: "01. 기록",
+                    description: "오늘의 활동과 상태를 입력합니다.",
+                  },
+                  {
+                    number: "02. 패턴 발견",
+                    description: "입력된 데이터를 종합적으로 살펴봅니다.",
+                  },
+                  {
+                    number: "03. 행동 이해",
+                    description: "행동의 배경과 경향을 해석합니다.",
+                  },
+                  {
+                    number: "04. 행동 추천",
+                    description: "더 나은 하루를 위한 방향을 제안합니다.",
+                  },
+                ].map((step) => (
+                  <div
+                    key={step.number}
+                    className="rounded-xl border border-white/10 bg-[#111a32]/80 p-4"
+                  >
+                    <p className="mb-2 font-bold text-violet-200">
+                      {step.number}
+                    </p>
+                    <p className="leading-6 text-slate-400">
+                      {step.description}
+                    </p>
+                  </div>
+                ))}
               </div>
             </div>
           </div>
         </section>
 
         {/* 사용자 입력 */}
-        <section className="flex flex-col gap-6 rounded-3xl border border-gray-100 bg-white p-7 shadow-sm">
+        <section className="flex flex-col gap-6 rounded-3xl border border-violet-200/15 bg-white/[0.06] p-6 shadow-[0_20px_80px_rgba(0,0,0,0.25)] backdrop-blur-xl sm:p-8">
+          <div className="border-b border-white/10 pb-5">
+            <div className="mb-3 inline-flex items-center gap-2 text-sm text-violet-200">
+              <span>✦</span>
+              <span>DAILY INPUT</span>
+            </div>
 
-          <div>
-            <h2 className="mb-2 text-xl font-semibold text-gray-900">
-              사용자 입력
+            <h2 className="mb-2 text-2xl font-bold text-violet-100">
+              오늘의 나를 기록하기
             </h2>
 
-            <p className="text-sm text-gray-600">
+            <p className="text-sm leading-7 text-slate-400">
               오늘 하루의 활동 및 상태를 입력해 주세요.
             </p>
           </div>
@@ -654,27 +646,23 @@ export default function InputPage() {
             />
           )}
 
-          <div className="flex flex-col gap-5">
-
+          <div className="flex flex-col gap-6">
             {/* 선택 항목 */}
-            {selectFields.map((field) => (
+            {selectFields.map((field, index) => (
               <div key={field.label}>
-                <label className="mb-2 block text-sm font-medium text-gray-800">
+                <label className="mb-3 block text-sm font-semibold leading-6 text-violet-100">
+                  <span className="mr-2 text-violet-300">
+                    {String(index + 1).padStart(2, "0")}.
+                  </span>
                   {field.label}
                 </label>
 
                 <select
-                  className="w-full rounded-xl border border-gray-200 bg-white p-3 text-gray-900 outline-none transition focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
+                  className="w-full rounded-2xl border border-violet-200/20 bg-[#10172d] p-4 text-white outline-none transition focus:border-violet-300/70 focus:ring-2 focus:ring-violet-400/20"
                   value={field.value}
-                  onChange={(e) =>
-                    field.onChange(e.target.value)
-                  }
+                  onChange={(e) => field.onChange(e.target.value)}
                 >
-                  <option
-                    value=""
-                    disabled
-                    hidden
-                  >
+                  <option value="" disabled hidden>
                     선택해 주세요
                   </option>
 
@@ -682,6 +670,7 @@ export default function InputPage() {
                     <option
                       key={option}
                       value={option}
+                      className="bg-[#10172d] text-white"
                     >
                       {option}
                     </option>
@@ -692,21 +681,19 @@ export default function InputPage() {
 
             {/* 목표 여부 */}
             <div>
-              <label className="mb-2 block text-sm font-medium text-gray-800">
+              <label className="mb-3 block text-sm font-semibold text-violet-100">
+                <span className="mr-2 text-violet-300">07.</span>
                 오늘의 목표가 있었나요?
               </label>
 
               <select
-                className="w-full rounded-xl border border-gray-200 bg-white p-3 text-gray-900 outline-none transition focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
+                className="w-full rounded-2xl border border-violet-200/20 bg-[#10172d] p-4 text-white outline-none transition focus:border-violet-300/70 focus:ring-2 focus:ring-violet-400/20"
                 value={hadGoal}
-                onChange={(e) =>
-                  setHadGoal(e.target.value)
-                }
+                onChange={(e) => setHadGoal(e.target.value)}
               >
                 <option value="" disabled hidden>
                   선택해 주세요
                 </option>
-
                 <option value="네">네</option>
                 <option value="아니요">아니요</option>
               </select>
@@ -715,21 +702,18 @@ export default function InputPage() {
             {/* 목표 달성 여부 */}
             {hadGoal === "네" && (
               <div className="animate-in fade-in duration-300">
-                <label className="mb-2 block text-sm font-medium text-gray-800">
+                <label className="mb-3 block text-sm font-semibold text-violet-100">
                   오늘의 목표를 달성했나요?
                 </label>
 
                 <select
-                  className="w-full rounded-xl border border-gray-200 bg-white p-3 text-gray-900 outline-none transition focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
+                  className="w-full rounded-2xl border border-violet-200/20 bg-[#10172d] p-4 text-white outline-none transition focus:border-violet-300/70 focus:ring-2 focus:ring-violet-400/20"
                   value={achievedGoal}
-                  onChange={(e) =>
-                    setAchievedGoal(e.target.value)
-                  }
+                  onChange={(e) => setAchievedGoal(e.target.value)}
                 >
                   <option value="" disabled hidden>
                     선택해 주세요
                   </option>
-
                   <option value="네">네</option>
                   <option value="아니요">아니요</option>
                 </select>
@@ -738,16 +722,16 @@ export default function InputPage() {
 
             {/* 하루 메모 */}
             <div>
-              <div className="mb-2 flex items-center justify-between">
-                <label className="block text-sm font-medium text-gray-800">
+              <div className="mb-3 flex items-center justify-between gap-3">
+                <label className="block text-sm font-semibold text-violet-100">
                   오늘 하루는 어떤 하루였나요?
                 </label>
 
                 <span
                   className={`text-xs font-medium ${
                     memo.length >= MEMO_MAX_LENGTH
-                      ? "text-red-500"
-                      : "text-gray-500"
+                      ? "text-rose-300"
+                      : "text-slate-500"
                   }`}
                 >
                   {memo.length}/{MEMO_MAX_LENGTH}
@@ -756,65 +740,44 @@ export default function InputPage() {
 
               <textarea
                 maxLength={MEMO_MAX_LENGTH}
-                className="h-28 w-full resize-none rounded-2xl border border-gray-200 bg-white p-4 text-gray-900 outline-none transition placeholder:text-gray-500 focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
+                className="h-36 w-full resize-none rounded-2xl border border-violet-200/20 bg-[#10172d]/80 p-5 leading-7 text-white outline-none transition placeholder:text-slate-500 focus:border-violet-300/70 focus:ring-2 focus:ring-violet-400/20"
                 placeholder="일기 쓰듯이 편하게 적어주세요."
                 value={memo}
-                onChange={(e) =>
-                  setMemo(e.target.value)
-                }
+                onChange={(e) => setMemo(e.target.value)}
               />
+
+              <p className="mt-2 text-xs text-slate-500">
+                ✧ 오늘의 생각과 감정을 자유롭게 기록해 주세요.
+              </p>
             </div>
-
           </div>
 
-          {/* 버튼 */}
-          <div className="flex flex-col gap-4">
+          
+{/* 분석 결과 버튼 */}
+<div className="flex flex-col gap-3 border-t border-white/10 pt-6">
+  <button
+    type="button"
+    disabled={isSubmitting}
+    onClick={handleSubmit}
+    className="flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-violet-600 via-purple-600 to-indigo-600 py-4 font-semibold text-white shadow-[0_0_25px_rgba(139,92,246,0.25)] transition hover:brightness-110 hover:shadow-[0_0_35px_rgba(139,92,246,0.4)] disabled:cursor-not-allowed disabled:opacity-60"
+  >
+    {isSubmitting && (
+      <div className="h-5 w-5 animate-spin rounded-full border-2 border-white border-t-violet-300" />
+    )}
 
-            {/* 분석 결과 보기 */}
-            <button
-              type="button"
-              disabled={isSubmitting}
-              onClick={handleSubmit}
-              className="flex w-full items-center justify-center gap-2 rounded-2xl bg-blue-600 py-4 font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-70"
-            >
-              {isSubmitting && (
-                <div className="h-5 w-5 animate-spin rounded-full border-2 border-white border-t-blue-300" />
-              )}
+    {isSubmitting
+      ? "결과 페이지로 이동 중..."
+      : "✧ 입력 내용으로 최종 결과 보기"}
+  </button>
+</div>
 
-              {isSubmitting
-                ? "결과 페이지로 이동 중..."
-                : "입력 내용으로 최종 결과 보기"}
-            </button>
-
-            {/* 분석 기록 */}
-            <button
-              type="button"
-              onClick={() => router.push("/analysis-history")}
-              className="w-full rounded-2xl bg-purple-600 py-4 font-semibold text-white shadow-lg transition hover:bg-purple-700"
-            >
-              📚 분석 기록 보기
-            </button>
-
-            {/* 나만의 일기 */}
-            <Link
-              href="/diary"
-              className="block w-full rounded-2xl bg-linear-to-r from-purple-500 to-pink-500 py-4 text-center font-semibold text-black shadow-lg transition hover:opacity-90"
-            >
-              📖 나만의 일기
-            </Link>
-
-            {/* 마이페이지 */}
-            <button
-              type="button"
-              onClick={() => router.push("/mypage")}
-              className="w-full rounded-2xl bg-gray-700 py-4 font-semibold text-white shadow-lg transition hover:bg-gray-800"
-            >
-              🪐✨ 마이페이지
-            </button>
-
-          </div>
         </section>
+
+        <p className="pb-2 text-center text-xs tracking-wider text-slate-600">
+          UNDER THE MOONLIGHT · DISCOVER YOURSELF
+        </p>
       </div>
     </main>
   );
 }
+

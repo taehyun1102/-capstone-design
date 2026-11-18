@@ -219,96 +219,144 @@ export default function AnalysisHistoryPage() {
   };
 
   return (
-    <main className="min-h-screen bg-gray-50 px-4 py-10 sm:px-6">
-      <div className="mx-auto max-w-4xl">
-        <header className="mb-8">
-          <p className="text-sm font-semibold text-purple-600">
-            MY ANALYSIS
-          </p>
+    <main className="relative min-h-screen overflow-hidden bg-[#080d20] px-5 py-10 text-white sm:px-7">
+      {/* 배경 장식 */}
+      <div className="pointer-events-none fixed inset-0 overflow-hidden">
+        <div className="absolute -left-40 top-0 h-[500px] w-[500px] rounded-full bg-violet-600/10 blur-[140px]" />
+        <div className="absolute right-[-150px] top-[25%] h-[500px] w-[500px] rounded-full bg-cyan-500/10 blur-[140px]" />
+        <div className="absolute bottom-[-180px] left-[25%] h-[450px] w-[450px] rounded-full bg-pink-500/[0.07] blur-[140px]" />
 
-          <h1 className="mt-2 text-3xl font-bold text-gray-900">
+        <div className="absolute left-[12%] top-[12%] h-1 w-1 rounded-full bg-white shadow-[0_0_12px_3px_rgba(255,255,255,0.5)]" />
+        <div className="absolute right-[18%] top-[20%] h-1.5 w-1.5 rounded-full bg-violet-200 shadow-[0_0_14px_4px_rgba(196,181,253,0.4)]" />
+        <div className="absolute left-[22%] top-[55%] h-1 w-1 rounded-full bg-cyan-200 shadow-[0_0_12px_3px_rgba(103,232,249,0.4)]" />
+        <div className="absolute bottom-[18%] right-[12%] h-1 w-1 rounded-full bg-pink-200 shadow-[0_0_12px_3px_rgba(249,168,212,0.4)]" />
+      </div>
+
+      <div className="relative mx-auto max-w-4xl">
+        {/* 헤더 */}
+        <header className="mb-8 rounded-3xl border border-violet-300/15 bg-gradient-to-br from-violet-500/15 via-[#111a35]/90 to-cyan-500/10 p-7 shadow-xl shadow-black/20 backdrop-blur-xl sm:p-9">
+          <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-violet-300/20 bg-violet-400/10 px-4 py-2 text-xs font-semibold tracking-wider text-violet-200">
+            <span>🌙</span>
+            MY ANALYSIS ARCHIVE
+          </div>
+
+          <h1 className="text-3xl font-bold tracking-tight text-white">
             나의 분석 기록
           </h1>
 
-          <p className="mt-3 text-gray-600">
+          <p className="mt-4 max-w-2xl text-sm leading-7 text-slate-300">
             저장한 생활 패턴 분석 결과를 확인하고 관리할 수 있어요.
+            지난 하루의 기록을 돌아보며 나의 변화를 살펴보세요.
           </p>
+
+          <div className="mt-6 flex flex-wrap gap-3">
+            <span className="rounded-xl border border-white/10 bg-white/[0.06] px-4 py-2 text-xs text-slate-300">
+              🧠 AI 생활 패턴 분석
+            </span>
+            <span className="rounded-xl border border-white/10 bg-white/[0.06] px-4 py-2 text-xs text-slate-300">
+              ✨ 나의 기록 보관함
+            </span>
+          </div>
         </header>
 
+        {/* 기록 상태 */}
         {isLoading ? (
-          <div className="rounded-2xl border border-gray-200 bg-white p-10 text-center text-gray-500">
-            분석 기록을 불러오는 중입니다...
+          <div className="rounded-3xl border border-white/10 bg-white/[0.045] px-6 py-16 text-center shadow-xl backdrop-blur-xl">
+            <div className="mx-auto mb-5 h-10 w-10 animate-spin rounded-full border-2 border-violet-200/20 border-t-violet-300" />
+            <p className="font-semibold text-white">
+              분석 기록을 불러오는 중입니다...
+            </p>
+            <p className="mt-2 text-sm text-slate-400">
+              잠시만 기다려 주세요.
+            </p>
           </div>
         ) : errorMessage ? (
-          <div className="rounded-2xl border border-red-200 bg-white px-6 py-12 text-center">
-            <p className="text-red-600">{errorMessage}</p>
+          <div className="rounded-3xl border border-rose-300/20 bg-rose-400/[0.06] px-6 py-12 text-center">
+            <span className="text-3xl">⚠️</span>
+
+            <p className="mt-4 text-sm leading-7 text-rose-200">
+              {errorMessage}
+            </p>
 
             <button
               type="button"
               onClick={() => window.location.reload()}
-              className="mt-4 rounded-xl bg-purple-600 px-5 py-2 font-semibold text-white transition hover:bg-purple-700"
+              className="mt-6 rounded-xl border border-violet-300/20 bg-violet-500/20 px-6 py-3 font-semibold text-violet-100 transition hover:bg-violet-500/30"
             >
               다시 불러오기
             </button>
           </div>
         ) : records.length === 0 ? (
-          <div className="rounded-2xl border border-gray-200 bg-white px-6 py-16 text-center">
-            <p className="text-lg font-semibold text-gray-800">
+          <div className="rounded-3xl border border-white/10 bg-white/[0.045] px-6 py-16 text-center shadow-xl backdrop-blur-xl">
+            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl border border-violet-300/20 bg-violet-400/10 text-3xl">
+              🌌
+            </div>
+
+            <p className="mt-6 text-lg font-bold text-white">
               저장된 분석 기록이 없습니다.
             </p>
 
-            <p className="mt-2 text-sm text-gray-500">
-              하루 생활 패턴 분석을 완료하면 기록이 자동으로 저장됩니다.
+            <p className="mt-3 text-sm leading-7 text-slate-400">
+              분석 결과 페이지에서 저장 버튼을 누르면 이곳에 기록이 보관됩니다.
             </p>
           </div>
         ) : (
           <>
-            <div className="mb-4 flex items-center justify-between">
-              <p className="text-sm text-gray-600">
+            {/* 기록 개수 */}
+            <div className="mb-5 flex items-center justify-between rounded-2xl border border-white/10 bg-white/[0.045] px-5 py-4 backdrop-blur-xl">
+              <p className="text-sm text-slate-300">
+                저장된 분석 기록
+              </p>
+
+              <p className="text-sm font-semibold text-violet-200">
                 총{" "}
-                <span className="font-bold text-purple-600">
+                <span className="text-lg font-bold text-white">
                   {records.length}
                 </span>
-                개의 기록
+                개
               </p>
             </div>
 
-            <div className="space-y-4">
+            {/* 기록 목록 */}
+            <div className="space-y-5">
               {records.map((record) => {
                 const isExpanded = expandedId === record.id;
 
                 return (
                   <section
                     key={record.id}
-                    className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm"
+                    className="overflow-hidden rounded-3xl border border-white/10 bg-white/[0.045] shadow-xl shadow-black/10 backdrop-blur-xl"
                   >
                     {/* 기록 제목 및 삭제 버튼 */}
-                    <div className="flex items-center gap-3 p-4 sm:p-5">
+                    <div className="flex items-center gap-2 p-4 sm:gap-4 sm:p-5">
                       <button
                         type="button"
                         onClick={() =>
                           setExpandedId(isExpanded ? null : record.id)
                         }
                         aria-expanded={isExpanded}
-                        className="flex min-w-0 flex-1 items-center justify-between gap-3 rounded-lg p-2 text-left transition hover:bg-purple-50"
+                        className="flex min-w-0 flex-1 items-center justify-between gap-3 rounded-2xl p-3 text-left transition hover:bg-violet-400/[0.06]"
                       >
                         <div className="min-w-0 flex-1">
-                          <p className="text-sm font-medium text-purple-600">
-                            {formatDate(record.analyzedAt)}
-                          </p>
+                          <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-violet-300/15 bg-violet-400/[0.08] px-3 py-1">
+                            <span className="text-xs">🌙</span>
+                            <p className="text-xs font-medium text-violet-200">
+                              {formatDate(record.analyzedAt)}
+                            </p>
+                          </div>
 
-                          <h2 className="mt-2 text-lg font-bold text-gray-900">
+                          <h2 className="text-base font-bold leading-7 text-white sm:text-lg">
                             {record.result?.summary ||
                               "생활 패턴 분석 결과"}
                           </h2>
 
-                          <p className="mt-2 line-clamp-2 text-sm text-gray-500">
+                          <p className="mt-2 line-clamp-2 text-sm leading-6 text-slate-400">
                             {record.result?.pattern ||
                               "생활 패턴 정보가 없습니다."}
                           </p>
                         </div>
 
-                        <span className="shrink-0 text-xl text-gray-500">
+                        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-violet-300/20 bg-violet-400/10 text-xl text-violet-200">
                           {isExpanded ? "−" : "+"}
                         </span>
                       </button>
@@ -318,7 +366,7 @@ export default function AnalysisHistoryPage() {
                         type="button"
                         disabled={deletingId === record.id}
                         onClick={() => handleDeleteRecord(record.id)}
-                        className="shrink-0 rounded-xl border border-red-200 px-3 py-2 text-sm font-semibold text-red-600 transition hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-50"
+                        className="shrink-0 rounded-xl border border-rose-300/20 bg-rose-400/[0.06] px-3 py-2 text-xs font-semibold text-rose-200 transition hover:bg-rose-400/15 disabled:cursor-not-allowed disabled:opacity-50 sm:px-4 sm:text-sm"
                       >
                         {deletingId === record.id ? "삭제 중..." : "삭제"}
                       </button>
@@ -326,46 +374,54 @@ export default function AnalysisHistoryPage() {
 
                     {/* 펼쳐지는 상세 내용 */}
                     {isExpanded && (
-                      <div className="space-y-5 border-t border-gray-100 p-5">
-                        <section>
-                          <h3 className="font-bold text-gray-900">
+                      <div className="space-y-6 border-t border-white/[0.08] p-5 sm:p-7">
+                        {/* 분석 요약 */}
+                        <section className="rounded-2xl border border-violet-300/15 bg-violet-400/[0.06] p-5">
+                          <h3 className="font-bold text-violet-200">
                             📌 분석 요약
                           </h3>
 
-                          <p className="mt-2 whitespace-pre-wrap leading-7 text-gray-700">
+                          <p className="mt-3 whitespace-pre-wrap break-words text-sm leading-8 text-slate-200">
                             {record.result?.summary ||
                               "분석 요약이 없습니다."}
                           </p>
                         </section>
 
-                        <section>
-                          <h3 className="font-bold text-gray-900">
+                        {/* 생활 패턴 분석 */}
+                        <section className="rounded-2xl border border-cyan-300/15 bg-cyan-400/[0.05] p-5">
+                          <h3 className="font-bold text-cyan-200">
                             🧠 생활 패턴 분석
                           </h3>
 
-                          <p className="mt-2 whitespace-pre-wrap leading-7 text-gray-700">
+                          <p className="mt-3 whitespace-pre-wrap break-words text-sm leading-8 text-slate-200">
                             {record.result?.pattern ||
                               "생활 패턴 정보가 없습니다."}
                           </p>
                         </section>
 
-                        <section>
-                          <h3 className="font-bold text-gray-900">
+                        {/* AI 조언 */}
+                        <section className="rounded-2xl border border-emerald-300/15 bg-emerald-400/[0.05] p-5">
+                          <h3 className="font-bold text-emerald-200">
                             💡 AI 조언
                           </h3>
 
-                          <p className="mt-2 whitespace-pre-wrap leading-7 text-gray-700">
+                          <p className="mt-3 whitespace-pre-wrap break-words text-sm leading-8 text-slate-200">
                             {record.result?.advice ||
                               "등록된 조언이 없습니다."}
                           </p>
                         </section>
 
+                        {/* 레이더 차트 */}
                         {record.result?.radar_chart &&
                           record.result.radar_chart.length > 0 && (
-                            <section>
-                              <h3 className="font-bold text-gray-900">
+                            <section className="rounded-2xl border border-violet-300/15 bg-[#0d1630]/80 p-5">
+                              <h3 className="font-bold text-violet-200">
                                 📊 생활 패턴 레이더 차트
                               </h3>
+
+                              <p className="mt-2 text-sm text-slate-400">
+                                당시 분석한 6가지 상태 수준입니다.
+                              </p>
 
                               <div className="mt-4 h-80 w-full">
                                 <ResponsiveContainer
@@ -378,13 +434,16 @@ export default function AnalysisHistoryPage() {
                                     cy="50%"
                                     outerRadius="70%"
                                   >
-                                    <PolarGrid />
+                                    <PolarGrid
+                                      stroke="rgba(167, 139, 250, 0.22)"
+                                      strokeDasharray="3 5"
+                                    />
 
                                     <PolarAngleAxis
                                       dataKey="axis"
                                       tick={{
                                         fontSize: 12,
-                                        fill: "#4b5563",
+                                        fill: "#ddd6fe",
                                       }}
                                     />
 
@@ -392,15 +451,20 @@ export default function AnalysisHistoryPage() {
                                       angle={30}
                                       domain={[0, 5]}
                                       ticks={[0, 1, 2, 3, 4, 5]}
-                                      tick={{ fontSize: 10 }}
+                                      tick={{
+                                        fontSize: 10,
+                                        fill: "#94a3b8",
+                                      }}
+                                      axisLine={false}
                                     />
 
                                     <Radar
                                       name="분석 수치"
                                       dataKey="value"
-                                      stroke="#9333ea"
-                                      fill="#a855f7"
-                                      fillOpacity={0.35}
+                                      stroke="#a78bfa"
+                                      strokeWidth={2.5}
+                                      fill="#8b5cf6"
+                                      fillOpacity={0.3}
                                       isAnimationActive={false}
                                     />
                                   </RadarChart>
@@ -409,22 +473,26 @@ export default function AnalysisHistoryPage() {
                             </section>
                           )}
 
+                        {/* 당시 입력 내용 */}
                         {record.payload?.userInput && (
-                          <section>
-                            <h3 className="font-bold text-gray-900">
+                          <section className="rounded-2xl border border-cyan-300/15 bg-cyan-400/[0.04] p-5">
+                            <h3 className="font-bold text-cyan-200">
                               📝 당시 입력 내용
                             </h3>
 
-                            <dl className="mt-3 space-y-3">
+                            <dl className="mt-4 space-y-4">
                               {Object.entries(
                                 record.payload.userInput
                               ).map(([key, value]) => (
-                                <div key={key}>
-                                  <dt className="text-sm font-medium text-gray-500">
+                                <div
+                                  key={key}
+                                  className="rounded-xl border border-white/[0.06] bg-[#111a32]/80 p-4"
+                                >
+                                  <dt className="text-xs font-medium text-cyan-300">
                                     {inputLabels[key] || key}
                                   </dt>
 
-                                  <dd className="mt-1 whitespace-pre-wrap text-gray-800">
+                                  <dd className="mt-2 whitespace-pre-wrap break-words text-sm leading-6 text-slate-200">
                                     {value === null ||
                                     value === undefined ||
                                     value === ""
@@ -445,17 +513,28 @@ export default function AnalysisHistoryPage() {
           </>
         )}
 
+        {/* 하단 버튼 */}
         <button
           type="button"
           onClick={() => router.push("/input")}
-          className="mt-8 w-full rounded-2xl bg-gradient-to-r from-purple-600 via-purple-500 to-pink-500 py-4 font-bold text-white shadow-lg shadow-purple-200 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-purple-300 active:translate-y-0"
+          className="mt-8 w-full rounded-2xl border border-violet-300/20 bg-gradient-to-r from-violet-600/80 via-purple-500/80 to-indigo-500/80 py-4 font-bold text-white shadow-lg shadow-violet-950/30 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-violet-900/30 active:translate-y-0"
         >
           <span className="flex items-center justify-center gap-2">
             <span className="text-xl">←</span>
             메인페이지로 돌아가기
           </span>
         </button>
+
+        <footer className="mt-8 border-t border-white/[0.07] py-7 text-center">
+          <p className="text-sm text-slate-400">
+            지나온 하루의 기록이 더 나은 내일을 만들어 갑니다.
+          </p>
+          <p className="mt-3 text-xs tracking-wider text-violet-300/50">
+            MOONLIGHT GARDEN · MY DAILY ARCHIVE
+          </p>
+        </footer>
       </div>
     </main>
   );
 }
+

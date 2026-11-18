@@ -100,30 +100,78 @@ app.post("/api/analyze", authenticateToken, async (req, res, next) => {
       goalResult,
     });
 
-    // 분석 결과는 MongoDB에 자동 저장
-    await saveAnalysis({
-      userId,
-      mood,
-      activity,
-      fatigue,
-      focusLevel,
-      distraction,
-      summary: result.summary,
-      pattern: result.pattern,
-      advice: result.advice,
-      radar_chart: result.radar_chart,
-      payload: {
-        userInput: body,
-      },
-      result,
-      createdAt: new Date(),
-    });
 
     return res.json(result);
   } catch (err) {
     next(err);
   }
 });
+
+// 사용자가 직접 요청한 분석 결과만 MongoDB에 저장
+app.post(
+  "/api/analysis/save",
+  authenticateToken,
+  async (req, res, next) => {
+    try {
+      const { userInput, result } = req.body || {};
+
+      // 입력값 검증
+      if (
+        !userInput ||
+        typeof userInput !== "object" ||
+        Array.isArray(userInput) ||
+        !result ||
+        typeof result !== "object" ||
+        Array.isArray(result)
+      ) {
+        return res.status(400).json({
+          error: "Invalid request body",
+          message: "userInput과 result가 필요합니다.",
+        });
+      }
+
+      if (
+        !result.summary ||
+        !result.pattern ||
+        !result.advice
+      ) {
+        return res.status(400).json({
+          error: "Invalid analysis result",
+          message: "분석 결과가 올바르지 않습니다.",
+        });
+      }
+
+      // 인증된 사용자 ID 사용
+      const userId = req.userId;
+
+      // 사용자가 저장 버튼을 눌렀을 때만 실행
+      const savedRecord = await saveAnalysis({
+        userId,
+        mood: userInput.mood,
+        activity: userInput.activity,
+        fatigue: userInput.fatigue,
+        focusLevel: userInput.focusLevel,
+        distraction: userInput.distraction,
+        summary: result.summary,
+        pattern: result.pattern,
+        advice: result.advice,
+        radar_chart: result.radar_chart,
+        payload: {
+          userInput,
+        },
+        result,
+        createdAt: new Date(),
+      });
+
+      return res.status(201).json({
+        message: "분석 기록이 저장되었습니다.",
+        record: savedRecord,
+      });
+    } catch (err) {
+      next(err);
+    }
+  }
+);
 
 // 로그인한 사용자의 분석 기록만 조회
 app.get(

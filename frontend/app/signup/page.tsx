@@ -151,129 +151,238 @@ export default function SignupPage() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-100">
-      <form
-        onSubmit={handleSignup}
-        className="w-full max-w-sm rounded-2xl bg-white p-8 shadow-lg"
-      >
-        <h1 className="mb-6 text-center text-2xl font-bold text-black">
-          회원가입
-        </h1>
+    <main className="relative flex min-h-screen items-center justify-center overflow-hidden bg-[#fff5f5] px-4 py-10">
 
-        <input
-          type="text"
-          placeholder="이름"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          className="mb-3 w-full rounded-lg border border-gray-300 p-3 text-gray-900 placeholder-gray-400"
-        />
+      {/* 배경 장식 */}
+      <div className="pointer-events-none absolute -left-24 top-10 h-80 w-80 rounded-full bg-[#ff9b9b]/70 blur-3xl" />
+      <div className="pointer-events-none absolute -right-24 top-10 h-96 w-96 rounded-full bg-[#a66cff]/60 blur-3xl" />
+      <div className="pointer-events-none absolute -bottom-32 left-1/4 h-96 w-96 rounded-full bg-[#ffb36b]/60 blur-3xl" />
+      <div className="pointer-events-none absolute bottom-0 right-0 h-72 w-72 rounded-full bg-[#ec71ce]/50 blur-3xl" />
 
-        <div className="mb-2 flex gap-2">
-          <input
-            type="text"
-            placeholder="아이디"
-            value={username}
-            onChange={(e) => {
-              setUsername(e.target.value);
-              setIsUsernameAvailable(null);
-            }}
-            className="flex-1 rounded-lg border border-gray-300 p-3 text-gray-900 placeholder-gray-400"
-          />
+      {/* 회원가입 카드 */}
+      <section className="relative z-10 w-full max-w-[510px] overflow-hidden rounded-[32px] border border-white/80 bg-white/55 px-6 py-9 shadow-[0_25px_80px_rgba(125,65,150,0.18)] backdrop-blur-2xl sm:px-12 sm:py-11">
 
-          <button
-            type="button"
-            onClick={checkUsername}
-            className="whitespace-nowrap rounded-lg bg-blue-500 px-3 text-sm text-white hover:bg-blue-600"
-          >
-            중복확인
-          </button>
+        {/* 카드 내부 장식 */}
+        <div className="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full bg-[#c18aff]/20 blur-2xl" />
+        <div className="pointer-events-none absolute -bottom-20 -left-16 h-48 w-48 rounded-full bg-[#ff9b8d]/20 blur-2xl" />
+
+        <div className="relative z-10">
+
+          {/* 브랜드 로고 */}
+          <div className="mb-7 text-center">
+            <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-[#8955df] shadow-lg shadow-purple-300/40">
+              <svg
+                viewBox="0 0 48 48"
+                fill="none"
+                className="h-8 w-8"
+                aria-hidden="true"
+              >
+                <path
+                  d="M24 39S6 28 6 17C6 8 18 5 24 15C30 5 42 8 42 17C42 28 24 39 24 39Z"
+                  stroke="white"
+                  strokeWidth="2.5"
+                  strokeLinejoin="round"
+                />
+                <path
+                  d="M9 24H17L21 18L25 29L29 22L32 24H39"
+                  stroke="white"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </div>
+
+            <h1 className="text-3xl font-extrabold tracking-tight text-[#30204f]">
+              마음의 하루
+            </h1>
+
+            <p className="mt-2 text-sm text-[#756482]">
+              나만의 하루와 마음을 기록해보세요.
+            </p>
+          </div>
+
+          {/* 제목 */}
+          <div className="mb-7 text-center">
+            <h2 className="text-2xl font-extrabold text-[#33204f]">
+              회원가입
+            </h2>
+            <p className="mt-2 text-sm text-[#796b89]">
+              마음의 하루와 함께 새로운 기록을 시작해요.
+            </p>
+          </div>
+
+          <form onSubmit={handleSignup} className="space-y-4">
+
+            {/* 이름 */}
+            <div>
+              <label htmlFor="name" className="mb-2 block text-sm font-bold text-[#463454]">
+                이름
+              </label>
+              <input
+                id="name"
+                type="text"
+                placeholder="이름을 입력해주세요."
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                required
+                className="h-13 w-full rounded-2xl border border-white bg-white/75 px-4 text-sm text-[#33204f] shadow-sm outline-none transition placeholder:text-[#ad9eb9] focus:border-[#ae83e9] focus:ring-4 focus:ring-purple-100"
+              />
+            </div>
+
+            {/* 아이디 및 중복확인 */}
+            <div>
+              <label htmlFor="username" className="mb-2 block text-sm font-bold text-[#463454]">
+                아이디
+              </label>
+
+              <div className="flex gap-2">
+                <input
+                  id="username"
+                  type="text"
+                  placeholder="아이디를 입력해주세요."
+                  value={username}
+                  onChange={(e) => {
+                    setUsername(e.target.value);
+                    setIsUsernameAvailable(null);
+                  }}
+                  required
+                  className="h-13 min-w-0 flex-1 rounded-2xl border border-white bg-white/75 px-4 text-sm text-[#33204f] shadow-sm outline-none transition placeholder:text-[#ad9eb9] focus:border-[#ae83e9] focus:ring-4 focus:ring-purple-100"
+                />
+
+                <button
+                  type="button"
+                  onClick={checkUsername}
+                  className="shrink-0 rounded-2xl bg-[#8955df] px-4 text-sm font-semibold text-white shadow-md shadow-purple-200 transition hover:bg-[#7432ca]"
+                >
+                  중복확인
+                </button>
+              </div>
+
+              {isUsernameAvailable === true && (
+                <p className="mt-2 text-xs font-semibold text-emerald-600">
+                  ✓ 사용 가능한 아이디입니다.
+                </p>
+              )}
+
+              {isUsernameAvailable === false && (
+                <p className="mt-2 text-xs font-semibold text-rose-600">
+                  ✕ 이미 사용 중인 아이디입니다.
+                </p>
+              )}
+            </div>
+
+            {/* 비밀번호 */}
+            <div>
+              <label htmlFor="password" className="mb-2 block text-sm font-bold text-[#463454]">
+                비밀번호
+              </label>
+              <input
+                id="password"
+                type="password"
+                placeholder="비밀번호 6자 이상 입력해주세요."
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                className="h-13 w-full rounded-2xl border border-white bg-white/75 px-4 text-sm text-[#33204f] shadow-sm outline-none transition placeholder:text-[#ad9eb9] focus:border-[#ae83e9] focus:ring-4 focus:ring-purple-100"
+              />
+            </div>
+
+            {/* 비밀번호 확인 */}
+            <div>
+              <label htmlFor="confirmPassword" className="mb-2 block text-sm font-bold text-[#463454]">
+                비밀번호 확인
+              </label>
+              <input
+                id="confirmPassword"
+                type="password"
+                placeholder="비밀번호를 다시 입력해주세요."
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                required
+                className="h-13 w-full rounded-2xl border border-white bg-white/75 px-4 text-sm text-[#33204f] shadow-sm outline-none transition placeholder:text-[#ad9eb9] focus:border-[#ae83e9] focus:ring-4 focus:ring-purple-100"
+              />
+
+              {confirmPassword && (
+                <p className={`mt-2 text-xs font-semibold ${
+                  password === confirmPassword
+                    ? "text-emerald-600"
+                    : "text-rose-600"
+                }`}>
+                  {password === confirmPassword
+                    ? "✓ 비밀번호가 일치합니다."
+                    : "✕ 비밀번호가 일치하지 않습니다."}
+                </p>
+              )}
+            </div>
+
+            {/* 보안 질문 */}
+            <div>
+              <label htmlFor="securityQuestion" className="mb-2 block text-sm font-bold text-[#463454]">
+                보안 질문
+              </label>
+              <select
+                id="securityQuestion"
+                value={securityQuestion}
+                onChange={(e) => setSecurityQuestion(e.target.value)}
+                required
+                className="h-13 w-full rounded-2xl border border-white bg-white/75 px-4 text-sm text-[#665477] shadow-sm outline-none transition focus:border-[#ae83e9] focus:ring-4 focus:ring-purple-100"
+              >
+                <option value="">보안 질문을 선택해주세요.</option>
+                {securityQuestions.map((question) => (
+                  <option key={question} value={question}>
+                    {question}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* 보안 답변 */}
+            <div>
+              <label htmlFor="securityAnswer" className="mb-2 block text-sm font-bold text-[#463454]">
+                보안 답변
+              </label>
+              <input
+                id="securityAnswer"
+                type="text"
+                placeholder="보안 질문의 답변을 입력해주세요."
+                value={securityAnswer}
+                onChange={(e) => setSecurityAnswer(e.target.value)}
+                required
+                className="h-13 w-full rounded-2xl border border-white bg-white/75 px-4 text-sm text-[#33204f] shadow-sm outline-none transition placeholder:text-[#ad9eb9] focus:border-[#ae83e9] focus:ring-4 focus:ring-purple-100"
+              />
+            </div>
+
+            {/* 가입 버튼 */}
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="mt-3 flex h-14 w-full items-center justify-center gap-2 rounded-2xl bg-[#873ee5] text-base font-bold text-white shadow-lg shadow-purple-300/40 transition hover:bg-[#7432ca] active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              {isLoading ? "가입 중..." : "회원가입"}
+              {!isLoading && <span aria-hidden="true">→</span>}
+            </button>
+          </form>
+
+          {/* 로그인 이동 */}
+          <div className="mt-7 text-center text-sm text-[#796b89]">
+            이미 계정이 있으신가요?
+            <button
+              type="button"
+              onClick={() => router.push("/login")}
+              className="ml-2 font-bold text-[#8546d5] transition hover:text-[#5d269e]"
+            >
+              로그인
+            </button>
+          </div>
+
+          <p className="mt-6 text-center text-xs text-[#9b8ba6]">
+            당신의 하루와 마음을 소중하게 기록해보세요.
+          </p>
+
         </div>
-
-        {isUsernameAvailable === true && (
-          <p className="mb-2 text-sm text-green-500">
-            사용 가능한 아이디입니다 ✔
-          </p>
-        )}
-
-        {isUsernameAvailable === false && (
-          <p className="mb-2 text-sm text-red-500">
-            이미 사용 중인 아이디입니다 ❌
-          </p>
-        )}
-
-        <input
-          type="password"
-          placeholder="비밀번호"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          className="mb-3 w-full rounded-lg border border-gray-300 p-3 text-gray-900 placeholder-gray-400"
-        />
-
-        <input
-          type="password"
-          placeholder="비밀번호 확인"
-          value={confirmPassword}
-          onChange={(e) => setConfirmPassword(e.target.value)}
-          className="mb-2 w-full rounded-lg border border-gray-300 p-3 text-gray-900 placeholder-gray-400"
-        />
-
-        {confirmPassword && (
-          <p
-            className={`mb-4 text-sm ${
-              password === confirmPassword
-                ? "text-green-500"
-                : "text-red-500"
-            }`}
-          >
-            {password === confirmPassword
-              ? "비밀번호가 일치합니다 ✔"
-              : "비밀번호가 일치하지 않습니다 ❌"}
-          </p>
-        )}
-
-        {/* 보안 질문 */}
-        <select
-          value={securityQuestion}
-          onChange={(e) => setSecurityQuestion(e.target.value)}
-          className="mb-3 w-full rounded-lg border border-gray-300 bg-white p-3 text-gray-900"
-        >
-          <option value="">보안 질문을 선택해주세요</option>
-
-          {securityQuestions.map((question) => (
-            <option key={question} value={question}>
-              {question}
-            </option>
-          ))}
-        </select>
-
-        {/* 보안 답변 */}
-        <input
-          type="text"
-          placeholder="보안 질문의 답변"
-          value={securityAnswer}
-          onChange={(e) => setSecurityAnswer(e.target.value)}
-          className="mb-4 w-full rounded-lg border border-gray-300 p-3 text-gray-900 placeholder-gray-400"
-        />
-
-        <button
-          type="submit"
-          disabled={isLoading}
-          className="w-full rounded-lg bg-black py-3 font-medium text-white transition hover:bg-gray-800 disabled:cursor-not-allowed disabled:bg-gray-500"
-        >
-          {isLoading ? "가입 중..." : "회원가입"}
-        </button>
-
-        <p className="mt-4 text-center text-sm text-gray-600">
-          이미 계정이 있으신가요?
-          <button
-            type="button"
-            onClick={() => router.push("/login")}
-            className="ml-1 text-blue-500 hover:underline"
-          >
-            로그인
-          </button>
-        </p>
-      </form>
-    </div>
+      </section>
+    </main>
   );
 }
+

@@ -125,68 +125,127 @@ export default function DiaryListPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-purple-50 to-white p-5">
-      <h1 className="text-3xl font-bold mb-6">
-        📚{" "}
-        <span className="bg-gradient-to-r from-blue-700 via-purple-600 to-pink-500 bg-clip-text text-transparent">
-          나만의 일기장
-        </span>
-      </h1>
+    
+<main
+  className="relative min-h-screen overflow-hidden bg-[#080d20] bg-cover bg-center bg-fixed px-5 py-10 text-white"
+  style={{
+    backgroundImage:
+      "linear-gradient(rgba(5, 8, 25, 0.38), rgba(5, 8, 25, 0.48)), url('/images/diary-library-bg.png')",
+  }}
+>
 
-      {isLoading ? (
-        <div className="bg-white rounded-3xl shadow p-8 text-center">
-          <p className="text-gray-500">
-            일기를 불러오는 중입니다...
+      <div className="relative mx-auto w-full max-w-4xl">
+        {/* 페이지 제목 */}
+        <header className="mb-9 text-center">
+          <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-violet-300/20 bg-violet-300/10 px-4 py-2 text-sm text-violet-200">
+            <span>☾</span>
+            <span>MY MOONLIGHT ARCHIVE</span>
+            <span>✦</span>
+          </div>
+
+          <h1 className="mb-3 text-3xl font-bold tracking-wide sm:text-4xl">
+            <span className="bg-gradient-to-r from-violet-200 via-pink-200 to-cyan-200 bg-clip-text text-transparent">
+              나만의 일기장
+            </span>
+          </h1>
+
+          <p className="text-sm text-slate-400">
+            당신이 기록한 소중한 순간들을 다시 만나보세요.
           </p>
-        </div>
-      ) : diaries.length === 0 ? (
-        <div className="bg-white rounded-3xl shadow p-8 text-center">
-          <p className="text-5xl mb-3">🥲</p>
-          <p className="text-gray-500">
-            아직 저장된 일기가 없습니다.
-          </p>
-        </div>
-      ) : (
-        <div className="space-y-4">
-          {diaries.map((item) => (
-            <div
-              key={item.id}
-              className="w-full bg-white rounded-3xl shadow p-5 flex items-center justify-between"
+        </header>
+
+        {/* 일기 목록 영역 */}
+        {isLoading ? (
+          <div className="rounded-3xl border border-violet-200/15 bg-white/[0.06] p-10 text-center shadow-xl backdrop-blur-xl">
+            <p className="mb-4 text-4xl">☾</p>
+            <p className="text-slate-300">
+              일기를 불러오는 중입니다...
+            </p>
+            <p className="mt-2 text-xs text-slate-500">
+              잠시만 기다려 주세요.
+            </p>
+          </div>
+        ) : diaries.length === 0 ? (
+          <div className="rounded-3xl border border-violet-200/15 bg-white/[0.06] px-6 py-14 text-center shadow-xl backdrop-blur-xl">
+            <div className="mb-5 text-5xl">🌙</div>
+
+            <h2 className="mb-3 text-xl font-semibold text-violet-100">
+              아직 기록된 일기가 없어요.
+            </h2>
+
+            <p className="text-sm leading-7 text-slate-400">
+              달빛 정원에서 새로운 이야기를 시작해 보세요.
+            </p>
+
+            <button
+              onClick={() => router.push("/diary/write")}
+              className="mt-7 rounded-2xl bg-gradient-to-r from-violet-600 to-indigo-600 px-7 py-3 font-semibold text-white shadow-[0_0_25px_rgba(139,92,246,0.25)] transition hover:brightness-110"
             >
-              <button
-                onClick={() =>
-                  router.push(`/diary/detail?id=${item.id}`)
-                }
-                className="flex-1 text-left hover:scale-[1.01] transition"
+              ✧ 첫 일기 작성하기
+            </button>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {diaries.map((item) => (
+              <div
+                key={item.id}
+                className="group flex items-center justify-between gap-3 rounded-3xl border border-violet-200/15 bg-white/[0.06] p-5 shadow-lg backdrop-blur-xl transition duration-300 hover:border-violet-300/40 hover:bg-white/[0.09] hover:shadow-[0_10px_35px_rgba(139,92,246,0.12)] sm:p-6"
               >
-                <p className="text-xl font-bold text-purple-700 mb-2">
-                  📖 {item.title}
-                </p>
+                {/* 일기 상세 페이지 이동 */}
+                <button
+                  onClick={() =>
+                    router.push(`/diary/detail?id=${item.id}`)
+                  }
+                  className="min-w-0 flex-1 text-left"
+                >
+                  <div className="mb-3 flex items-center gap-3">
+                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-violet-200/15 bg-violet-400/10 text-xl text-violet-200">
+                      ✧
+                    </span>
 
-                <p className="text-sm text-black">
-                  📅 {item.date}
-                </p>
-              </button>
+                    <div className="min-w-0">
+                      <p className="truncate text-lg font-bold text-violet-100 transition group-hover:text-pink-200 sm:text-xl">
+                        {item.title}
+                      </p>
 
-              <button
-                onClick={() => handleDelete(item.id)}
-                disabled={deletingId === item.id}
-                className="ml-3 px-3 py-2 text-xs text-red-500 border border-red-200 rounded-xl hover:bg-red-50 disabled:opacity-50"
-              >
-                {deletingId === item.id ? "삭제 중..." : "삭제"}
-              </button>
-            </div>
-          ))}
-        </div>
-      )}
+                      <p className="mt-1 text-xs text-slate-500">
+                        MOONLIGHT MEMORY
+                      </p>
+                    </div>
+                  </div>
 
-      <button
-        onClick={() => router.back()}
-        className="w-full mt-6 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-500 text-white py-3 rounded-2xl font-semibold shadow-lg"
-      >
-        <span className="text-black">←</span>{" "}
-        <span className="text-white">이전</span>
-      </button>
-    </div>
+                  <p className="text-sm text-slate-400">
+                    <span className="mr-2 text-violet-300">☾</span>
+                    {item.date}
+                  </p>
+                </button>
+
+                {/* 삭제 버튼 */}
+                <button
+                  onClick={() => handleDelete(item.id)}
+                  disabled={deletingId === item.id}
+                  className="shrink-0 rounded-xl border border-rose-300/20 bg-rose-400/5 px-3 py-2 text-xs text-rose-200 transition hover:border-rose-300/40 hover:bg-rose-400/15 disabled:cursor-not-allowed disabled:opacity-50 sm:px-4"
+                >
+                  {deletingId === item.id ? "삭제 중..." : "삭제"}
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* 이전 버튼 */}
+        <button
+          onClick={() => router.back()}
+          className="mt-8 w-full rounded-2xl border border-white/10 bg-white/[0.05] py-4 font-semibold text-slate-300 transition hover:bg-white/10 hover:text-white"
+        >
+          ← 이전 화면으로
+        </button>
+
+        <p className="mt-6 text-center text-xs tracking-wider text-slate-600">
+          UNDER THE MOONLIGHT · YOUR MEMORIES REMAIN
+        </p>
+      </div>
+    </main>
   );
 }
+
