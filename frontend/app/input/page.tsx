@@ -458,19 +458,24 @@ export default function InputPage() {
 
   
   return (
-    <main className="relative min-h-screen overflow-hidden bg-[#080d20] px-5 py-10 text-white">
-      {/* 달빛 정원 배경 */}
-      <div className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div className="absolute -right-32 -top-32 h-96 w-96 rounded-full bg-violet-500/15 blur-[100px]" />
-        <div className="absolute -bottom-32 -left-24 h-96 w-96 rounded-full bg-cyan-500/10 blur-[100px]" />
-        <div className="absolute left-1/2 top-1/3 h-64 w-64 -translate-x-1/2 rounded-full bg-indigo-500/10 blur-[100px]" />
+    
+<main className="relative min-h-screen overflow-hidden bg-[#080d20] px-5 py-10 text-white">
+  {/* 마음연구소 유리 온실 배경 */}
+  <div
+    className="pointer-events-none absolute inset-0 bg-cover bg-center bg-no-repeat"
+    style={{
+      backgroundImage: "url('/images/mind-lab-bg.png')",
+    }}
+  />
 
-        <div className="absolute left-[12%] top-[20%] h-1.5 w-1.5 rounded-full bg-cyan-200 shadow-[0_0_12px_3px_rgba(165,243,252,0.5)]" />
-        <div className="absolute right-[15%] top-[30%] h-2 w-2 rounded-full bg-violet-200 shadow-[0_0_15px_4px_rgba(196,181,253,0.5)]" />
-        <div className="absolute right-[25%] bottom-[20%] h-1.5 w-1.5 rounded-full bg-pink-200 shadow-[0_0_12px_3px_rgba(251,207,232,0.5)]" />
-      </div>
+  {/* 배경 어둡게 처리하여 글씨 가독성 확보 */}
+  <div className="pointer-events-none absolute inset-0 bg-[#080d20]/40" />
 
-      <div className="relative mx-auto flex max-w-4xl flex-col gap-8">
+  {/* 은은한 보랏빛 분위기 */}
+  <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-[#100b2b]/20 via-transparent to-[#080d20]/60" />
+
+
+      <div className="relative z-10 mx-auto flex max-w-4xl flex-col gap-8">
         {/* 페이지 소개 */}
         <section>
           <div className="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">

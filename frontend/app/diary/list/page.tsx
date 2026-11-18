@@ -139,19 +139,19 @@ export default function DiaryListPage() {
         <header className="mb-9 text-center">
           <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-violet-300/20 bg-violet-300/10 px-4 py-2 text-sm text-violet-200">
             <span>☾</span>
-            <span>MY MOONLIGHT ARCHIVE</span>
+            <span>MY MOONLIGHT OBSERVATORY</span>
             <span>✦</span>
           </div>
 
           <h1 className="mb-3 text-3xl font-bold tracking-wide sm:text-4xl">
             <span className="bg-gradient-to-r from-violet-200 via-pink-200 to-cyan-200 bg-clip-text text-transparent">
-              나만의 일기장
+              달빛 전망대
             </span>
           </h1>
 
-          <p className="text-sm text-slate-400">
-            당신이 기록한 소중한 순간들을 다시 만나보세요.
-          </p>
+          <p className="text-sm text-slate-300">
+  달빛 아래에서 나만의 이야기를 기록하고, 소중한 순간들을 다시 만나보세요.
+</p>
         </header>
 
         {/* 일기 목록 영역 */}
@@ -170,12 +170,12 @@ export default function DiaryListPage() {
             <div className="mb-5 text-5xl">🌙</div>
 
             <h2 className="mb-3 text-xl font-semibold text-violet-100">
-              아직 기록된 일기가 없어요.
-            </h2>
+  아직 달빛 아래 기록된 이야기가 없어요.
+</h2>
 
-            <p className="text-sm leading-7 text-slate-400">
-              달빛 정원에서 새로운 이야기를 시작해 보세요.
-            </p>
+<p className="text-sm leading-7 text-slate-400">
+  오늘의 마음과 소중한 순간들을 첫 일기로 남겨보세요.
+</p>
 
             <button
               onClick={() => router.push("/diary/write")}
@@ -209,7 +209,7 @@ export default function DiaryListPage() {
                       </p>
 
                       <p className="mt-1 text-xs text-slate-500">
-                        MOONLIGHT MEMORY
+                        MY MOONLIGHT STORY
                       </p>
                     </div>
                   </div>

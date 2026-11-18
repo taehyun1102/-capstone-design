@@ -219,34 +219,31 @@ export default function AnalysisHistoryPage() {
   };
 
   return (
-    <main className="relative min-h-screen overflow-hidden bg-[#080d20] px-5 py-10 text-white sm:px-7">
-      {/* 배경 장식 */}
-      <div className="pointer-events-none fixed inset-0 overflow-hidden">
-        <div className="absolute -left-40 top-0 h-[500px] w-[500px] rounded-full bg-violet-600/10 blur-[140px]" />
-        <div className="absolute right-[-150px] top-[25%] h-[500px] w-[500px] rounded-full bg-cyan-500/10 blur-[140px]" />
-        <div className="absolute bottom-[-180px] left-[25%] h-[450px] w-[450px] rounded-full bg-pink-500/[0.07] blur-[140px]" />
-
-        <div className="absolute left-[12%] top-[12%] h-1 w-1 rounded-full bg-white shadow-[0_0_12px_3px_rgba(255,255,255,0.5)]" />
-        <div className="absolute right-[18%] top-[20%] h-1.5 w-1.5 rounded-full bg-violet-200 shadow-[0_0_14px_4px_rgba(196,181,253,0.4)]" />
-        <div className="absolute left-[22%] top-[55%] h-1 w-1 rounded-full bg-cyan-200 shadow-[0_0_12px_3px_rgba(103,232,249,0.4)]" />
-        <div className="absolute bottom-[18%] right-[12%] h-1 w-1 rounded-full bg-pink-200 shadow-[0_0_12px_3px_rgba(249,168,212,0.4)]" />
-      </div>
+    <main
+  className="relative min-h-screen overflow-hidden bg-[#080d20] bg-cover bg-center bg-fixed px-5 py-10 text-white sm:px-7"
+  style={{
+    backgroundImage:
+      "linear-gradient(rgba(5, 8, 25, 0.30), rgba(5, 8, 25, 0.50)), url('/images/memory-tree-bg.png')",
+  }}
+>
+  {/* 기억의 나무 배경 분위기 */}
+  <div className="pointer-events-none fixed inset-0 bg-gradient-to-b from-[#080d20]/10 via-transparent to-[#080d20]/40" />
 
       <div className="relative mx-auto max-w-4xl">
         {/* 헤더 */}
         <header className="mb-8 rounded-3xl border border-violet-300/15 bg-gradient-to-br from-violet-500/15 via-[#111a35]/90 to-cyan-500/10 p-7 shadow-xl shadow-black/20 backdrop-blur-xl sm:p-9">
           <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-violet-300/20 bg-violet-400/10 px-4 py-2 text-xs font-semibold tracking-wider text-violet-200">
             <span>🌙</span>
-            MY ANALYSIS ARCHIVE
+            MY MEMORY TREE
           </div>
 
           <h1 className="text-3xl font-bold tracking-tight text-white">
-            나의 분석 기록
+            기억의 나무
           </h1>
 
           <p className="mt-4 max-w-2xl text-sm leading-7 text-slate-300">
-            저장한 생활 패턴 분석 결과를 확인하고 관리할 수 있어요.
-            지난 하루의 기록을 돌아보며 나의 변화를 살펴보세요.
+            나무에 하나씩 맺힌 기억의 열매를 살펴보세요.
+저장된 마음의 기록을 돌아보며 나의 변화를 발견할 수 있어요.
           </p>
 
           <div className="mt-6 flex flex-wrap gap-3">
@@ -515,15 +512,15 @@ export default function AnalysisHistoryPage() {
 
         {/* 하단 버튼 */}
         <button
-          type="button"
-          onClick={() => router.push("/input")}
-          className="mt-8 w-full rounded-2xl border border-violet-300/20 bg-gradient-to-r from-violet-600/80 via-purple-500/80 to-indigo-500/80 py-4 font-bold text-white shadow-lg shadow-violet-950/30 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-violet-900/30 active:translate-y-0"
-        >
-          <span className="flex items-center justify-center gap-2">
-            <span className="text-xl">←</span>
-            메인페이지로 돌아가기
-          </span>
-        </button>
+  type="button"
+  onClick={() => router.push("/garden")}
+  className="mt-8 w-full rounded-2xl border border-violet-300/20 bg-gradient-to-r from-violet-600/80 via-purple-500/80 to-indigo-500/80 py-4 font-bold text-white shadow-lg shadow-violet-950/30 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-violet-900/30 active:translate-y-0"
+>
+  <span className="flex items-center justify-center gap-2">
+    <span className="text-xl">←</span>
+    정원으로 돌아가기
+  </span>
+</button>
 
         <footer className="mt-8 border-t border-white/[0.07] py-7 text-center">
           <p className="text-sm text-slate-400">

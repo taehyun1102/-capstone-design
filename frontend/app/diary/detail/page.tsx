@@ -194,11 +194,12 @@ function DiaryDetailContent() {
         </div>
 
         <button
-          onClick={() => router.push("/diary")}
-          className="relative mt-5 w-full rounded-2xl border border-white/10 bg-white/[0.07] py-4 text-slate-200 transition hover:bg-white/10"
-        >
-          ← 일기장으로 돌아가기
-        </button>
+  type="button"
+  onClick={() => router.back()}
+  className="mt-8 w-full rounded-2xl border border-violet-300/20 bg-white/[0.06] py-4 font-semibold text-violet-200 transition hover:bg-violet-400/10"
+>
+  ← 이전으로
+</button>
       </main>
     );
   }
@@ -310,13 +311,14 @@ function DiaryDetailContent() {
           </section>
         )}
 
-        {/* 일기장으로 돌아가기 */}
-        <button
-          onClick={() => router.push("/diary")}
-          className="mt-6 w-full rounded-2xl border border-white/10 bg-white/[0.05] py-4 font-semibold text-slate-300 transition hover:bg-white/10 hover:text-white"
-        >
-          ← 일기장으로 돌아가기
-        </button>
+        {/* 이전 페이지로 돌아가기 */}
+<button
+  type="button"
+  onClick={() => router.back()}
+  className="mt-6 w-full rounded-2xl border border-white/10 bg-white/[0.05] py-4 font-semibold text-slate-300 transition hover:bg-white/10 hover:text-white"
+>
+  ← 이전으로
+</button>
 
         <p className="mt-6 text-center text-xs tracking-wider text-slate-600">
           UNDER THE MOONLIGHT · YOUR STORY MATTERS

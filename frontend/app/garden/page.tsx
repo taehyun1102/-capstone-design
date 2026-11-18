@@ -12,13 +12,6 @@ const menuItems = [
     color: "from-pink-400/30 to-rose-300/10",
   },
   {
-  icon: "🌌",
-  title: "나의 일기 보관함",
-  subtitle: "저장한 일기를 다시 만나다",
-  path: "/diary/list",
-  color: "from-amber-400/30 to-violet-300/10",
-  },
-  {
   icon: "◇",
   title: "달빛 다리",
   subtitle: "오늘의 마음을 들여다보다",
@@ -33,11 +26,11 @@ const menuItems = [
     color: "from-violet-400/30 to-purple-300/10",
   },
   {
-    icon: "☾",
-    title: "달빛 전망대",
-    subtitle: "마음의 결과를 바라보다",
-    path: "/result",
-    color: "from-indigo-400/30 to-blue-300/10",
+  icon: "☾",
+  title: "달빛 전망대",
+  subtitle: "나만의 이야기를 기록하고 돌아보다",
+  path: "/diary/list",
+  color: "from-indigo-400/30 to-blue-300/10",
   },
   {
     icon: "♧",
@@ -74,12 +67,12 @@ const gardenPlaces = [
     glow: "cottage-glow",
   },
   {
-    title: "달빛 전망대",
-    subtitle: "마음의 결과를 바라보다",
-    path: "/result",
-    position: "left-[79%] top-[6%] w-[17%] h-[27%]",
-    glow: "moon-place-glow",
-  },
+  title: "달빛 전망대",
+  subtitle: "나만의 이야기를 기록하고 돌아보다",
+  path: "/diary/list",
+  position: "left-[79%] top-[6%] w-[17%] h-[27%]",
+  glow: "moon-place-glow",
+},
   {
     title: "달빛 다리",
     subtitle: "오늘의 마음을 들여다보다",
@@ -87,13 +80,6 @@ const gardenPlaces = [
     position: "left-[43%] top-[54%] w-[17%] h-[17%]",
     glow: "bridge-glow",
   },
-  {
-  title: "나의 일기 보관함",
-  subtitle: "저장한 소중한 일기를 다시 만나보다",
-  path: "/diary/list",
-  position: "left-[33%] top-[-6%] w-[35%] h-[35%]",
-  glow: "aurora-place-glow",
-},
 ];
 
 
@@ -258,7 +244,7 @@ export default function GardenPage() {
           </p>
         </div>
 
-        <div className="mx-auto grid max-w-6xl grid-cols-6 gap-3">
+        <div className="mx-auto grid max-w-6xl grid-cols-5 gap-3">
 
           {menuItems.map((item) => (
             <button

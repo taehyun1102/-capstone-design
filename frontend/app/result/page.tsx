@@ -172,50 +172,86 @@ const handleSaveAnalysis = async () => {
   const user = payload?.userInput;
 
   return (
-    <main className="relative min-h-screen overflow-hidden bg-[#080d20] px-5 py-10 text-white">
-      {/* 배경 장식 */}
-      <div className="pointer-events-none fixed inset-0 overflow-hidden">
-        <div className="absolute -left-40 top-0 h-[500px] w-[500px] rounded-full bg-violet-600/10 blur-[140px]" />
-        <div className="absolute right-[-150px] top-[25%] h-[500px] w-[500px] rounded-full bg-cyan-500/10 blur-[140px]" />
-        <div className="absolute bottom-[-180px] left-[25%] h-[450px] w-[450px] rounded-full bg-pink-500/[0.07] blur-[140px]" />
+    
+<main className="relative min-h-screen overflow-hidden bg-[#070b1e] px-5 py-10 text-white">
+  {/* 달빛 전망대 배경 */}
+  <div className="pointer-events-none fixed inset-0 overflow-hidden">
 
-        <div className="absolute left-[12%] top-[12%] h-1 w-1 rounded-full bg-white shadow-[0_0_12px_3px_rgba(255,255,255,0.5)]" />
-        <div className="absolute right-[18%] top-[20%] h-1.5 w-1.5 rounded-full bg-violet-200 shadow-[0_0_14px_4px_rgba(196,181,253,0.4)]" />
-        <div className="absolute left-[22%] top-[55%] h-1 w-1 rounded-full bg-cyan-200 shadow-[0_0_12px_3px_rgba(103,232,249,0.4)]" />
-        <div className="absolute bottom-[18%] right-[12%] h-1 w-1 rounded-full bg-pink-200 shadow-[0_0_12px_3px_rgba(249,168,212,0.4)]" />
-      </div>
+    {/* 밤하늘의 은은한 빛 */}
+    <div className="absolute -left-40 -top-32 h-[550px] w-[550px] rounded-full bg-violet-600/20 blur-[150px]" />
+    <div className="absolute -right-40 top-[15%] h-[550px] w-[550px] rounded-full bg-indigo-500/15 blur-[150px]" />
+    <div className="absolute bottom-[-200px] left-[25%] h-[500px] w-[500px] rounded-full bg-cyan-500/10 blur-[150px]" />
+
+    {/* 달빛 */}
+    <div className="absolute right-[12%] top-[8%] h-36 w-36 rounded-full bg-violet-100/10 blur-2xl" />
+    <div className="absolute right-[14%] top-[9%] h-24 w-24 rounded-full border border-violet-100/20 bg-gradient-to-br from-violet-100/20 to-indigo-300/5 shadow-[0_0_80px_rgba(196,181,253,0.18)]" />
+
+    {/* 별빛 */}
+    <div className="absolute left-[12%] top-[12%] h-1 w-1 rounded-full bg-white shadow-[0_0_14px_4px_rgba(255,255,255,0.6)]" />
+    <div className="absolute left-[35%] top-[8%] h-1.5 w-1.5 rounded-full bg-violet-200 shadow-[0_0_15px_4px_rgba(196,181,253,0.6)]" />
+    <div className="absolute right-[30%] top-[32%] h-1 w-1 rounded-full bg-cyan-200 shadow-[0_0_14px_4px_rgba(103,232,249,0.5)]" />
+    <div className="absolute left-[20%] top-[55%] h-1.5 w-1.5 rounded-full bg-white shadow-[0_0_14px_4px_rgba(255,255,255,0.5)]" />
+    <div className="absolute right-[15%] top-[65%] h-1 w-1 rounded-full bg-pink-200 shadow-[0_0_14px_4px_rgba(249,168,212,0.5)]" />
+    <div className="absolute left-[65%] bottom-[15%] h-1 w-1 rounded-full bg-violet-200 shadow-[0_0_14px_4px_rgba(196,181,253,0.5)]" />
+
+    {/* 별자리 장식 */}
+    <svg className="absolute inset-0 h-full w-full opacity-20" viewBox="0 0 1000 1000" preserveAspectRatio="none">
+      <path d="M120 180 L190 240 L270 170 L340 260" fill="none" stroke="#c4b5fd" strokeWidth="1" strokeDasharray="4 8" />
+      <path d="M700 350 L770 290 L840 360 L910 300" fill="none" stroke="#a5f3fc" strokeWidth="1" strokeDasharray="4 8" />
+      <circle cx="120" cy="180" r="3" fill="#ddd6fe" />
+      <circle cx="190" cy="240" r="3" fill="#ddd6fe" />
+      <circle cx="270" cy="170" r="3" fill="#ddd6fe" />
+      <circle cx="340" cy="260" r="3" fill="#ddd6fe" />
+      <circle cx="700" cy="350" r="3" fill="#a5f3fc" />
+      <circle cx="770" cy="290" r="3" fill="#a5f3fc" />
+      <circle cx="840" cy="360" r="3" fill="#a5f3fc" />
+      <circle cx="910" cy="300" r="3" fill="#a5f3fc" />
+    </svg>
+  </div>
+
 
       <div className="relative mx-auto flex max-w-4xl flex-col gap-6">
         {/* 헤더 */}
-        <section className="relative overflow-hidden rounded-3xl border border-violet-300/15 bg-gradient-to-br from-violet-500/15 via-[#111a35]/90 to-cyan-500/10 p-8 shadow-2xl shadow-black/20 backdrop-blur-xl">
-          <div className="pointer-events-none absolute -right-10 -top-16 h-64 w-64 rounded-full border border-violet-200/10" />
-          <div className="pointer-events-none absolute -right-2 -top-8 h-48 w-48 rounded-full border border-violet-200/10" />
+        
+{/* 달빛 전망대 메인 헤더 */}
+<section className="relative overflow-hidden rounded-3xl border border-violet-300/20 bg-gradient-to-br from-[#25204b]/90 via-[#111a35]/95 to-[#101d3b]/90 p-8 shadow-2xl shadow-violet-950/30 backdrop-blur-xl sm:p-10">
 
-          <div className="relative">
-            <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-violet-300/20 bg-violet-400/10 px-4 py-2 text-xs font-semibold tracking-wider text-violet-200">
-              <span>🌙</span>
-              MOONLIGHT ANALYSIS REPORT
-            </div>
+  {/* 장식 */}
+  <div className="pointer-events-none absolute -right-16 -top-20 h-72 w-72 rounded-full border border-violet-200/10" />
+  <div className="pointer-events-none absolute -right-8 -top-12 h-52 w-52 rounded-full border border-violet-200/10" />
+  <div className="pointer-events-none absolute right-12 top-12 h-24 w-24 rounded-full bg-violet-300/10 blur-2xl" />
 
-            <h1 className="text-3xl font-bold tracking-tight text-white sm:text-4xl">
-              오늘의 마음을 들여다보다
-            </h1>
+  <div className="relative">
+    <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-violet-300/25 bg-violet-300/10 px-4 py-2 text-xs font-semibold tracking-[0.18em] text-violet-200">
+      <span>🌙</span>
+      MOONLIGHT OBSERVATORY
+      <span>✦</span>
+    </div>
 
-            <p className="mt-4 max-w-2xl text-sm leading-7 text-slate-300">
-              오늘 하루의 활동과 감정, 집중 상태를 바탕으로 분석한 결과입니다.
-              나의 생활 패턴을 돌아보고 더 나은 내일을 준비해 보세요.
-            </p>
+    <h1 className="text-3xl font-bold leading-tight tracking-tight text-white sm:text-4xl">
+      오늘의 마음을 관측하다
+    </h1>
 
-            <div className="mt-7 flex flex-wrap gap-3">
-              <span className="rounded-xl border border-white/10 bg-white/[0.06] px-4 py-2 text-xs text-slate-300">
-                🧠 AI 생활 패턴 분석
-              </span>
-              <span className="rounded-xl border border-white/10 bg-white/[0.06] px-4 py-2 text-xs text-slate-300">
-                ✨ 하루 상태 리포트
-              </span>
-            </div>
-          </div>
-        </section>
+    <p className="mt-4 max-w-2xl text-sm leading-8 text-slate-300">
+      오늘 하루의 활동과 감정, 집중 상태를 바탕으로
+      나만의 생활 패턴을 분석했습니다.
+      달빛 아래에서 오늘의 나를 돌아보고 더 나은 내일을 준비해 보세요.
+    </p>
+
+    <div className="mt-7 flex flex-wrap gap-3">
+      <span className="rounded-xl border border-violet-300/20 bg-violet-400/10 px-4 py-2 text-xs text-violet-100">
+        🧠 AI 생활 패턴 분석
+      </span>
+      <span className="rounded-xl border border-cyan-300/20 bg-cyan-400/10 px-4 py-2 text-xs text-cyan-100">
+        ✨ 오늘의 마음 리포트
+      </span>
+      <span className="rounded-xl border border-pink-300/20 bg-pink-400/10 px-4 py-2 text-xs text-pink-100">
+        🌌 나만의 행동 관측
+      </span>
+    </div>
+  </div>
+</section>
+
 
         {/* 사용자 입력 요약 */}
         {user && (
@@ -276,31 +312,59 @@ const handleSaveAnalysis = async () => {
           </section>
         )}
 
-        {/* AI 종합 요약 */}
-        <section className="relative overflow-hidden rounded-3xl border border-violet-300/20 bg-gradient-to-br from-violet-500/20 via-[#171c3a] to-indigo-500/10 p-7 shadow-xl shadow-violet-950/20 sm:p-8">
-          <div className="pointer-events-none absolute -right-12 -top-12 h-48 w-48 rounded-full bg-violet-400/10 blur-3xl" />
+        
+{/* AI 종합 해석 - 달빛 전망대 리포트 */}
+<section className="relative overflow-hidden rounded-3xl border border-violet-300/25 bg-gradient-to-br from-[#25204b]/90 via-[#171c3a]/95 to-[#101d3b]/90 p-7 shadow-2xl shadow-violet-950/30 backdrop-blur-xl sm:p-9">
 
-          <div className="relative">
-            <div className="mb-5 flex items-center gap-3">
-              <div className="flex h-11 w-11 items-center justify-center rounded-2xl border border-violet-200/20 bg-violet-300/10 text-xl">
-                🧠
-              </div>
+  {/* 카드 내부 달빛 장식 */}
+  <div className="pointer-events-none absolute -right-16 -top-16 h-56 w-56 rounded-full border border-violet-200/10" />
+  <div className="pointer-events-none absolute -right-8 -top-8 h-40 w-40 rounded-full border border-violet-200/10" />
+  <div className="pointer-events-none absolute right-10 top-10 h-28 w-28 rounded-full bg-violet-400/10 blur-3xl" />
 
-              <div>
-                <p className="text-xs font-semibold tracking-wider text-violet-300">
-                  AI INSIGHT
-                </p>
-                <h2 className="mt-1 text-xl font-bold text-white">
-                  AI 종합 해석
-                </h2>
-              </div>
-            </div>
+  <div className="relative">
 
-            <p className="whitespace-pre-line text-sm leading-8 text-violet-50/90">
-              {result.summary}
-            </p>
-          </div>
-        </section>
+    {/* 카드 제목 */}
+    <div className="mb-7 flex items-center gap-4">
+      <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border border-violet-200/20 bg-violet-300/10 text-2xl shadow-lg shadow-violet-950/20">
+        🌙
+      </div>
+
+      <div>
+        <p className="text-xs font-semibold tracking-[0.2em] text-violet-300">
+          OBSERVATORY INSIGHT
+        </p>
+        <h2 className="mt-1 text-xl font-bold text-white sm:text-2xl">
+          오늘의 마음 관측 결과
+        </h2>
+      </div>
+    </div>
+
+    {/* 구분선 */}
+    <div className="mb-6 h-px bg-gradient-to-r from-violet-300/40 via-violet-300/10 to-transparent" />
+
+    {/* AI 분석 결과 */}
+    <div className="rounded-2xl border border-violet-200/15 bg-[#0b1028]/50 p-5 shadow-inner sm:p-7">
+      <div className="mb-4 flex items-center gap-2">
+        <span className="text-lg">✦</span>
+        <p className="text-sm font-semibold text-violet-200">
+          AI 종합 해석
+        </p>
+      </div>
+
+      <p className="whitespace-pre-line text-sm leading-8 text-slate-100 sm:text-base sm:leading-9">
+        {result.summary}
+      </p>
+    </div>
+
+    {/* 하단 안내 */}
+    <div className="mt-5 flex items-center gap-2 text-xs text-violet-200/60">
+      <span>✧</span>
+      <span>오늘의 기록을 바탕으로 생성된 AI 분석 리포트입니다.</span>
+    </div>
+
+  </div>
+</section>
+
 
         {/* 6대 상태 밸런스 */}
         <section className="rounded-3xl border border-white/10 bg-white/[0.045] p-6 shadow-xl shadow-black/10 backdrop-blur-xl sm:p-7">
@@ -328,18 +392,21 @@ const handleSaveAnalysis = async () => {
                     cy="50%"
                     outerRadius="70%"
                   >
-                    <PolarGrid
-                      stroke="rgba(167, 139, 250, 0.22)"
-                      strokeDasharray="3 5"
-                    />
+                    
+<PolarGrid
+  stroke="#c4b5fd"
+  strokeWidth={1.5}
+  strokeOpacity={0.9}
+/>
 
                     <PolarAngleAxis
-                      dataKey="axis"
-                      tick={{
-                        fontSize: 13,
-                        fill: "#ddd6fe",
-                      }}
-                    />
+  dataKey="axis"
+  tick={{
+    fontSize: 14,
+    fill: "#ffffff",
+    fontWeight: 600,
+  }}
+/>
 
                     <PolarRadiusAxis
                       angle={30}
@@ -352,13 +419,13 @@ const handleSaveAnalysis = async () => {
                     />
 
                     <Radar
-                      name="오늘의 상태"
-                      dataKey="value"
-                      stroke="#a78bfa"
-                      strokeWidth={2.5}
-                      fill="#8b5cf6"
-                      fillOpacity={0.32}
-                    />
+  name="오늘의 상태"
+  dataKey="value"
+  stroke="#c4b5fd"
+  strokeWidth={3}
+  fill="#8b5cf6"
+  fillOpacity={0.45}
+/>
                   </RadarChart>
                 </ResponsiveContainer>
               </div>
