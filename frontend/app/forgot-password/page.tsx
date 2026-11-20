@@ -4,10 +4,7 @@
 import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 
-const API_BASE_URL = `${
-  process.env.NEXT_PUBLIC_API_URL ||
-  "https://capstone-design-ip8n.onrender.com"
-}/api/auth`;
+const API_BASE_URL = "/api/auth";
 
 export default function ForgotPasswordPage() {
   const router = useRouter();

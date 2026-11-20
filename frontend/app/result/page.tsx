@@ -39,9 +39,7 @@ type AnalysisPayload = {
   userInput: UserInputData;
 };
 
-const API_URL =
-  process.env.NEXT_PUBLIC_API_URL ||
-  "https://capstone-design-ip8n.onrender.com";
+const API_URL = "";
 
 export default function ResultPage() {
   const router = useRouter();

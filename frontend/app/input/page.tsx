@@ -46,9 +46,7 @@ type NoticeTone = "red" | "amber" | "violet" | "green";
 
 const MEMO_MAX_LENGTH = 500;
 
-const API_URL =
-  process.env.NEXT_PUBLIC_API_URL ||
-  "https://capstone-design-ip8n.onrender.com";
+const API_URL = "";
 
 function NoticeBox({
   message,

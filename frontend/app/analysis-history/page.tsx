@@ -37,9 +37,7 @@ type SavedAnalysis = {
   result: AnalysisResult;
 };
 
-const API_URL =
-  process.env.NEXT_PUBLIC_API_URL ||
-  "https://capstone-design-ip8n.onrender.com";
+const API_URL = "";
 
 const inputLabels: Record<string, string> = {
   mainActivity: "주요 활동",

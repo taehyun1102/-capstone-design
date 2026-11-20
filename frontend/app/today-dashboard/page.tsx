@@ -12,9 +12,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
-const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL ||
-  "https://capstone-design-ip8n.onrender.com";
+const API_BASE_URL = "";
 
 type Diary = {
   id: string | number;

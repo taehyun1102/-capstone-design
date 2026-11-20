@@ -4,9 +4,7 @@
 import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 
-const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL ||
-  "https://capstone-design-ip8n.onrender.com";
+const API_BASE_URL = "";
 
 export default function LoginPage() {
   const router = useRouter();

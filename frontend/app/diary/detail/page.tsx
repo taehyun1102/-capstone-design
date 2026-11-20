@@ -13,9 +13,7 @@ type Diary = {
   analyzedAt?: string | null;
 };
 
-const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL ||
-  "https://capstone-design-ip8n.onrender.com";
+const API_BASE_URL = "";
 
 function DiaryDetailContent() {
   const searchParams = useSearchParams();
