@@ -1,3 +1,4 @@
+
 import type { NextConfig } from "next";
 
 const backendUrl =
@@ -8,6 +9,10 @@ const nextConfig: NextConfig = {
 
   async rewrites() {
     return [
+      {
+        source: "/backend-health",
+        destination: `${backendUrl}/health`,
+      },
       {
         source: "/api/:path*",
         destination: `${backendUrl}/api/:path*`,
