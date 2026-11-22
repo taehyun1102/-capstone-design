@@ -241,9 +241,9 @@ app.use((err, _req, res, _next) => {
 // MongoDB 연결 후 서버 실행
 connectDB()
   .then(() => {
-    app.listen(PORT, () => {
-      console.log(`Server running on port ${PORT}`);
-    });
+    app.listen(PORT, "0.0.0.0", () => {
+  console.log(`Server running on port ${PORT}`);
+});
   })
   .catch((err) => {
     console.error("MongoDB connection failed:", err);

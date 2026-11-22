@@ -1,4 +1,3 @@
-
 FROM node:22-bookworm-slim AS builder
 
 WORKDIR /app
@@ -8,12 +7,14 @@ RUN npm ci
 
 COPY . .
 
-# Next.js standalone 빌드
-ARG NEXT_PUBLIC_API_URL
-ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
+# Render 백엔드 주소를 Next.js 빌드에 전달
+ARG BACKEND_URL
+ENV BACKEND_URL=${BACKEND_URL}
 
+# Next.js standalone 빌드
 RUN mkdir -p public
 RUN npm run build
+
 
 FROM node:22-bookworm-slim AS runner
 
