@@ -6,6 +6,17 @@ import { useRouter } from "next/navigation";
 
 const API_BASE_URL = "";
 
+// 로그인 재시도 설정
+const MAX_ATTEMPTS = 3;
+const REQUEST_TIMEOUT = 45000;
+const RETRY_DELAY = 5000;
+
+// 재시도 가능한 HTTP 상태 코드
+const RETRYABLE_STATUS_CODES = [502, 503, 504];
+
+const delay = (ms: number) =>
+  new Promise((resolve) => setTimeout(resolve, ms));
+
 export default function LoginPage() {
   const router = useRouter();
 
@@ -13,6 +24,7 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [loadingMessage, setLoadingMessage] = useState("로그인 중...");
 
   const handleLogin = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -28,53 +40,133 @@ export default function LoginPage() {
     }
 
     setIsLoading(true);
+    setLoadingMessage("로그인 중...");
 
     try {
-      const res = await fetch(`${API_BASE_URL}/api/auth/login`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          username: username.trim(),
-          password,
-        }),
-      });
+      for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
+        const controller = new AbortController();
 
-      const data = await res.json();
+        let response: Response | null = null;
+        let requestError: unknown = null;
 
-      if (!res.ok) {
-        alert(
-          data.message ||
-            "아이디 또는 비밀번호가 올바르지 않습니다."
-        );
+        // 요청별 최대 대기 시간 설정
+        const timeoutId = window.setTimeout(() => {
+          controller.abort();
+        }, REQUEST_TIMEOUT);
+
+        try {
+          response = await fetch(`${API_BASE_URL}/api/auth/login`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              username: username.trim(),
+              password,
+            }),
+            signal: controller.signal,
+          });
+        } catch (error) {
+          requestError = error;
+          console.error(
+            `로그인 요청 ${attempt}회차 실패:`,
+            error
+          );
+        } finally {
+          window.clearTimeout(timeoutId);
+        }
+
+        // 네트워크 오류 또는 응답 시간 초과
+        let shouldRetry = requestError !== null;
+
+        // Render 프록시에서 발생할 수 있는 일시적 오류
+        if (
+          response &&
+          RETRYABLE_STATUS_CODES.includes(response.status)
+        ) {
+          shouldRetry = true;
+
+          console.warn(
+            `일시적인 서버 오류: HTTP ${response.status}`
+          );
+        }
+
+        // 연결 오류라면 재시도
+        if (shouldRetry) {
+          if (attempt < MAX_ATTEMPTS) {
+            setLoadingMessage(
+              `서버 응답을 기다리는 중... (${attempt}/${MAX_ATTEMPTS})`
+            );
+
+            await delay(RETRY_DELAY);
+            continue;
+          }
+
+          console.error(
+            "로그인 최대 재시도 횟수를 초과했습니다.",
+            requestError
+          );
+
+          alert(
+            "서버 응답이 지연되고 있습니다.\n잠시 후 다시 시도해주세요."
+          );
+
+          return;
+        }
+
+        if (!response) {
+          alert("서버 응답을 확인할 수 없습니다.");
+          return;
+        }
+
+        // 서버 응답 데이터 처리
+        const data = await response.json().catch(() => null);
+
+        if (!data) {
+          console.error("로그인 서버 응답 형식 오류");
+
+          alert("서버에서 올바른 응답을 받지 못했습니다.");
+          return;
+        }
+
+        // 아이디 또는 비밀번호 오류 등 일반적인 HTTP 오류
+        // 이러한 오류는 자동 재시도하지 않음
+        if (!response.ok) {
+          alert(
+            data.message ||
+              "아이디 또는 비밀번호가 올바르지 않습니다."
+          );
+          return;
+        }
+
+        // 인증 토큰 확인
+        if (!data.token) {
+          console.error(
+            "로그인 응답에 token이 없습니다:",
+            data
+          );
+
+          alert(
+            "인증 토큰을 받지 못했습니다. 서버 로그인 API를 확인해주세요."
+          );
+
+          return;
+        }
+
+        // 로그인 정보 저장
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("userId", data.userId);
+        localStorage.setItem("userName", data.name || "");
+        localStorage.setItem("username", data.username || "");
+
+        alert("로그인 성공!");
+
+        router.push("/garden");
         return;
       }
-
-      if (!data.token) {
-        console.error("로그인 응답에 token이 없습니다:", data);
-
-        alert(
-          "인증 토큰을 받지 못했습니다. 서버 로그인 API를 확인해주세요."
-        );
-        return;
-      }
-
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("userId", data.userId);
-      localStorage.setItem("userName", data.name || "");
-      localStorage.setItem("username", data.username || "");
-
-      
-     alert("로그인 성공!");
-
-     router.push("/garden");
-
-    } catch (error) {
-      console.error("로그인 오류:", error);
-      alert("서버 연결 실패");
     } finally {
       setIsLoading(false);
+      setLoadingMessage("로그인 중...");
     }
   };
 
@@ -190,7 +282,8 @@ export default function LoginPage() {
                 onChange={(e) => setUsername(e.target.value)}
                 autoComplete="username"
                 required
-                className="h-full w-full bg-transparent px-3 text-sm text-[#49236d] outline-none placeholder:text-[#886e99]"
+                disabled={isLoading}
+                className="h-full w-full bg-transparent px-3 text-sm text-[#49236d] outline-none placeholder:text-[#886e99] disabled:opacity-60"
               />
             </div>
 
@@ -209,14 +302,16 @@ export default function LoginPage() {
                 onChange={(e) => setPassword(e.target.value)}
                 autoComplete="current-password"
                 required
-                className="h-full min-w-0 w-full bg-transparent px-3 text-sm text-[#49236d] outline-none placeholder:text-[#886e99]"
+                disabled={isLoading}
+                className="h-full min-w-0 w-full bg-transparent px-3 text-sm text-[#49236d] outline-none placeholder:text-[#886e99] disabled:opacity-60"
               />
 
               <button
                 type="button"
+                disabled={isLoading}
                 onClick={() => setShowPassword(!showPassword)}
                 aria-label={showPassword ? "비밀번호 숨기기" : "비밀번호 보기"}
-                className="shrink-0 text-[#795a91] transition hover:text-[#49236d]"
+                className="shrink-0 text-[#795a91] transition hover:text-[#49236d] disabled:opacity-50"
               >
                 {showPassword ? (
                   <svg viewBox="0 0 24 24" fill="none" className="h-5 w-5" stroke="currentColor" strokeWidth="1.8">
@@ -237,7 +332,7 @@ export default function LoginPage() {
               disabled={isLoading}
               className="mt-2 flex h-12 w-full items-center justify-center gap-3 rounded-xl bg-gradient-to-r from-[#ff995f] via-[#eb40ad] to-[#9229f5] text-base font-bold text-white shadow-lg shadow-purple-400/30 transition hover:brightness-105 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-60"
             >
-              {isLoading ? "로그인 중..." : "로그인"}
+              {isLoading ? loadingMessage : "로그인"}
               {!isLoading && <span className="text-xl">→</span>}
             </button>
           </form>
@@ -247,8 +342,9 @@ export default function LoginPage() {
 
             <button
               type="button"
+              disabled={isLoading}
               onClick={() => router.push("/signup")}
-              className="text-[#642c91] transition hover:text-[#a52fce]"
+              className="text-[#642c91] transition hover:text-[#a52fce] disabled:opacity-50"
             >
               회원가입
             </button>
@@ -257,8 +353,9 @@ export default function LoginPage() {
 
             <button
               type="button"
+              disabled={isLoading}
               onClick={() => router.push("/forgot-password")}
-              className="text-[#642c91] transition hover:text-[#a52fce]"
+              className="text-[#642c91] transition hover:text-[#a52fce] disabled:opacity-50"
             >
               비밀번호 찾기
             </button>
@@ -274,4 +371,3 @@ export default function LoginPage() {
     </main>
   );
 }
-
