@@ -101,7 +101,7 @@ export default function GardenPage() {
   const router = useRouter();
 
   return (
-    <main className="relative h-screen min-w-[1024px] w-full overflow-hidden bg-[#090d29] text-white">
+    <main className="relative h-[100svh] min-h-[100svh] min-w-0 w-full overflow-hidden bg-[#090d29] text-white">
 
       {/* 배경 일러스트 */}
       <div
@@ -204,25 +204,25 @@ export default function GardenPage() {
       </div>
 
       {/* 상단 헤더 */}
-      <header className="absolute left-0 right-0 top-0 z-10 flex items-start justify-between px-14 pt-9">
+      <header className="absolute left-0 right-0 top-0 z-10 flex items-start justify-between gap-2 px-4 pt-5 sm:px-14 sm:pt-9">
 
         <div>
           <p className="text-[11px] font-semibold tracking-[0.5em] text-[#d8c8ff]">
             M O O N L I G H T G A R D E N
           </p>
 
-          <h1 className="mt-4 text-5xl font-bold tracking-tight text-white drop-shadow-[0_3px_18px_rgba(180,140,255,0.5)]">
+          <h1 className="mt-2 text-2xl font-bold tracking-tight text-white drop-shadow-[0_3px_18px_rgba(180,140,255,0.5)] sm:mt-4 sm:text-5xl">
             달빛 아래의 정원
           </h1>
 
-          <p className="mt-3 text-sm tracking-wide text-[#e4ddff]">
-            오늘의 마음이 머무는 특별한 공간
+          <p className="mt-2 text-[10px] tracking-wide text-[#e4ddff] sm:mt-3 sm:text-sm">
+          오늘의 마음이 머무는 특별한 공간
           </p>
         </div>
 
         <button
           onClick={() => router.push("/mypage")}
-          className="rounded-full border border-white/25 bg-white/10 px-7 py-3 text-sm text-white shadow-lg backdrop-blur-xl transition hover:border-purple-200/60 hover:bg-white/20"
+          className="shrink-0 rounded-full border border-white/25 bg-white/10 px-3 py-2 text-xs text-white shadow-lg backdrop-blur-xl transition hover:border-purple-200/60 hover:bg-white/20 sm:px-7 sm:py-3 sm:text-sm"
         >
           내 정보 <span className="ml-2">↗</span>
         </button>
@@ -236,7 +236,7 @@ export default function GardenPage() {
       </div>
 
       {/* 하단 메뉴 */}
-      <section className="absolute bottom-9 left-0 right-0 z-10 px-12">
+      <section className="absolute bottom-5 left-0 right-0 z-10 px-2 sm:bottom-9 sm:px-12">
 
         <div className="mx-auto mb-5 max-w-4xl text-center">
           <p className="text-xs tracking-[0.25em] text-white/80">
@@ -244,25 +244,25 @@ export default function GardenPage() {
           </p>
         </div>
 
-        <div className="mx-auto grid max-w-6xl grid-cols-5 gap-3">
+        <div className="mx-auto grid max-w-6xl grid-cols-5 gap-1.5 sm:gap-3">
 
           {menuItems.map((item) => (
             <button
               key={item.path}
               onClick={() => router.push(item.path)}
-              className={`group relative overflow-hidden rounded-2xl border border-white/20 bg-gradient-to-br ${item.color} px-4 py-5 text-center shadow-[0_12px_40px_rgba(4,5,25,0.35)] backdrop-blur-2xl transition-all duration-300 hover:-translate-y-2 hover:border-white/50 hover:shadow-[0_15px_40px_rgba(160,130,255,0.3)]`}
+              className={`group relative overflow-hidden rounded-xl border border-white/20 bg-gradient-to-br ${item.color} px-1 py-3 text-center shadow-[0_12px_40px_rgba(4,5,25,0.35)] backdrop-blur-2xl transition-all duration-300 hover:-translate-y-2 hover:border-white/50 hover:shadow-[0_15px_40px_rgba(160,130,255,0.3)] sm:rounded-2xl sm:px-4 sm:py-5`}
             >
               <div className="absolute inset-0 bg-white/5 opacity-0 transition group-hover:opacity-100" />
 
-              <span className="relative block text-3xl text-white drop-shadow-[0_0_12px_rgba(220,190,255,0.7)]">
+              <span className="relative block text-xl text-white drop-shadow-[0_0_12px_rgba(220,190,255,0.7)] sm:text-3xl">
                 {item.icon}
               </span>
 
-              <span className="relative mt-3 block text-base font-bold text-white">
+              <span className="relative mt-2 block break-keep text-[10px] font-bold leading-tight text-white sm:mt-3 sm:text-base">
                 {item.title}
               </span>
 
-              <span className="relative mt-2 block text-[11px] text-white/65">
+              <span className="relative mt-1 hidden text-[11px] text-white/65 sm:mt-2 sm:block">
                 {item.subtitle}
               </span>
             </button>
