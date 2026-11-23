@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useRouter } from "next/navigation";
@@ -49,35 +48,40 @@ const gardenPlaces = [
     title: "기억의 나무",
     subtitle: "지나온 마음을 기억하다",
     path: "/analysis-history",
-    position: "left-[7%] top-[26%] w-[36%] h-[44%]",
+    position:
+      "left-[0%] top-[38%] w-[48%] h-[23%] sm:left-[7%] sm:top-[26%] sm:w-[36%] sm:h-[44%]",
     glow: "tree-glow",
   },
   {
     title: "마음 연구소",
     subtitle: "나의 마음을 탐구하다",
     path: "/input",
-    position: "left-[47%] top-[24%] w-[18%] h-[26%]",
+    position:
+      "left-[34%] top-[34%] w-[32%] h-[18%] sm:left-[47%] sm:top-[24%] sm:w-[18%] sm:h-[26%]",
     glow: "portal-glow",
   },
   {
     title: "달빛 일기",
     subtitle: "오늘의 마음을 기록하다",
     path: "/diary/write",
-    position: "left-[63%] top-[32%] w-[31%] h-[37%]",
+    position:
+      "left-[55%] top-[43%] w-[43%] h-[21%] sm:left-[63%] sm:top-[32%] sm:w-[31%] sm:h-[37%]",
     glow: "cottage-glow",
   },
   {
-  title: "달빛 전망대",
-  subtitle: "나만의 이야기를 기록하고 돌아보다",
-  path: "/diary/list",
-  position: "left-[79%] top-[6%] w-[17%] h-[27%]",
-  glow: "moon-place-glow",
-},
+    title: "달빛 전망대",
+    subtitle: "나만의 이야기를 기록하고 돌아보다",
+    path: "/diary/list",
+    position:
+      "left-[60%] top-[22%] w-[40%] h-[20%] sm:left-[79%] sm:top-[6%] sm:w-[17%] sm:h-[27%]",
+    glow: "moon-place-glow",
+  },
   {
     title: "달빛 다리",
     subtitle: "오늘의 마음을 들여다보다",
     path: "/today-dashboard",
-    position: "left-[43%] top-[54%] w-[17%] h-[17%]",
+    position:
+      "left-[28%] top-[57%] w-[44%] h-[13%] sm:left-[43%] sm:top-[54%] sm:w-[17%] sm:h-[17%]",
     glow: "bridge-glow",
   },
 ];
@@ -104,12 +108,19 @@ export default function GardenPage() {
     <main className="relative h-[100svh] min-h-[100svh] min-w-0 w-full overflow-hidden bg-[#090d29] text-white">
 
       {/* 배경 일러스트 */}
-      <div
-        className="absolute inset-0 bg-cover bg-center"
-        style={{
-          backgroundImage: "url('/images/garden-background.png')",
-        }}
-      />
+<div
+  className="absolute inset-0 bg-cover bg-center hidden sm:block"
+  style={{
+    backgroundImage: "url('/images/garden-background.png')",
+  }}
+/>
+
+<div
+  className="absolute inset-0 bg-cover bg-center sm:hidden"
+  style={{
+    backgroundImage: "url('/images/garden-background-mobile.png')",
+  }}
+/>
 
       {/* 배경 분위기 */}
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-[#090d29]/40 via-transparent to-[#090d29]/80" />
